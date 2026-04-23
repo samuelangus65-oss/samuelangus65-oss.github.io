@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samuel Angus — Personal &amp; Professional Development Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Tenor+Sans&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #1C2B3A;
+  --teal:   #2E8B72;
+  --gold:   #C9A84C;
+  --parch:  #F5F0E8;
+  --slate:  #2D4155;
+  --border: #D8E4ED;
+  --white:  #FFFFFF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  color: var(--navy);
+  background: var(--white);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── TYPOGRAPHY ── */
+.display {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300; line-height: 1.1;
+}
+.display-xl  { font-size: clamp(48px, 7vw, 88px); }
+.display-lg  { font-size: clamp(38px, 5vw, 60px); }
+.display-md  { font-size: clamp(30px, 3.5vw, 46px); }
+
+.eyebrow {
+  font-size: 10px; letter-spacing: 5px;
+  text-transform: uppercase; color: var(--teal);
+  font-weight: 500; display: block;
+}
+
+p { font-size: 16px; line-height: 1.85; color: var(--slate); }
+p.large { font-size: 18px; line-height: 1.85; color: var(--navy); }
+
+/* ── LAYOUT ── */
+.container        { max-width: 1120px; margin: 0 auto; padding: 0 48px; }
+.container-narrow { max-width: 800px;  margin: 0 auto; padding: 0 48px; }
+section { padding: 100px 0; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background: var(--teal); color: var(--white);
+  padding: 15px 36px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 500;
+  text-decoration: none; display: inline-block;
+  transition: background 0.2s; border: none; cursor: pointer;
+}
+.btn-primary:hover { background: #268c6e; }
+
+.btn-outline {
+  border: 1.5px solid var(--gold); color: var(--gold);
+  padding: 14px 36px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 400;
+  text-decoration: none; display: inline-block;
+  transition: all 0.2s; cursor: pointer; background: transparent;
+}
+.btn-outline:hover { background: rgba(201,168,76,0.08); }
+
+.btn-slack {
+  background: #4A154B; color: var(--white);
+  padding: 15px 36px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 500;
+  text-decoration: none; display: inline-block;
+  transition: background 0.2s; border: none; cursor: pointer;
+}
+.btn-slack:hover { background: #611f64; }
+
+.gold-rule { width: 44px; height: 2px; background: var(--gold); margin: 24px 0; }
+
+/* ══════════════════════════════
+   NAVIGATION
+══════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100; background: var(--navy);
+  padding: 0 48px; height: 68px;
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+
+.nav-mark svg { display: block; }
+
+.nav-brand-text { display: flex; flex-direction: column; gap: 2px; }
+
+.nav-founder-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 400;
+  color: var(--white); letter-spacing: 1px;
+  line-height: 1;
+}
+
+.nav-practice {
+  font-size: 9px; letter-spacing: 2.5px;
+  color: var(--gold); text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex; align-items: center;
+  gap: 32px; list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+
+.nav-cta {
+  background: var(--teal); color: var(--white);
+  padding: 10px 24px; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  text-decoration: none; transition: background 0.2s;
+}
+.nav-cta:hover { background: #268c6e; }
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
+#hero {
+  background: var(--navy);
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding-top: 68px; padding-bottom: 0;
+  position: relative; overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+.hero-glow {
+  position: absolute; right: -100px; top: 50%;
+  transform: translateY(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(ellipse,
+    rgba(201,168,76,0.06) 0%,
+    rgba(46,139,114,0.03) 40%,
+    transparent 70%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  display: grid; grid-template-columns: 1fr 360px;
+  gap: 80px; align-items: center;
+  padding: 80px 0;
+}
+
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 5px;
+  text-transform: uppercase; color: var(--gold);
+  font-weight: 500; margin-bottom: 24px; display: block;
+}
+
+.hero-founder {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(56px, 8vw, 100px);
+  font-weight: 300; letter-spacing: 6px;
+  color: var(--white); text-transform: uppercase;
+  line-height: 1; margin-bottom: 6px;
+}
+
+.hero-practice {
+  font-family: 'Tenor Sans', sans-serif;
+  font-size: clamp(13px, 1.5vw, 18px);
+  letter-spacing: 5px; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 28px;
+  display: block;
+}
+
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-style: italic; font-weight: 300;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.5; margin-bottom: 20px;
+}
+
+.hero-scripture {
+  padding: 20px 24px;
+  border-left: 2px solid rgba(201,168,76,0.4);
+  margin-bottom: 40px;
+}
+
+.hero-scripture p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-style: italic;
+  color: rgba(255,255,255,0.5); line-height: 1.8;
+  margin-bottom: 6px;
+}
+
+.hero-scripture cite {
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--gold); text-transform: uppercase;
+  font-style: normal;
+}
+
+.hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.hero-mark {
+  display: flex; align-items: center;
+  justify-content: center; position: relative; z-index: 2;
+}
+
+/* ══════════════════════════════
+   CREDENTIALS STRIP
+══════════════════════════════ */
+#credentials {
+  background: var(--parch);
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.creds-inner {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
+}
+
+.cred-item { display: flex; align-items: center; gap: 10px; }
+
+.cred-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--teal); flex-shrink: 0;
+}
+
+.cred-text {
+  font-size: 13px; font-weight: 500; color: var(--navy);
+}
+
+.cred-divider {
+  width: 1px; height: 24px; background: var(--border);
+}
+
+/* ══════════════════════════════
+   ABOUT
+══════════════════════════════ */
+#about { background: var(--white); }
+
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: start;
+}
+
+.about-left .eyebrow { margin-bottom: 20px; }
+
+.about-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(34px, 4vw, 50px);
+  font-weight: 300; color: var(--navy);
+  line-height: 1.15; margin-bottom: 24px;
+}
+
+.about-headline em { font-style: italic; color: var(--teal); }
+
+.about-quote {
+  margin: 28px 0;
+  padding-left: 20px;
+  border-left: 2px solid var(--gold);
+}
+
+.about-quote p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px; font-weight: 400;
+  font-style: italic; color: var(--navy);
+  line-height: 1.6;
+}
+
+.about-right { padding-top: 48px; }
+
+.about-card {
+  background: var(--parch);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 10px 10px 0;
+  padding: 24px 28px; margin-bottom: 16px;
+}
+
+.about-card:nth-child(2) { border-left-color: var(--gold); }
+.about-card:nth-child(3) { border-left-color: var(--navy); }
+.about-card:nth-child(4) { border-left-color: var(--teal); }
+
+.about-card h3 {
+  font-size: 15px; font-weight: 500;
+  color: var(--navy); margin-bottom: 8px;
+}
+
+.about-card p {
+  font-size: 14px; color: var(--slate); line-height: 1.7;
+}
+
+/* ══════════════════════════════
+   APPROACH
+══════════════════════════════ */
+#approach { background: var(--navy); }
+
+#approach .eyebrow { color: var(--gold); margin-bottom: 20px; }
+
+.approach-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(34px, 4vw, 52px);
+  font-weight: 300; color: var(--white);
+  line-height: 1.15; margin-bottom: 16px;
+}
+
+.approach-headline em { font-style: italic; color: var(--gold); }
+
+.approach-intro {
+  font-size: 17px; line-height: 1.85;
+  color: rgba(255,255,255,0.75);
+  max-width: 620px; margin-bottom: 60px;
+}
+
+.approach-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-bottom: 60px;
+}
+
+.approach-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 36px 32px;
+  transition: background 0.2s;
+}
+
+.approach-card:hover { background: rgba(255,255,255,0.07); }
+.approach-card:first-child { border-radius: 12px 0 0 12px; }
+.approach-card:last-child  { border-radius: 0 12px 12px 0; }
+
+.approach-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px; font-weight: 300;
+  color: var(--teal); opacity: 0.5;
+  line-height: 1; margin-bottom: 16px;
+}
+
+.approach-card h3 {
+  font-size: 16px; font-weight: 500;
+  color: var(--white); margin-bottom: 12px;
+}
+
+.approach-card p {
+  font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.75;
+}
+
+.toolkit-box {
+  background: rgba(46,139,114,0.1);
+  border: 1px solid rgba(46,139,114,0.25);
+  border-radius: 12px; padding: 40px;
+}
+
+.toolkit-box .eyebrow { color: var(--teal); margin-bottom: 14px; }
+
+.toolkit-box h3 {
+  font-size: 20px; font-weight: 500;
+  color: var(--white); margin-bottom: 12px;
+}
+
+.toolkit-box p {
+  font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.8;
+}
+
+.toolkit-tags {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px;
+}
+
+.toolkit-tag {
+  border: 1px solid rgba(46,139,114,0.35);
+  color: var(--teal); padding: 8px 18px;
+  border-radius: 100px; font-size: 12px;
+  letter-spacing: 1px;
+}
+
+/* ══════════════════════════════
+   SERVICES
+══════════════════════════════ */
+#services { background: var(--white); }
+
+.services-intro {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: end; margin-bottom: 60px;
+}
+
+.services-intro .eyebrow { margin-bottom: 16px; }
+
+.services-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.service-card {
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 36px 28px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.service-card:hover {
+  border-color: var(--teal);
+  box-shadow: 0 8px 32px rgba(28,43,58,0.08);
+}
+
+.service-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--teal);
+  transform: scaleX(0); transition: transform 0.2s;
+  transform-origin: left;
+}
+
+.service-card:hover::before { transform: scaleX(1); }
+
+.service-card.featured {
+  background: var(--navy); border-color: var(--navy);
+}
+
+.service-card h3 {
+  font-size: 16px; font-weight: 500;
+  color: var(--navy); margin-bottom: 12px;
+}
+
+.service-card.featured h3 { color: var(--white); }
+
+.service-card p {
+  font-size: 14px; color: var(--slate); line-height: 1.75;
+}
+
+.service-card.featured p { color: rgba(255,255,255,0.65); }
+
+.service-duration {
+  display: inline-block; margin-top: 16px;
+  font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--teal);
+  font-weight: 500;
+}
+
+.service-card.featured .service-duration { color: var(--gold); }
+
+/* ══════════════════════════════
+   INTEGRATIONS — CALENDLY & SLACK
+══════════════════════════════ */
+#integrations { background: var(--parch); }
+
+#integrations .eyebrow { margin-bottom: 20px; }
+
+.integrations-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 40px; margin-top: 60px;
+}
+
+.integration-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 40px 36px;
+}
+
+.integration-logo {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 24px;
+}
+
+.integration-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+}
+
+.icon-calendly { background: #006BFF; }
+.icon-slack    { background: #4A154B; }
+
+.integration-name {
+  font-size: 18px; font-weight: 500;
+  color: var(--navy); line-height: 1;
+}
+
+.integration-type {
+  font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--teal);
+  margin-top: 4px;
+}
+
+.integration-card h3 {
+  font-size: 20px; font-weight: 500;
+  color: var(--navy); margin-bottom: 12px;
+}
+
+.integration-card p {
+  font-size: 15px; color: var(--slate);
+  line-height: 1.8; margin-bottom: 20px;
+}
+
+.integration-steps {
+  list-style: none; margin-bottom: 28px;
+}
+
+.integration-steps li {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 14px; color: var(--slate);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.6;
+}
+
+.integration-steps li:last-child { border-bottom: none; }
+
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--teal); color: var(--white);
+  font-size: 11px; font-weight: 500;
+  display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ══════════════════════════════
+   WHO I WORK WITH
+══════════════════════════════ */
+#who { background: var(--white); }
+
+.who-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+
+.who-list { list-style: none; margin-top: 28px; }
+
+.who-list li {
+  display: flex; align-items: flex-start;
+  gap: 14px; padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px; color: var(--slate);
+  line-height: 1.65;
+}
+
+.who-list li:last-child { border-bottom: none; }
+
+.who-tick {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--teal); flex-shrink: 0;
+  display: flex; align-items: center;
+  justify-content: center; margin-top: 2px;
+}
+
+.who-tick::after {
+  content: '';
+  width: 6px; height: 4px;
+  border-left: 1.5px solid var(--white);
+  border-bottom: 1.5px solid var(--white);
+  transform: rotate(-45deg) translate(0px, -1px);
+}
+
+.who-right {
+  background: var(--navy);
+  border-radius: 16px; padding: 44px;
+}
+
+.who-right blockquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 300; font-style: italic;
+  color: var(--white); line-height: 1.6; margin-bottom: 20px;
+}
+
+.who-right cite {
+  font-size: 12px; color: var(--gold);
+  font-style: normal; letter-spacing: 1px;
+}
+
+.who-right-cta {
+  margin-top: 32px; padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.who-right-cta p {
+  font-size: 14px; color: rgba(255,255,255,0.6);
+  margin-bottom: 16px; line-height: 1.7;
+}
+
+/* ══════════════════════════════
+   DISCOVERY CALL / CONTACT
+══════════════════════════════ */
+#contact {
+  background: var(--navy); text-align: center;
+}
+
+#contact .eyebrow { color: var(--gold); margin-bottom: 20px; }
+
+.contact-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 300; color: var(--white);
+  line-height: 1.1; margin-bottom: 20px;
+}
+
+.contact-body {
+  font-size: 17px; color: rgba(255,255,255,0.7);
+  line-height: 1.85; max-width: 580px;
+  margin: 0 auto 60px;
+}
+
+.process-steps {
+  display: flex; justify-content: center;
+  gap: 0; margin-bottom: 52px;
+  max-width: 700px; margin-left: auto; margin-right: auto;
+}
+
+.process-step {
+  flex: 1; padding: 0 24px; text-align: center;
+  position: relative;
+}
+
+.process-step::after {
+  content: ''; position: absolute;
+  right: 0; top: 18px;
+  width: 1px; height: 36px;
+  background: rgba(255,255,255,0.1);
+}
+
+.process-step:last-child::after { display: none; }
+
+.step-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px; font-weight: 300;
+  color: var(--teal); line-height: 1; margin-bottom: 10px;
+}
+
+.process-step h3 {
+  font-size: 14px; font-weight: 500;
+  color: var(--white); margin-bottom: 6px;
+}
+
+.process-step p {
+  font-size: 13px; color: rgba(255,255,255,0.5);
+  line-height: 1.6;
+}
+
+.contact-ctas {
+  display: flex; gap: 16px;
+  justify-content: center; flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.contact-details {
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  letter-spacing: 0.5px;
+}
+
+.contact-details a {
+  color: #2E8B72; text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+footer {
+  background: #141F2A; padding: 56px 0 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.footer-inner {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 48px; flex-wrap: wrap;
+}
+
+.footer-founder {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 300;
+  color: var(--white); letter-spacing: 1px;
+}
+
+.footer-practice {
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--gold); text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.footer-tagline {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  margin-top: 12px; max-width: 240px;
+  font-style: italic; font-family: 'Cormorant Garamond', serif;
+  line-height: 1.6;
+}
+
+.footer-links h4 {
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: rgba(255,255,255,0.4);
+  margin-bottom: 16px; font-weight: 500;
+}
+
+.footer-links ul { list-style: none; }
+
+.footer-links li { margin-bottom: 10px; }
+
+.footer-links a {
+  font-size: 14px; color: rgba(255,255,255,0.6);
+  text-decoration: none; transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--white); }
+
+.footer-bottom {
+  margin-top: 48px; padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 12px;
+}
+
+.footer-bottom p {
+  font-size: 12px; color: rgba(255,255,255,0.3);
+}
+
+.footer-scripture {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-style: italic;
+  color: rgba(255,255,255,0.25);
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAVIGATION ══ -->
+<nav>
+  <a href="#hero" class="nav-brand">
+    <div class="nav-mark">
+      <svg width="38" height="38" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="52" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
+        <circle cx="60" cy="60" r="34" stroke="rgba(46,139,114,0.4)" stroke-width="0.8"/>
+        <circle cx="60" cy="60" r="16" stroke="rgba(201,168,76,0.6)" stroke-width="1"/>
+        <path d="M28 60 Q60 36 92 60 Q60 84 28 60Z" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>
+        <circle cx="60" cy="60" r="7" fill="none" stroke="rgba(201,168,76,0.7)" stroke-width="1"/>
+        <circle cx="60" cy="60" r="3" fill="#C9A84C"/>
+        <line x1="60" y1="8" x2="60" y2="22" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
+        <line x1="60" y1="98" x2="60" y2="112" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
+        <line x1="8" y1="60" x2="22" y2="60" stroke="rgba(46,139,114,0.3)" stroke-width="0.8"/>
+        <line x1="98" y1="60" x2="112" y2="60" stroke="rgba(46,139,114,0.3)" stroke-width="0.8"/>
+      </svg>
+    </div>
+    <div class="nav-brand-text">
+      <span class="nav-founder-name">Samuel Angus</span>
+      <span class="nav-practice">Personal &amp; Professional Development Coach</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#integrations">How We Work</a></li>
+    <li><a href="#who">Who I Work With</a></li>
+  </ul>
+  <a href="https://calendly.com/samuelanguscoach-info/30min" target="_blank" class="nav-cta">Book a Discovery Call</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <span class="hero-eyebrow">Personal & Professional Development Coach · Leeds, UK · Online Worldwide</span>
+        <h1 class="hero-founder">Samuel Angus</h1>
+        <span class="hero-practice">Personal &amp; Professional Development Coach</span>
+        <p class="hero-tagline">"See clearly. Know yourself. Move forward."</p>
+        <div class="hero-scripture">
+          <p>"Counsel in the heart of man is like deep water; but a man of understanding will draw it out."</p>
+          <cite>Proverbs 20:5 · KJV</cite>
+        </div>
+        <div style="margin-bottom:24px;padding:14px 20px;border:1px solid rgba(201,168,76,0.3);border-radius:8px;background:rgba(201,168,76,0.06);display:block;max-width:560px;position:relative;z-index:1">
+          <p style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6">Currently completing ILM Level 5 qualification — accepting enquiries for sessions commencing upon qualification.</p>
+        </div>
+        <div class="hero-ctas" style="position:relative;z-index:2">
+          <a href="https://calendly.com/samuelanguscoach-info/30min" target="_blank" class="btn-primary">Book a Free Discovery Call</a>
+          <a href="#about" class="btn-outline">Learn More</a>
+        </div>
+      </div>
+      <div class="hero-mark">
+        <svg width="260" height="260" viewBox="0 0 260 260" fill="none">
+          <circle cx="130" cy="130" r="118" stroke="rgba(201,168,76,0.12)" stroke-width="0.8"/>
+          <circle cx="130" cy="130" r="90"  stroke="rgba(46,139,114,0.15)" stroke-width="0.8"/>
+          <circle cx="130" cy="130" r="62"  stroke="rgba(201,168,76,0.2)"  stroke-width="0.8"/>
+          <circle cx="130" cy="130" r="34"  stroke="rgba(201,168,76,0.4)"  stroke-width="1"/>
+          <path d="M62 130 Q130 76 198 130 Q130 184 62 130Z" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+          <circle cx="130" cy="130" r="16"  fill="none" stroke="rgba(201,168,76,0.6)" stroke-width="1"/>
+          <circle cx="130" cy="130" r="6"   fill="#C9A84C"/>
+          <line x1="130" y1="12"  x2="130" y2="40"  stroke="rgba(201,168,76,0.2)" stroke-width="0.8"/>
+          <line x1="130" y1="220" x2="130" y2="248" stroke="rgba(201,168,76,0.2)" stroke-width="0.8"/>
+          <line x1="12"  y1="130" x2="40"  y2="130" stroke="rgba(46,139,114,0.2)" stroke-width="0.8"/>
+          <line x1="220" y1="130" x2="248" y2="130" stroke="rgba(46,139,114,0.2)" stroke-width="0.8"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CREDENTIALS STRIP ══ -->
+<section id="credentials" style="padding:0">
+  <div class="container">
+    <div class="creds-inner">
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <span class="cred-text">ILM Level 5 Certified Coach</span>
+      </div>
+      <div class="cred-divider"></div>
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <span class="cred-text">Multi-Sector Experience</span>
+      </div>
+      <div class="cred-divider"></div>
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <span class="cred-text">20+ Years NHS Experience</span>
+      </div>
+      <div class="cred-divider"></div>
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <span class="cred-text">Nearly a Decade in Business</span>
+      </div>
+      <div class="cred-divider"></div>
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <span class="cred-text">Equality & Inclusion Practitioner</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-left">
+        <span class="eyebrow">About Samuel Angus</span>
+        <h2 class="about-headline">A life of working with people.<br><em>Formed across every sector that matters.</em></h2>
+        <div class="gold-rule"></div>
+        <p class="large">Samuel Angus brings to coaching a breadth of working experience that spans decades and crosses almost every sector that touches human need, human potential, and human systems. Retail at senior consultant level. Local authority finance, housing, and cashiering. Third sector project management — including leading a local employment project supporting people with mental health difficulties back into work, in partnership with Jobcentre Plus. Youth justice work through the probation service, supporting young people under RAP with life skills and direction. Supplementary teaching in Maths and English, and founding and running his own supplementary school preparing children for their SATs in English, Maths, and Science. Serving on management committees across third sector organisations. Working with inequality and discrimination reduction teams across statutory services — including police forces and housing organisations. And over two decades within the NHS — across PALS, carer development, the carers team, systemic family therapy, diversity and equality, and as a Cultural Inclusion Ambassador working across the organisation on disciplinary and grievance proceedings.</p>
+        <div class="about-quote">
+          <p>"It is not one system that has formed me. It is a life spent inside the real complexity of how people, communities, and organisations work — and what they need to thrive."</p>
+        </div>
+        <p>Alongside this, Samuel has spent nearly a decade as a company director — carrying full commercial responsibility for every aspect of a business operation. That experience gives him an understanding of what it genuinely means to run an organisation — the pressures, the decisions, the compliance obligations, and the human complexity that sits behind every commercial challenge. It is a dimension of formation that few coaches bring, and one that makes a real difference when working with entrepreneurs, business owners, and commercially minded professionals.</p>
+        <br>
+        <p>Now, as a qualified coach, Samuel brings that full formation to personal and professional development coaching. Drawing on systemic thinking, reflexive questioning, and a genuine commitment to seeing the person in front of him clearly — he helps individuals and organisations find the direction, clarity, and understanding they already carry within them.</p>
+      </div>
+      <div class="about-right">
+        <div class="about-card">
+          <h3>Systemic Thinking</h3>
+          <p>Informed by systemic therapy principles — not as a therapeutic intervention, but as a powerful lens for understanding the relational and organisational patterns that shape how teams, individuals, and workplaces actually function.</p>
+        </div>
+        <div class="about-card">
+          <h3>ILM Level 5 Certified</h3>
+          <p>The Institute of Leadership and Management Level 5 Certificate in Coaching and Mentoring — rigorous, evidence-based, and professionally recognised. Underpinning every coaching relationship with genuine qualification.</p>
+        </div>
+        <div class="about-card">
+          <h3>A Career Spanning Every Sector</h3>
+          <p>Senior retail consultant, local authority finance and housing officer, third sector project manager, youth justice practitioner, supplementary school founder, inequality and discrimination adviser across statutory services, and over twenty years within the NHS — including PALS, carer development, systemic family therapy, diversity and equality, and Cultural Inclusion Ambassador. Formation that no single sector could provide.</p>
+        </div>
+        <div class="about-card">
+          <h3>Equity & Inclusion Commitment</h3>
+          <p>A demonstrated track record of ensuring cultural difference, race, and ableism were properly considered within organisational processes. This commitment runs through every coaching relationship Samuel holds.</p>
+        </div>
+        <div class="about-card">
+          <h3>Commercial & Business Experience</h3>
+          <p>Nearly a decade as a company director — carrying full commercial responsibility across every aspect of a business operation. A coach who understands what running an organisation actually demands, from the inside and in practice.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ APPROACH ══ -->
+<section id="approach">
+  <div class="container">
+    <span class="eyebrow">The Coaching Approach</span>
+    <h2 class="approach-headline">The counsel you need<br>is already within you.<br><em>It simply needs drawing out.</em></h2>
+    <p class="approach-intro">Every coaching engagement begins with the belief that the person in front of me carries more than they have yet been able to access. The work is not to advise, instruct, or prescribe. It is to create the conditions in which what is already within you can surface — through honest reflection, careful questioning, and genuine human presence.</p>
+
+    <div class="approach-grid">
+      <div class="approach-card">
+        <div class="approach-number">01</div>
+        <h3>We start with your whole picture</h3>
+        <p>Before goals, we explore context. Who and what shapes your situation? What patterns keep returning? What remains unspoken in your team or organisation? Understanding the whole system is where genuine clarity begins.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-number">02</div>
+        <h3>We work with what is real</h3>
+        <p>Coaching is not about ideal scenarios. It is about your actual situation, with all its complexity. Through reflexive and circular questioning, we surface what is genuinely happening — and what you most want to change.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-number">03</div>
+        <h3>We move toward lasting direction</h3>
+        <p>Reflection without movement is just thinking. Together we move from understanding to decision, from hesitation to purposeful action. The clarity you develop in our sessions is designed to hold well beyond them.</p>
+      </div>
+    </div>
+
+    <div class="toolkit-box">
+      <span class="eyebrow" style="color:var(--teal);margin-bottom:14px">The Coaching Toolkit</span>
+      <h3>The right approach for each person — not a fixed formula</h3>
+      <p>No two clients are the same. I draw on a range of evidence-based frameworks and approaches — selecting what is most appropriate for each individual, team, or organisational context. The structure of our coaching adapts to your needs. What remains constant is the quality of thinking, the depth of the conversation, and the commitment to real, lasting change.</p>
+      <div class="toolkit-tags">
+        <span class="toolkit-tag">Goal-focused models</span>
+        <span class="toolkit-tag">Systemic frameworks</span>
+        <span class="toolkit-tag">Reflexive practice</span>
+        <span class="toolkit-tag">Values-based approaches</span>
+        <span class="toolkit-tag">Action & accountability</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section id="services">
+  <div class="container">
+    <div class="services-intro">
+      <div>
+        <span class="eyebrow">Services</span>
+        <h2 class="display display-md">How we can work together.</h2>
+        <div class="gold-rule"></div>
+      </div>
+      <p class="large">All coaching is delivered one to one, in complete confidence, and tailored entirely to your circumstances. Sessions are available in person in Leeds or online across the UK and worldwide.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <h3>Personal Development Coaching</h3>
+        <p>For individuals seeking greater clarity about who they are, what they carry, and where they are headed. Whether you are navigating change, rebuilding confidence, or simply know something needs to shift — this is where the work begins.</p>
+        <span class="service-duration">4–6 Sessions · Flexible</span>
+      </div>
+      <div class="service-card">
+        <h3>Professional Development Coaching</h3>
+        <p>For professionals looking to develop their leadership capacity, navigate organisational complexity, or strengthen the way they think, communicate, and lead. Grounded in real organisational experience, not just theory.</p>
+        <span class="service-duration">6 Sessions · 90 min each</span>
+      </div>
+      <div class="service-card">
+        <h3>New Manager Coaching</h3>
+        <p>Specifically designed for those stepping into management or team leadership for the first time. Focused on role identity, relational dynamics, and the unspoken challenges of leading people — including those you already know.</p>
+        <span class="service-duration">4–6 Sessions · Flexible</span>
+      </div>
+      <div class="service-card">
+        <h3>Single Session Coaching</h3>
+        <p>A focused 90-minute coaching conversation for a specific decision, challenge, or crossroads. Structured, purposeful, and designed to produce real movement — without the commitment of a full programme.</p>
+        <span class="service-duration">1 Session · 90 min</span>
+      </div>
+      <div class="service-card">
+        <h3>Organisational Coaching</h3>
+        <p>For organisations whose people need greater clarity, direction, and capacity to navigate complexity. Coaching programmes designed around your team's real situation — not a generic off-the-shelf package.</p>
+        <span class="service-duration">Bespoke · On request</span>
+      </div>
+      <div class="service-card featured">
+        <h3>Not sure where to start?</h3>
+        <p>Every coaching relationship begins with a free 30-minute discovery call. No commitment, no sales pitch — just an honest conversation about where you are and whether we are the right fit for each other.</p>
+        <a href="https://calendly.com/samuelanguscoach-info/30min" target="_blank" class="btn-primary" style="margin-top:20px;font-size:13px;padding:10px 20px;display:inline-block">Book your free call →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ INTEGRATIONS — CALENDLY & SLACK ══ -->
+<section id="integrations">
+  <div class="container">
+    <span class="eyebrow">How We Work Together</span>
+    <h2 class="display display-md" style="color:var(--navy);margin-bottom:16px">Simple. Flexible. Built around you.</h2>
+    <div class="gold-rule"></div>
+    <p class="large" style="max-width:620px">Booking a session and staying connected between sessions should be straightforward. Here is how the practical side of working with Samuel Angus is set up.</p>
+
+    <div class="integrations-grid">
+
+      <!-- CALENDLY -->
+      <div class="integration-card">
+        <div class="integration-logo">
+          <div class="integration-icon icon-calendly">
+            <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+              <rect x="4" y="6" width="24" height="22" rx="3" stroke="white" stroke-width="1.5" fill="none"/>
+              <line x1="4" y1="12" x2="28" y2="12" stroke="white" stroke-width="1.5"/>
+              <line x1="10" y1="4" x2="10" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="22" y1="4" x2="22" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="16" cy="20" r="2" fill="white"/>
+            </svg>
+          </div>
+          <div>
+            <div class="integration-name">Calendly</div>
+            <div class="integration-type">Session Booking</div>
+          </div>
+        </div>
+        <h3>Book your session in seconds</h3>
+        <p>No back-and-forth emails. No waiting. Choose a time that works for you directly from Samuel's live calendar — available around the clock from anywhere in the world.</p>
+        <ol class="integration-steps">
+          <li><span class="step-num">1</span>Click the booking link on this page or in any email from Samuel</li>
+          <li><span class="step-num">2</span>Choose the session type and a time that suits you</li>
+          <li><span class="step-num">3</span>Receive an automatic confirmation with a video link or location details</li>
+          <li><span class="step-num">4</span>Receive a reminder 24 hours before your session</li>
+        </ol>
+        <a href="https://calendly.com/samuelanguscoach-info/30min" target="_blank" class="btn-primary">Book a Session Now</a>
+      </div>
+
+      <!-- SLACK -->
+      <div class="integration-card">
+        <div class="integration-logo">
+          <div class="integration-icon icon-slack">
+            <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+              <rect x="4" y="12" width="6" height="6" rx="2" fill="white"/>
+              <rect x="4" y="20" width="6" height="6" rx="2" fill="white" opacity="0.6"/>
+              <rect x="12" y="4" width="6" height="6" rx="2" fill="white" opacity="0.6"/>
+              <rect x="12" y="12" width="6" height="6" rx="2" fill="white"/>
+              <rect x="20" y="12" width="6" height="6" rx="2" fill="white" opacity="0.6"/>
+              <rect x="20" y="20" width="6" height="6" rx="2" fill="white"/>
+            </svg>
+          </div>
+          <div>
+            <div class="integration-name">Slack</div>
+            <div class="integration-type">Organisational Communication</div>
+          </div>
+        </div>
+        <h3>Stay connected between sessions</h3>
+        <p>For organisational coaching clients whose teams already use Slack — Samuel is available via a dedicated channel for light-touch check-ins, resource sharing, and brief reflections between formal coaching sessions.</p>
+        <ol class="integration-steps">
+          <li><span class="step-num">1</span>Raise Slack access during your discovery call or first session</li>
+          <li><span class="step-num">2</span>A dedicated channel is set up for your organisation</li>
+          <li><span class="step-num">3</span>Use it for check-ins, questions, and brief reflections between sessions</li>
+          <li><span class="step-num">4</span>Full confidentiality maintained within the agreed channel</li>
+        </ol>
+        <a href="#contact" class="btn-slack">Ask About Slack Access</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHO I WORK WITH ══ -->
+<section id="who">
+  <div class="container">
+    <div class="who-grid">
+      <div>
+        <span class="eyebrow">Who I Work With</span>
+        <h2 class="display display-md" style="color:var(--navy);margin-bottom:16px">People ready to see themselves and their situations clearly.</h2>
+        <div class="gold-rule"></div>
+        <p style="margin-bottom:8px">My clients come from a wide range of backgrounds and sectors. What they tend to share is a genuine willingness to look honestly at where they are — and a readiness to move forward with real intention.</p>
+        <ul class="who-list">
+          <li><div class="who-tick"></div><span>Individuals navigating significant personal or professional change</span></li>
+          <li><div class="who-tick"></div><span>People who feel overlooked or undervalued by the systems around them</span></li>
+          <li><div class="who-tick"></div><span>New managers and team leaders stepping into leadership for the first time</span></li>
+          <li><div class="who-tick"></div><span>Mid-level professionals developing their thinking and influence</span></li>
+          <li><div class="who-tick"></div><span>Public sector and NHS professionals navigating change and complexity</span></li>
+          <li><div class="who-tick"></div><span>Organisations whose people need greater clarity and direction</span></li>
+          <li><div class="who-tick"></div><span>Small business owners navigating the pressures and decisions of running a commercial operation</span></li>
+          <li><div class="who-tick"></div><span>Anyone who knows something needs to shift but is not yet sure what</span></li>
+        </ul>
+      </div>
+      <div class="who-right">
+        <blockquote>"My coaching is not about giving you the answers. It is about creating the conditions in which you can access the clarity, direction, and understanding that is already within you."</blockquote>
+        <cite>— Samuel Angus</cite>
+        <div class="who-right-cta">
+          <p>If you are unsure whether this is the right fit for you, the free discovery call is exactly the place to find out. No pressure. No commitment. Just an honest conversation.</p>
+          <a href="https://calendly.com/samuelanguscoach-info/30min" target="_blank" class="btn-primary">Book a Free Discovery Call</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section id="contact">
+  <div class="container">
+    <span class="eyebrow">Book a Discovery Call</span>
+    <h2 class="contact-headline">Let us start the conversation.</h2>
+    <p class="contact-body">Every coaching relationship begins with a free 30-minute discovery call. This is a genuine conversation — not a sales pitch. We will talk about where you are, what you are navigating, and whether working together makes sense for both of us.</p>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-number">1</div>
+        <h3>Book your call</h3>
+        <p>Choose a time directly from Samuel's calendar via Calendly.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-number">2</div>
+        <h3>We talk honestly</h3>
+        <p>You share where you are. Samuel shares how he works. No pressure.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-number">3</div>
+        <h3>We decide together</h3>
+        <p>If it feels right for both of us, we agree how to proceed.</p>
+      </div>
+    </div>
+
+    <div class="contact-ctas">
+      <a href="https://calendly.com/samuelanguscoach-info/30min" target="_blank" class="btn-primary">Book via Calendly</a>
+      <a href="mailto:info@samuelanguscoach.co.uk" class="btn-outline">Send an Email</a>
+    </div>
+
+    <p class="contact-details" style="margin-top:32px">
+      <a href="mailto:info@samuelanguscoach.co.uk">info@samuelanguscoach.co.uk</a> &nbsp;·&nbsp;
+      <a href="https://www.samuelanguscoach.co.uk" target="_blank">www.samuelanguscoach.co.uk</a> &nbsp;·&nbsp;
+      Leeds, UK &nbsp;·&nbsp;
+      Online sessions available worldwide
+    </p>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-founder">Samuel Angus</div>
+        <div class="footer-practice">Personal &amp; Professional Development Coach</div>
+        <p class="footer-tagline">"See clearly. Know yourself. Move forward."</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#approach">Approach</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#integrations">How We Work</a></li>
+          <li><a href="#who">Who I Work With</a></li>
+          <li><a href="#contact">Book a Call</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Personal Development</a></li>
+          <li><a href="#services">Professional Development</a></li>
+          <li><a href="#services">New Manager Coaching</a></li>
+          <li><a href="#services">Single Session</a></li>
+          <li><a href="#services">Organisational Coaching</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:info@samuelanguscoach.co.uk">info@samuelanguscoach.co.uk</a></li>
+          <li><a href="https://www.samuelanguscoach.co.uk">www.samuelanguscoach.co.uk</a></li>
+          <li><a href="#">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Samuel Angus. Personal &amp; Professional Development Coach. All rights reserved.</p>
+      <p class="footer-scripture">"Counsel in the heart of man is like deep water." · Proverbs 20:5 KJV</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
