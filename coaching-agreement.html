@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching Agreement — Samuel Angus</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:  #1C2B3A;
+  --teal:  #2E8B72;
+  --gold:  #C9A84C;
+  --parch: #F5F0E8;
+  --slate: #2D4155;
+  --border:#D8E4ED;
+  --white: #FFFFFF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  color: var(--navy);
+  background: var(--white);
+  line-height: 1.8;
+}
+
+.page-header {
+  background: var(--navy);
+  padding: 60px;
+  position: relative; overflow: hidden;
+}
+
+.header-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.header-back {
+  position: relative; z-index: 2;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; color: rgba(255,255,255,0.5);
+  text-decoration: none; margin-bottom: 24px;
+  transition: color 0.2s;
+}
+.header-back:hover { color: var(--white); }
+
+.header-founder {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300;
+  letter-spacing: 3px; color: var(--white);
+  text-transform: uppercase;
+  position: relative; z-index: 2;
+  margin-bottom: 4px; display: block;
+}
+
+.header-practice {
+  font-size: 10px; letter-spacing: 4px;
+  color: var(--gold); text-transform: uppercase;
+  position: relative; z-index: 2;
+  display: block; margin-bottom: 32px;
+}
+
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 300; color: var(--white);
+  position: relative; z-index: 2;
+  line-height: 1.2;
+}
+
+.header-updated {
+  font-size: 12px; color: rgba(255,255,255,0.35);
+  position: relative; z-index: 2;
+  margin-top: 12px; display: block;
+}
+
+.content {
+  max-width: 800px; margin: 0 auto;
+  padding: 60px 48px;
+}
+
+.intro-box {
+  background: var(--parch);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 10px 10px 0;
+  padding: 24px 28px; margin-bottom: 48px;
+}
+
+.intro-box p {
+  font-size: 15px; color: var(--slate);
+  line-height: 1.8;
+}
+
+.section {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section:last-of-type { border-bottom: none; }
+
+.section-number {
+  font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--teal);
+  font-weight: 500; display: block;
+  margin-bottom: 8px;
+}
+
+.section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 400;
+  color: var(--navy); margin-bottom: 16px;
+}
+
+.section p {
+  font-size: 15px; color: var(--slate);
+  line-height: 1.85; margin-bottom: 12px;
+}
+
+.section p:last-child { margin-bottom: 0; }
+
+.gold-rule { width: 40px; height: 2px; background: var(--gold); margin-bottom: 20px; }
+
+.data-protection-box {
+  background: var(--parch);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 10px 10px 0;
+  padding: 28px 32px; margin-top: 16px;
+}
+
+.data-protection-box h3 {
+  font-size: 14px; font-weight: 500;
+  color: var(--navy); margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.data-protection-box p {
+  font-size: 14px; color: var(--slate);
+  line-height: 1.85; margin-bottom: 10px;
+}
+
+.data-protection-box p:last-child { margin-bottom: 0; }
+
+/* Signature section */
+.signature-section {
+  margin-top: 48px;
+  padding: 40px;
+  background: var(--parch);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.signature-section h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400;
+  color: var(--navy); margin-bottom: 24px;
+}
+
+.sig-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.sig-block h4 {
+  font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 16px; font-weight: 500;
+}
+
+.sig-line {
+  border-bottom: 1px solid var(--navy);
+  height: 32px; margin-bottom: 8px;
+}
+
+.sig-label {
+  font-size: 12px; color: rgba(28,43,58,0.4);
+}
+
+.page-footer {
+  background: var(--navy);
+  padding: 40px 60px;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.footer-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 300;
+  color: var(--white); letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.footer-practice {
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 16px; display: block;
+}
+
+.footer-copy {
+  font-size: 12px; color: rgba(255,255,255,0.3);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="header-grid"></div>
+  <a href="https://samuelanguscoach.co.uk" class="header-back">← Back to samuelanguscoach.co.uk</a>
+  <span class="header-founder">Samuel Angus</span>
+  <span class="header-practice">Personal & Professional Development Coach</span>
+  <h1 class="header-title">Coaching Agreement</h1>
+  <span class="header-updated">Version 1.0 — April 2026</span>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <div class="intro-box">
+    <p>This agreement sets out the terms of the coaching relationship between Samuel Angus (the Coach) and the client named below. Please read it carefully. By signing or confirming agreement electronically you are indicating that you understand and accept these terms.</p>
+  </div>
+
+  <!-- 1. THE COACHING RELATIONSHIP -->
+  <div class="section">
+    <span class="section-number">Section 01</span>
+    <h2>The coaching relationship</h2>
+    <div class="gold-rule"></div>
+    <p>Coaching is a collaborative and structured process designed to support personal and professional development. It is distinct from counselling, therapy, or mentoring. The coach does not provide advice, diagnoses, or therapeutic treatment.</p>
+    <p>The coach's role is to ask questions, facilitate reflection, and support the client in identifying their own direction, clarity, and goals. The client retains full responsibility for the decisions and actions they take as a result of coaching.</p>
+  </div>
+
+  <!-- 2. SESSIONS -->
+  <div class="section">
+    <span class="section-number">Section 02</span>
+    <h2>Sessions and scheduling</h2>
+    <div class="gold-rule"></div>
+    <p>Sessions are conducted online via Google Meet or in person in Leeds by prior arrangement. Each session is 60 minutes in duration unless otherwise agreed.</p>
+    <p>Sessions are booked through Calendly at calendly.com/samuelanguscoach-info. A confirmation email is sent automatically upon booking.</p>
+    <p>If you need to cancel or reschedule please do so at least 24 hours in advance using the link in your confirmation email. Cancellations with less than 24 hours notice may be charged at the full session rate.</p>
+  </div>
+
+  <!-- 3. FEES -->
+  <div class="section">
+    <span class="section-number">Section 03</span>
+    <h2>Fees and payment</h2>
+    <div class="gold-rule"></div>
+    <p>Current introductory rates — applicable during the post-qualifying practice period:</p>
+    <p>Single Session — £50<br>
+    Clarity & Direction (4 sessions) — £100<br>
+    Focused Development Programme (6 sessions) — £250</p>
+    <p>Payment is due prior to or on the date of the first session in a programme, or prior to a single session. Payment is made by bank transfer to the details provided upon booking.</p>
+    <p>Rates will move to full professional pricing following the completion of post-qualifying practice hours. Clients who have commenced a programme at the introductory rate will retain that rate for the duration of their agreed programme.</p>
+  </div>
+
+  <!-- 4. CONFIDENTIALITY -->
+  <div class="section">
+    <span class="section-number">Section 04</span>
+    <h2>Confidentiality</h2>
+    <div class="gold-rule"></div>
+    <p>Everything discussed within coaching sessions is held in strict confidence. Information shared by the client will not be disclosed to any third party without the client's explicit consent.</p>
+    <p>There are two exceptions to this confidentiality commitment:</p>
+    <p>First — if the coach reasonably believes there is a serious risk of harm to the client or another person, they may be required to take appropriate action, which could include contacting relevant authorities.</p>
+    <p>Second — the coach participates in professional supervision. Session content may be discussed with a supervisor in an anonymised form for the purposes of reflective practice and professional development. No identifying information will be disclosed.</p>
+  </div>
+
+  <!-- 5. PROFESSIONAL BOUNDARIES -->
+  <div class="section">
+    <span class="section-number">Section 05</span>
+    <h2>Professional boundaries</h2>
+    <div class="gold-rule"></div>
+    <p>The coaching relationship is a professional one. The coach is committed to maintaining appropriate professional boundaries at all times.</p>
+    <p>If at any point the coach considers that the client's needs would be better met by a different form of support — such as counselling, therapy, or medical advice — they will say so and may suggest appropriate referral.</p>
+    <p>Either party may bring the coaching relationship to an end at any time by giving reasonable notice. In such circumstances any unused sessions from a prepaid programme will be refunded.</p>
+  </div>
+
+  <!-- 6. DATA PROTECTION -->
+  <div class="section">
+    <span class="section-number">Section 06</span>
+    <h2>Data protection</h2>
+    <div class="gold-rule"></div>
+    <div class="data-protection-box">
+      <h3>Data Protection</h3>
+      <p>Samuel Angus Personal & Professional Development Coach processes personal data in accordance with the UK General Data Protection Regulation and the Data Protection Act 2018.</p>
+      <p>Personal data, including name, contact details, and session notes, is collected and processed for the purpose of delivering coaching services. The lawful basis for processing is the performance of a contract and, where applicable, legitimate interests in providing effective coaching support.</p>
+      <p>In the course of coaching, some information shared may be considered sensitive personal data. Such information is processed only with your explicit consent.</p>
+      <p>Your data is stored securely — electronically and/or in paper format — and is not shared with third parties except where required by law or where necessary for the provision of services, such as secure data storage or communication platforms.</p>
+      <p>You have the right to access, correct, or request deletion of your personal data, as well as the right to restrict or object to processing. You also have the right to lodge a complaint with the Information Commissioner's Office (ICO).</p>
+      <p>Personal data is retained for a period of three years following the end of the coaching relationship, after which it is securely deleted.</p>
+      <p>To exercise any of your data rights please contact: info@samuelanguscoach.co.uk</p>
+    </div>
+  </div>
+
+  <!-- 7. LIMITATION OF LIABILITY -->
+  <div class="section">
+    <span class="section-number">Section 07</span>
+    <h2>Limitation of liability</h2>
+    <div class="gold-rule"></div>
+    <p>Coaching is not a substitute for professional medical, legal, financial, or psychological advice. The coach accepts no liability for decisions made or actions taken by the client as a result of coaching conversations.</p>
+    <p>The coach's liability in respect of any claim arising from the coaching relationship shall not exceed the total fees paid by the client for the relevant programme.</p>
+  </div>
+
+  <!-- SIGNATURE -->
+  <div class="signature-section">
+    <h3>Agreement and signatures</h3>
+    <p style="font-size:14px;color:var(--slate);margin-bottom:28px">By signing below both parties confirm they have read, understood, and agreed to the terms of this coaching agreement.</p>
+
+    <div class="sig-grid">
+      <div class="sig-block">
+        <h4>The Coach</h4>
+        <div class="sig-line"></div>
+        <p class="sig-label">Samuel Angus</p>
+        <div class="sig-line" style="margin-top:20px"></div>
+        <p class="sig-label">Date</p>
+      </div>
+      <div class="sig-block">
+        <h4>The Client</h4>
+        <div class="sig-line"></div>
+        <p class="sig-label">Full name</p>
+        <div class="sig-line" style="margin-top:20px"></div>
+        <p class="sig-label">Date</p>
+      </div>
+    </div>
+
+    <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--border)">
+      <p style="font-size:13px;color:rgba(28,43,58,0.5)">This agreement may be signed electronically. An email confirmation stating agreement to these terms is accepted as a valid electronic signature.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <div class="footer-name">Samuel Angus</div>
+  <span class="footer-practice">Personal & Professional Development Coach</span>
+  <p class="footer-copy">© 2026 Samuel Angus. All rights reserved. · info@samuelanguscoach.co.uk · samuelanguscoach.co.uk</p>
+</div>
+
+</body>
+</html>
