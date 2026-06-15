@@ -737,6 +737,86 @@ footer {
   font-size: 13px; font-style: italic;
   color: rgba(255,255,255,0.25);
 }
+/* ══════════════════════════════
+   MOBILE RESPONSIVE
+══════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Navigation */
+  nav { padding: 0 20px; height: 60px; }
+  .nav-links { display: none; }
+  .nav-cta { padding: 8px 16px; font-size: 12px; }
+  .nav-founder-name { font-size: 15px; }
+  .nav-practice { display: none; }
+
+  /* Hero */
+  #hero { padding-top: 60px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 32px; padding: 48px 0; }
+  .hero-mark { display: none; }
+  .hero-founder { font-size: clamp(40px, 12vw, 64px); letter-spacing: 3px; }
+  .hero-practice { font-size: 12px; letter-spacing: 3px; }
+  .hero-tagline { font-size: 20px; }
+  .hero-ctas { flex-direction: column; }
+  .btn-primary, .btn-outline { width: 100%; text-align: center; padding: 14px 20px; }
+
+  /* Container */
+  .container { padding: 0 20px; }
+  .container-narrow { padding: 0 20px; }
+  section { padding: 60px 0; }
+
+  /* Credentials */
+  .creds-inner { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .cred-divider { display: none; }
+
+  /* About */
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .about-right { padding-top: 0; }
+  .about-headline { font-size: clamp(28px, 7vw, 40px); }
+
+  /* Approach */
+  .approach-grid { grid-template-columns: 1fr; gap: 2px; }
+  .approach-card:first-child { border-radius: 12px 12px 0 0; }
+  .approach-card:last-child { border-radius: 0 0 12px 12px; }
+  .approach-headline { font-size: clamp(28px, 7vw, 40px); }
+
+  /* Services */
+  .services-intro { grid-template-columns: 1fr; gap: 24px; }
+  .services-grid { grid-template-columns: 1fr; gap: 16px; }
+
+  /* Pricing */
+  div[style*="grid-template-columns:repeat(3,1fr)"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  /* Integrations */
+  .integrations-grid { grid-template-columns: 1fr; gap: 24px; }
+
+  /* Who */
+  .who-grid { grid-template-columns: 1fr; gap: 40px; }
+
+  /* Contact */
+  .process-steps { flex-direction: column; gap: 24px; }
+  .process-step::after { display: none; }
+  .contact-ctas { flex-direction: column; align-items: center; }
+  .contact-headline { font-size: clamp(28px, 8vw, 48px); }
+
+  /* Footer */
+  .footer-inner { flex-direction: column; gap: 32px; }
+  .footer-bottom { flex-direction: column; text-align: center; gap: 8px; }
+}
+
+@media (max-width: 480px) {
+  .hero-founder { font-size: clamp(36px, 10vw, 52px); }
+  .hero-scripture p { font-size: 14px; }
+  .toolkit-box { padding: 24px 20px; }
+  .toolkit-tags { gap: 8px; }
+  .toolkit-tag { font-size: 11px; padding: 6px 12px; }
+  .who-right { padding: 28px 24px; }
+  .who-right blockquote { font-size: 18px; }
+}
+
 </style>
 </head>
 <body>
