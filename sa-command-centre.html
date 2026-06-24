@@ -72,7 +72,7 @@ body { font-family: "DM Sans", system-ui, sans-serif; }
   cursor:pointer;font-family:sans-serif;">⚙ API Key</button>
 
 <!-- MAIN APP -->
-<div id="root"></div>
+<div id="root" style="display:none;"></div>
 
 <script>
 function checkSetup() {
@@ -83,8 +83,13 @@ function checkSetup() {
   } else {
     document.getElementById("setup-screen").style.display = "none";
     document.getElementById("root").style.display = "block";
+    // Mount React app after Babel has finished compiling
+    setTimeout(function() {
+      if (window.__mountApp) window.__mountApp();
+    }, 500);
   }
 }
+
 
 function saveApiKey() {
   const key = document.getElementById("api-key-input").value.trim();
@@ -1913,7 +1918,9 @@ function CommandCentre() {
 }
 
 
-ReactDOM.createRoot(document.getElementById("root")).render(<CommandCentre />);
+window.__mountApp = function() {
+  ReactDOM.createRoot(document.getElementById("root")).render(<CommandCentre />);
+};
 
 </script>
 
