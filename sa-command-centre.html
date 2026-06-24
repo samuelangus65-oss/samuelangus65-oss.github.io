@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samuel Angus — Coaching Command Centre</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "DM Sans", system-ui, sans-serif; }
+#setup-screen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; background: #1C2B3A; padding: 20px;
+}
+.setup-card {
+  background: white; border-radius: 16px; padding: 40px;
+  max-width: 480px; width: 100%;
+}
+.setup-card h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 28px; font-weight: 300; color: #1C2B3A; margin-bottom: 8px;
+}
+.setup-card p { font-size: 14px; color: #4B5563; line-height: 1.7; margin-bottom: 20px; }
+.setup-card label { font-size: 12px; font-weight: 500; color: #2D4155; display: block; margin-bottom: 6px; }
+.setup-card input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid #DDE3EA;
+  border-radius: 8px; font-size: 14px; color: #1C2B3A;
+  font-family: "DM Sans", sans-serif; outline: none; margin-bottom: 16px;
+}
+.setup-card input:focus { border-color: #2E8B72; }
+.setup-btn {
+  background: #2E8B72; color: white; border: none; cursor: pointer;
+  padding: 13px 28px; border-radius: 8px; font-size: 15px;
+  font-weight: 500; font-family: "DM Sans", sans-serif; width: 100%;
+}
+.setup-btn:hover { background: #268c6e; }
+.setup-note {
+  margin-top: 16px; font-size: 12px; color: #9CA3AF; line-height: 1.6;
+}
+.setup-note a { color: #2E8B72; }
+</style>
+</head>
+<body>
+
+<!-- API KEY SETUP SCREEN -->
+<div id="setup-screen" style="display:none;">
+  <div class="setup-card">
+    <h1>Samuel Angus<br>Command Centre</h1>
+    <p style="font-family:Georgia,serif;font-style:italic;color:#2E8B72;margin-bottom:20px;">
+      "Counsel in the heart of man is like deep water; but a man of understanding will draw it out." — Proverbs 20:5 KJV
+    </p>
+    <p>To generate AI-powered coaching messages you need an Anthropic API key. Your key is stored only on this device and is never shared with anyone.</p>
+    <label>Anthropic API Key</label>
+    <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" />
+    <button class="setup-btn" onclick="saveApiKey()">Save and Open Command Centre</button>
+    <div class="setup-note">
+      Get your API key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>.
+      Your key is stored in your browser only — it never leaves this device except to make direct calls to Anthropic.
+      <br><br>
+      <strong>Cost:</strong> Each message generation uses approximately 500-1000 tokens. At standard Anthropic rates this is fractions of a penny per message.
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS BUTTON -->
+<button onclick="if(confirm('Reset your Anthropic API key?')){localStorage.removeItem('sa-api-key');window.location.reload();}"
+  style="position:fixed;bottom:90px;right:16px;z-index:200;background:#1C2B3A;color:rgba(255,255,255,0.6);
+  border:1px solid rgba(255,255,255,0.2);padding:8px 12px;border-radius:6px;font-size:11px;
+  cursor:pointer;font-family:sans-serif;">⚙ API Key</button>
+
+<!-- MAIN APP -->
+<div id="root"></div>
+
+<script>
+function checkSetup() {
+  const key = localStorage.getItem("sa-api-key");
+  if (!key) {
+    document.getElementById("setup-screen").style.display = "flex";
+    document.getElementById("root").style.display = "none";
+  } else {
+    document.getElementById("setup-screen").style.display = "none";
+    document.getElementById("root").style.display = "block";
+  }
+}
+
+function saveApiKey() {
+  const key = document.getElementById("api-key-input").value.trim();
+  if (!key || key.length < 10) {
+    alert("Please enter a valid Anthropic API key starting with sk-");
+    return;
+  }
+  try {
+    localStorage.setItem("sa-api-key", key);
+    const check = localStorage.getItem("sa-api-key");
+    if (!check) {
+      alert("Storage error — your browser may be blocking local storage for file:// pages. Try opening the file in Chrome and ensure cookies/storage are not blocked.");
+      return;
+    }
+    alert("API key saved successfully! Your Command Centre is opening now.");
+    window.location.reload();
+  } catch(e) {
+    alert("Could not save key: " + e.message + "\n\nTry opening the file in Chrome and check that local storage is not blocked in your browser settings.");
+  }
+}
+
+window.addEventListener("load", checkSetup);
+</script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ── BRAND ────────────────────────────────────────────────────
+const C = {
+  navy:  '#1C2B3A', teal:  '#2E8B72',
+  gold:  '#C9A84C', parch: '#F5F0E8',
+  slate: '#2D4155', light: '#EEF3F7',
+  white: '#FFFFFF', red:   '#C0392B',
+  tealLight: 'rgba(46,139,114,0.12)',
+  goldLight:  'rgba(201,168,76,0.12)',
+};
+
+// ── MESSAGE TYPES ─────────────────────────────────────────────
+const MSG_TYPES = [
+  { id:'midweek',    label:'Midweek Check-in',       icon:'💬', desc:'Personalised encouragement between sessions' },
+  { id:'pre',        label:'Pre-Session Reminder',   icon:'🔔', desc:'Thoughtful prompt before the next session' },
+  { id:'post',       label:'Post-Session Summary',   icon:'📝', desc:'Turn your bullet notes into a warm summary' },
+  { id:'reflection', label:'Weekly Reflection',      icon:'🌱', desc:'Sunday evening deep reflection prompt' },
+  { id:'milestone',  label:'Milestone Message',      icon:'🏆', desc:'Celebrate progress at key moments' },
+  { id:'reengage',   label:'Re-engagement',          icon:'🤝', desc:'Gentle check-in after a period of silence' },
+  { id:'support',    label:'Struggling Coachee',     icon:'🆘', desc:'Diagnostically-informed support for coachees who are not progressing' },
+];
+
+// ── STRUGGLE PATTERNS ─────────────────────────────────────────
+const STRUGGLE_PATTERNS = [
+  {
+    id: 'avoidance',
+    label: 'Avoidance',
+    icon: '🚧',
+    subtitle: 'Not doing the thing',
+    colour: '#E67E22',
+    research: 'Low self-efficacy (Bandura) — belief in ability to execute is low. Task feels too big.',
+    approach: 'Shrink the task. Remove the barrier. One tiny action only.',
+    questions: [
+      'What is the smallest possible version of this you could do today?',
+      'What would make this feel less daunting right now?',
+      'What has got in the way — and is that something you can move?',
+    ]
+  },
+  {
+    id: 'self_criticism',
+    label: 'Self-Criticism',
+    icon: '🔁',
+    subtitle: 'I am not good enough',
+    colour: '#8E44AD',
+    research: 'Fixed mindset (Dweck) — interpreting setbacks as evidence of inadequacy rather than as part of learning.',
+    approach: 'Reframe effort as the variable, not ability. Surface what was learned, not what failed.',
+    questions: [
+      'What did you learn from this week, even if it did not go to plan?',
+      'What would you say to a friend who had the same week you just had?',
+      'What has this shown you that you did not know before?',
+    ]
+  },
+  {
+    id: 'overwhelm',
+    label: 'Overwhelm',
+    icon: '🌊',
+    subtitle: 'Too much at once',
+    colour: '#2980B9',
+    research: 'Emotional regulation under pressure — cognitive load is too high to take purposeful action.',
+    approach: 'Narrow the focus radically. One thing. Not ten. The most important thing only.',
+    questions: [
+      'Of everything on your mind right now, what is the one thing that matters most?',
+      'What can you let go of this week without it actually mattering?',
+      'If you could only do one thing today, what would it be?',
+    ]
+  },
+  {
+    id: 'disengagement',
+    label: 'Disengagement',
+    icon: '🌫️',
+    subtitle: 'Going quiet or pulling back',
+    colour: '#7F8C8D',
+    research: 'Shame, discouragement, or external life circumstances — the coachee has withdrawn rather than risk further failure or exposure.',
+    approach: 'Open without pressure. No agenda. No expectations. Just warmth and an open door.',
+    questions: [
+      'No agenda from me — just checking in. How are you doing?',
+      'Nothing to report is fine. I just wanted you to know I am here.',
+      'What would feel supportive right now?',
+    ]
+  },
+  {
+    id: 'plateau',
+    label: 'Plateau',
+    icon: '📉',
+    subtitle: 'Working but not seeing progress',
+    colour: '#27AE60',
+    research: 'Delayed gratification struggle (Mischel) and milestone blindness — effort is present but reward is not yet visible, causing motivation to drop.',
+    approach: 'Surface evidence of progress the coachee cannot see themselves. Look backwards, not forward.',
+    questions: [
+      'Look back at week one. What is different now, even if it feels small?',
+      'What are you doing now that you were not doing when we started?',
+      'On a scale of 1-10, how much do you trust that the work is adding up — even when you cannot see it yet?',
+    ]
+  },
+];
+
+// ── PROMPT BUILDER ────────────────────────────────────────────
+function buildPrompt(type, coachee, extra = '') {
+  const phase = coachee.weekNumber <= 2
+    ? 'early stage — focus on building trust, understanding the goal, and gentle self-awareness'
+    : coachee.weekNumber <= 5
+    ? 'middle stage — deepen the work, surface what is really getting in the way, begin to stretch and challenge'
+    : 'later stage — consolidate growth, embed new patterns, look forward with clarity';
+
+  const base = `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's coaching approach draws out what is already within each person. His voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always feels personal. He signs off simply as Samuel.
+
+Coachee name: ${coachee.name}
+Their coaching goal: ${coachee.goal}
+Week number: ${coachee.weekNumber} (${phase})
+${coachee.intake ? `Intake notes: ${coachee.intake}` : ''}`;
+
+  const types = {
+    midweek: `${base}
+
+Write a midweek WhatsApp-style check-in message. Maximum 4 sentences. Reference their goal naturally — do not make it feel like a coaching intervention. Include exactly ONE question drawn from The Coaching Habit methodology or reflexive/systemic practice. Choose the question that fits most naturally for week ${coachee.weekNumber}. Question bank to draw from (pick one only): "What's on your mind this week?", "And what else is coming up for you?", "What's the real challenge here for you right now?", "What do you want from this week?", "What story are you telling yourself about why this hasn't happened yet?", "If the version of you from five years ago could see you now, what would they notice?", "What would the people who believe in you most say about where you are right now?", "On a scale of 1-10, how committed are you to your goal this week — and what would move it one point higher?". Keep it conversational. No bullet points. No coaching language. Sound like a person who genuinely cares.`,
+
+    pre: `${base}
+
+Write a pre-session reminder (2-3 sentences maximum). Warm reminder that the session is coming up. Include one question for them to sit with beforehand — relevant to their goal and their stage. Light and human. Not heavy.`,
+
+    post: `${base}
+
+Samuel's session bullet notes: ${extra || '[No notes provided — write a general warm closing message]'}
+
+Turn these notes into a post-session summary for the coachee (4-6 sentences, second person — you/your). Capture what was explored, what insight emerged, and one clear next step. End with one forward-looking question from The Coaching Habit: "What was most useful for you today?" or "What do you want to focus on before we next speak?" Do not use bullet points. Do not use coaching terminology. Warm and grounded.`,
+
+    reflection: `${base}
+
+Write a Sunday evening weekly reflection message (3-4 sentences). Include one deep question calibrated to week ${coachee.weekNumber}: early weeks — self-awareness questions; middle weeks — pattern recognition and what is getting in the way; later weeks — consolidation and looking forward. Question bank to draw from (pick one): "What has this week shown you about yourself?", "What are you most proud of this week, even if it feels small?", "What got in the way this week — and what does that tell you?", "Imagine you wake up tomorrow and your goal is already resolved — what is the first thing you notice that is different?", "If you could change one thing about how you approached this week, what would it be?", "What has shifted in how you see yourself since we started working together?". Brief, warm, no jargon.`,
+
+    milestone: `${base}
+
+This coachee has just reached a meaningful milestone at week ${coachee.weekNumber}. Write a short celebration message (3-4 sentences). Acknowledge their commitment genuinely — reference their specific goal. Do not be over the top or use empty affirmations. Grounded and sincere. End with one forward-looking question that keeps the momentum going.`,
+
+    reengage: `${base}
+
+This coachee has been quiet for about 5 days. Write a gentle re-engagement message (2-3 sentences maximum). No pressure. No guilt. Just warmth and an open door. One light question at the end. Short. Human.`,
+  };
+  return types[type] || types.midweek;
+}
+
+// ── SUPPORT PROMPT BUILDER ────────────────────────────────────
+function buildSupportPrompt(coachee, pattern, presentation) {
+  const phase = coachee.weekNumber <= 2
+    ? 'early stage — trust is still being built'
+    : coachee.weekNumber <= 5
+    ? 'middle stage — the work has deepened but the coachee is struggling'
+    : 'later stage — the coachee has been working for some time but progress has stalled';
+
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always personal. He signs off simply as Samuel.
+
+Coachee name: ${coachee.name}
+Their coaching goal: ${coachee.goal}
+Week number: ${coachee.weekNumber} (${phase})
+${coachee.intake ? `Intake notes: ${coachee.intake}` : ''}
+
+CLINICAL CONTEXT (do not reference this directly in the message — use it to inform tone and question choice only):
+Struggle pattern identified: ${pattern.label} — ${pattern.subtitle}
+Research basis: ${pattern.research}
+Recommended approach: ${pattern.approach}
+What the coachee presented or said: ${presentation || 'No specific presentation noted — write based on the pattern alone.'}
+
+Suggested questions to draw from (choose ONE that fits most naturally):
+${pattern.questions.map((q, i) => `${i+1}. "${q}"`).join('\n')}
+
+Write a WhatsApp-style message (3-5 sentences maximum) that:
+- Feels warm, personal, and unhurried — never clinical
+- Addresses the underlying dynamic without naming it or using psychological language
+- References their goal naturally if appropriate — but do not force it
+- Includes exactly ONE question from the list above, chosen for maximum fit
+- Does not attempt to fix, solve, or reassure with empty affirmations
+- Sounds like Samuel — a person who genuinely cares and has spent decades sitting with people in difficulty
+
+The coachee must never feel diagnosed, analysed, or managed. They must feel seen.`;
+}
+
+// ── FIVE WHYS — Root Cause Analysis (Wiegers/Ishikawa) ───────
+const FIVE_WHYS_CONFIG = {
+  title: 'Five Whys — Root Cause Analysis',
+  subtitle: 'Wiegers · Ishikawa · The problem first presented is rarely the real problem.',
+  colour: '#1A6B8A',
+  description: 'Ask "why" up to five times to move from the presenting symptom to the root cause. Each answer becomes the input for the next question. By Why 5 you are typically at the real issue — which then informs the pattern selection and message.',
+};
+
+function buildWhyPrompt(coachee, presentingProblem, chain, step) {
+  const chainText = chain.map((c, i) =>
+    `Why ${i+1}: "${c.question}"\nAnswer: "${c.answer}"`
+  ).join('\n\n');
+
+  return `You are assisting Samuel Angus — an ILM Level 5 qualified coach — in a root cause analysis using the Five Whys technique (Wiegers/Ishikawa). The goal is to move from the presenting problem to the underlying root cause by asking successively deeper "why" questions.
+
+Coachee name: ${coachee.name}
+Their coaching goal: ${coachee.goal}
+${coachee.intake ? `Intake notes: ${coachee.intake}` : ''}
+
+Presenting problem: "${presentingProblem}"
+
+${chain.length > 0 ? `Five Whys chain so far:\n${chainText}` : ''}
+
+Generate Why ${step + 1} — a single probing question that goes one level deeper than the previous answer. The question should:
+- Be simple and direct — no more than one sentence
+- Build naturally on what the coachee has already said
+- Move toward the underlying cause, not just clarify the surface issue
+- Sound like something a curious, caring human would ask — not a clinical interrogation
+- Never use the word "why" directly (rephrase as "what makes...", "what's behind...", "what is it about... that..." etc.)
+- Be specific to this coachee's goal and situation
+
+Return ONLY the question — no preamble, no explanation, no quotation marks.`;
+}
+
+function buildRootCauseSummaryPrompt(coachee, presentingProblem, chain) {
+  const chainText = chain.map((c, i) =>
+    `Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`
+  ).join('\n\n');
+
+  return `You are assisting Samuel Angus — an ILM Level 5 qualified coach — in synthesising a Five Whys root cause analysis into a brief coaching insight.
+
+Coachee name: ${coachee.name}
+Their coaching goal: ${coachee.goal}
+
+Presenting problem: "${presentingProblem}"
+
+Five Whys chain:
+${chainText}
+
+Write a brief root cause summary (2-3 sentences maximum) that:
+- Identifies what the Five Whys chain reveals as the likely underlying issue
+- Uses plain, non-clinical language Samuel could hold in mind during the coaching session
+- Does NOT diagnose or label the coachee
+- Ends with one question Samuel might use to test whether this root cause resonates
+
+Return only the summary — no preamble or heading.`;
+}
+
+// ── STRESS SIGNALS ────────────────────────────────────────────
+const STRESS_SIGNALS = [
+  { id:'sleep',      label:'Reporting poor sleep or physical exhaustion',         weight:1, clinical:false },
+  { id:'clipped',    label:'Short, clipped or withdrawn communication',           weight:1, clinical:false },
+  { id:'physical',   label:'Describing physical symptoms — tension, headaches, fatigue', weight:1, clinical:false },
+  { id:'withdrawal', label:'Sudden withdrawal after a period of engagement',      weight:1, clinical:false },
+  { id:'body',       label:'Overwhelmed in the body, not just the mind',          weight:1, clinical:false },
+  { id:'illness',    label:'Reporting illness alongside emotional difficulty',    weight:1, clinical:false },
+  { id:'hopeless',   label:'Expressing hopelessness or inability to see forward', weight:2, clinical:true  },
+  { id:'event',      label:'Significant life event — bereavement, job loss, relationship breakdown', weight:2, clinical:true },
+];
+
+const getStressLevel = (checked) => {
+  if (!checked.length) return 'none';
+  const hasClinical = checked.some(id => STRESS_SIGNALS.find(s => s.id === id)?.clinical);
+  const total = checked.reduce((sum, id) => sum + (STRESS_SIGNALS.find(s => s.id === id)?.weight || 1), 0);
+  if (hasClinical || total >= 4) return 'high';
+  if (total >= 2) return 'moderate';
+  return 'low';
+};
+
+const STRESS_CONFIG = {
+  none:     { label:'No stress signals',            colour:'#95A5A6', bg:'#F8F9FA', message:'Psychological safety appears established. Proceed with standard support approach.' },
+  low:      { label:'Low stress indicators',        colour:C.teal,    bg:'#F0FAF5', message:'Some stress present but psychological safety is broadly intact. Proceed with pattern-based support.' },
+  moderate: { label:'Moderate stress load',         colour:'#E67E22', bg:'#FFF3E0', message:'Psychological safety is under pressure. Generate a grounding message first. The coachee needs to feel safe before coaching questions can land.' },
+  high:     { label:'Psychological safety at risk', colour:'#C0392B', bg:'#FFEBEE', message:'Psychological safety may not be sufficiently established for coaching to be effective. A grounding message is appropriate. Consider referral to GP or appropriate psychological intervention.' },
+};
+
+// ── GROUNDING PROMPT BUILDER ──────────────────────────────────
+function buildGroundingPrompt(coachee, stressLevel, signals, presentation) {
+  const signalLabels = signals.map(id => STRESS_SIGNALS.find(s => s.id === id)?.label).filter(Boolean).join('; ');
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy. He signs off simply as Samuel.
+
+Coachee name: ${coachee.name}
+Their coaching goal: ${coachee.goal}
+Week number: ${coachee.weekNumber}
+${coachee.intake ? `Intake notes: ${coachee.intake}` : ''}
+
+STRESS CONTEXT (use to calibrate tone only — never reference this directly):
+Stress level assessed: ${stressLevel.toUpperCase()}
+Signals observed: ${signalLabels || 'General stress presentation'}
+What the coachee presented: ${presentation || 'Not specified'}
+
+PSYCHOLOGICAL SAFETY CONTEXT: Under stress, the amygdala is in threat-detection mode and psychological safety is compromised. The prefrontal cortex — responsible for planning, reflection, and goal pursuit — is less accessible. Coaching questions requiring cognitive effort will not land. Psychological safety must be restored before the mind can engage with the work.
+
+Write a grounding message (3-4 sentences maximum) that:
+- Acknowledges that things feel heavy right now — without naming, diagnosing, or analysing
+- Slows the pace — short sentences, no urgency, no forward push
+- Creates a sense of safety and presence — "I am here, there is no pressure"
+- Does NOT ask a coaching question or invite reflection
+- Does NOT reference their goal or progress
+- Does NOT try to fix, reframe, or motivate
+${stressLevel === 'high' ? '- Gently normalises the idea of speaking to someone — GP, trusted person, or support line — without pressure or alarm. One sentence only, woven in naturally.' : ''}
+- Ends with one simple, low-demand question such as "How are you doing today?" or "Is there anything you need right now?"
+
+The coachee must feel that Samuel has noticed, that they do not have to perform, and that the coaching work can wait.`;
+}
+
+// ── RELATIONSHIP TO HELP — Tomm, Burnham, Cecchin ────────────
+const HELP_POSITIONS = [
+  {
+    id: 'customer',
+    label: 'Customer',
+    icon: '🟢',
+    subtitle: 'Internally motivated — came willingly, sees themselves as part of the solution',
+    colour: '#27AE60',
+    tomm: 'Karl Tomm: Customer position — full coaching engagement is appropriate. The coachee is ready to work.',
+    approach: 'Full coaching engagement. Pattern-based support and challenge are appropriate. This person is ready.',
+    burnham: 'Consider which GRRRAAACCEEESSS dimensions may still affect how openly they receive challenge — even motivated coachees carry identity-based barriers to help.',
+  },
+  {
+    id: 'complainant',
+    label: 'Complainant',
+    icon: '🟡',
+    subtitle: 'Emotionally engaged but locates the problem externally — in others or circumstances',
+    colour: '#E67E22',
+    tomm: 'Karl Tomm: Complainant position — validate their experience first. Do not immediately redirect. They need to feel heard before they can look inward.',
+    approach: 'Validate the experience. Gently introduce circular questions that shift perspective without dismissing their reality. Ask about what they can influence, not what others should do.',
+    burnham: 'Consider whether cultural or structural factors are genuinely at play — sometimes the external attribution is accurate. Social GRRRAAACCEEESSS: race, class, gender dynamics in workplace may be real barriers, not just perception.',
+  },
+  {
+    id: 'visitor',
+    label: 'Visitor',
+    icon: '🔴',
+    subtitle: 'Came because someone else suggested or expected it — not internally motivated',
+    colour: '#C0392B',
+    tomm: 'Karl Tomm: Visitor position — do not attempt pattern-based coaching. Build motivation and safety first. Pushing for action will increase resistance.',
+    approach: 'Explore what brought them here. Find one small thing that is genuinely theirs. Build internal motivation before any forward work. Cecchin: stay curious, not corrective.',
+    burnham: 'Burnham: Visitor position is often shaped by power dynamics — who sent them and what relationship that person has with them. Explore this gently. Their reluctance may be relational, not attitudinal.',
+  },
+];
+
+// ── ENHANCED SUPPORT PROMPT — with Relationship to Help ───────
+function buildEnhancedSupportPrompt(coachee, pattern, presentation, helpPosition, stressLevel, stressSignals, rootCauseSummary, whyChain, whyPresenting) {
+  const phase = coachee.weekNumber <= 2 ? 'early stage'
+    : coachee.weekNumber <= 5 ? 'middle stage' : 'later stage';
+  const signalLabels = stressSignals.map(id => STRESS_SIGNALS.find(s => s.id === id)?.label).filter(Boolean).join('; ');
+  const pos = HELP_POSITIONS.find(h => h.id === helpPosition);
+  const whyContext = whyChain.length > 0
+    ? `\nROOT CAUSE ANALYSIS (Five Whys — do not reference directly, use to inform depth and question choice):\nPresenting problem: "${whyPresenting}"\n${whyChain.map((c,i)=>`Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`).join('\n')}\n${rootCauseSummary ? `Root cause summary: ${rootCauseSummary}` : ''}`
+    : '';
+
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy, always personal. He signs off simply as Samuel.
+
+Coachee name: ${coachee.name}
+Their coaching goal: ${coachee.goal}
+Week number: ${coachee.weekNumber} (${phase})
+${coachee.intake ? `Intake notes: ${coachee.intake}` : ''}
+
+RELATIONSHIP TO HELP CONTEXT (Tomm/Burnham — inform tone only, never reference directly):
+Position: ${pos ? pos.label + ' — ' + pos.subtitle : 'Not assessed'}
+${pos ? 'Approach: ' + pos.approach : ''}
+${stressLevel !== 'none' ? `Stress level: ${stressLevel.toUpperCase()} — signals: ${signalLabels}` : ''}
+${whyContext}
+
+STRUGGLE PATTERN (Bandura/Dweck/Mischel — inform question choice only):
+Pattern: ${pattern.label} — ${pattern.subtitle}
+Research basis: ${pattern.research}
+Recommended approach: ${pattern.approach}
+
+What the coachee presented or said: ${presentation || 'Not specified'}
+
+Suggested questions (choose ONE only — the one that fits most naturally given their relationship to help position and struggle pattern):
+${pattern.questions.map((q, i) => `${i+1}. "${q}"`).join('\n')}
+
+Write a WhatsApp-style message (3-5 sentences maximum) that:
+- Is calibrated to their relationship to help position: ${pos ? pos.label : 'unknown'} — ${helpPosition === 'visitor' ? 'do not push for action, build safety first' : helpPosition === 'complainant' ? 'validate their experience before any redirection' : 'full engagement is appropriate'}
+- Addresses the underlying struggle pattern without naming it or using psychological language
+- ${stressLevel === 'high' || stressLevel === 'moderate' ? 'Acknowledges that things feel hard without adding pressure — the body and mind need safety before movement' : 'References their goal naturally if appropriate'}
+- Includes exactly ONE question from the list above
+- Does not attempt to fix, diagnose, or rush progress
+- Sounds like Samuel — a person who genuinely cares and has spent decades sitting with people in difficulty
+
+The coachee must feel seen, not managed. Heard, not processed.`;
+}
+
+// ── API CALL ──────────────────────────────────────────────────
+async function callAI(prompt) {
+  const apiKey = localStorage.getItem('sa-api-key');
+  if (!apiKey) throw new Error('No API key set. Please add your Anthropic API key in Settings.');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || 'API error');
+  return data.content?.[0]?.text || '';
+}
+
+// ── STORAGE ───────────────────────────────────────────────────
+const KEY = 'samuel-command-centre-v1';
+const SABBATH_KEY = 'samuel-sabbath-v1';
+const LOOP_SENT_KEY = 'samuel-loop-sent-v1';
+
+// ── SABBATH CALCULATIONS ──────────────────────────────────────
+function calcSabbaths(firstDateStr) {
+  if (!firstDateStr) return [];
+  const first = new Date(firstDateStr + 'T00:00:00');
+  return [0, 7, 14, 21].map(days => {
+    const d = new Date(first);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split('T')[0];
+  });
+}
+const todayStr = () => new Date().toISOString().split('T')[0];
+const tomorrowStr = () => { const d = new Date(); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0]; };
+const isTodaySabbath = (s) => s.includes(todayStr());
+const isTomorrowSabbath = (s) => s.includes(tomorrowStr());
+const nextSabbath = (s) => s.find(d => d >= todayStr()) || null;
+const daysUntil = (dateStr) => Math.ceil((new Date(dateStr) - new Date(todayStr())) / 86400000);
+const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+
+// ── LOOP ENGINE ───────────────────────────────────────────────
+function getLoopItems(coachees, sabbaths, sentIds) {
+  if (isTodaySabbath(sabbaths)) return [];
+  const tomorrowSab = isTomorrowSabbath(sabbaths);
+  const dayOfWeek = new Date().getDay(); // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+  const items = [];
+
+  coachees.forEach(coachee => {
+    const days = daysSince(coachee.lastSession);
+    const baseId = (type) => `${coachee.id}-${type}-${todayStr()}`;
+
+    // Priority 1 — Re-engagement (5+ days silence)
+    if (days >= 5 && !sentIds.includes(baseId('reengage'))) {
+      items.push({ uid: baseId('reengage'), coachee, priority: 1, msgType: 'reengage',
+        icon: '🤝', label: 'Re-engagement needed',
+        reason: `${days} days since last contact — ${coachee.name} may need a gentle nudge`,
+        colour: '#C0392B', sent: false });
+      return;
+    }
+
+    // Priority 2 — Milestone
+    if ([4,8,12,16,20,24].includes(coachee.weekNumber) && !sentIds.includes(baseId('milestone'))) {
+      items.push({ uid: baseId('milestone'), coachee, priority: 2, msgType: 'milestone',
+        icon: '🏆', label: `Week ${coachee.weekNumber} milestone`,
+        reason: `${coachee.name} has reached week ${coachee.weekNumber} — celebrate the commitment`,
+        colour: C.gold, sent: false });
+    }
+
+    // Priority 3 — Pre-Sabbath reflection (day before Sabbath)
+    if (tomorrowSab && days >= 2 && !sentIds.includes(baseId('reflection'))) {
+      items.push({ uid: baseId('reflection'), coachee, priority: 3, msgType: 'reflection',
+        icon: '🌱', label: 'Pre-Sabbath reflection',
+        reason: 'Sabbath is tomorrow — send the weekly reflection prompt today',
+        colour: '#7B5EA7', sent: false });
+    }
+    // Midweek Wednesday check-in
+    else if (dayOfWeek === 3 && days >= 2 && days <= 6 && !sentIds.includes(baseId('midweek'))) {
+      items.push({ uid: baseId('midweek'), coachee, priority: 3, msgType: 'midweek',
+        icon: '💬', label: 'Midweek check-in',
+        reason: `Wednesday rhythm — ${coachee.name} is in week ${coachee.weekNumber}`,
+        colour: C.teal, sent: false });
+    }
+    // Monday momentum (start of week)
+    else if (dayOfWeek === 1 && days >= 5 && !sentIds.includes(baseId('pre'))) {
+      items.push({ uid: baseId('pre'), coachee, priority: 4, msgType: 'pre',
+        icon: '🔔', label: 'Monday session reminder',
+        reason: 'Start of week — upcoming session reminder',
+        colour: '#1A6B8A', sent: false });
+    }
+  });
+
+  return items.sort((a,b) => a.priority - b.priority || a.coachee.name.localeCompare(b.coachee.name));
+}
+async function load() {
+  try { const r = localStorage.getItem(KEY); return r ? JSON.parse(r) : []; }
+  catch { return []; }
+}
+async function save(data) {
+  try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+}
+async function loadSabbath() {
+  try { const r = localStorage.getItem(SABBATH_KEY); return r ? JSON.parse(r) : { firstDate:'', dates:[] }; }
+  catch { return { firstDate:'', dates:[] }; }
+}
+async function saveSabbath(data) {
+  try { localStorage.setItem(SABBATH_KEY, JSON.stringify(data)); } catch(e) { console.error(e); }
+}
+async function loadSentIds() {
+  try { const r = localStorage.getItem(LOOP_SENT_KEY); return r ? JSON.parse(r) : []; }
+  catch { return []; }
+}
+async function saveSentIds(ids) {
+  try { localStorage.setItem(LOOP_SENT_KEY, JSON.stringify(ids)); } catch(e) { console.error(e); }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+const daysSince = iso => Math.floor((Date.now() - new Date(iso)) / 86400000);
+const weekBadgeColor = w => w <= 2 ? C.teal : w <= 5 ? C.gold : '#7B5EA7';
+
+// ── STYLES ────────────────────────────────────────────────────
+const injectStyles = () => {
+  if (document.getElementById('cc-styles')) return;
+  const s = document.createElement('style');
+  s.id = 'cc-styles';
+  s.textContent = `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .cc-serif { font-family: 'Cormorant Garamond', serif !important; }
+    .cc-layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+    .cc-sidebar { display: flex; flex-direction: column; background: ${C.navy}; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+    .cc-main { overflow-y: auto; min-height: 100vh; }
+    .cc-bottomnav { display: none; }
+    .cc-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .cc-msg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .cc-btn { cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+    .cc-btn:active { transform: scale(0.97); }
+    .cc-nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 20px; cursor: pointer; border-radius: 8px; margin: 2px 12px; font-size: 14px; font-family: 'DM Sans', sans-serif; transition: background 0.15s; color: rgba(255,255,255,0.65); border: none; background: none; width: calc(100% - 24px); text-align: left; }
+    .cc-nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+    .cc-nav-item.active { background: rgba(46,139,114,0.25); color: ${C.teal}; }
+    .cc-coachee-card { background: white; border-radius: 14px; padding: 22px; border: 1.5px solid transparent; transition: all 0.15s; cursor: pointer; }
+    .cc-coachee-card:hover { border-color: ${C.teal}; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(28,43,58,0.08); }
+    .cc-msg-type-btn { background: white; border: 1.5px solid ${C.light}; border-radius: 12px; padding: 16px; cursor: pointer; text-align: left; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+    .cc-msg-type-btn:hover { border-color: ${C.teal}; background: ${C.tealLight}; }
+    .cc-msg-type-btn.active { border-color: ${C.teal}; background: ${C.tealLight}; }
+    .cc-input { width: 100%; padding: 11px 14px; border: 1.5px solid #DDE3EA; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: ${C.navy}; background: white; outline: none; transition: border-color 0.15s; }
+    .cc-input:focus { border-color: ${C.teal}; }
+    .cc-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #DDE3EA; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: ${C.navy}; background: white; outline: none; resize: vertical; min-height: 90px; transition: border-color 0.15s; }
+    .cc-textarea:focus { border-color: ${C.teal}; }
+    .cc-label { font-size: 12px; font-weight: 500; color: ${C.slate}; margin-bottom: 6px; display: block; letter-spacing: 0.3px; }
+    .cc-result-box { background: ${C.parch}; border-radius: 12px; padding: 20px; border-left: 3px solid ${C.teal}; font-size: 14px; line-height: 1.8; color: ${C.navy}; white-space: pre-wrap; font-family: 'DM Sans', sans-serif; }
+    .cc-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: cc-spin 0.7s linear infinite; }
+    @keyframes cc-spin { to { transform: rotate(360deg); } }
+    @keyframes cc-fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .cc-fade-in { animation: cc-fade 0.25s ease forwards; }
+    .cc-delete-btn { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.4); font-size: 18px; padding: 4px 8px; border-radius: 4px; transition: color 0.15s; }
+    .cc-delete-btn:hover { color: #E57373; }
+    @media (max-width: 768px) {
+      .cc-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
+      .cc-sidebar { display: none; }
+      .cc-bottomnav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid rgba(255,255,255,0.08); padding: 8px 0 12px; z-index: 100; justify-content: space-around; }
+      .cc-main { padding-bottom: 80px !important; }
+      .cc-mobile-header { display: flex !important; }
+      .cc-card-grid { grid-template-columns: 1fr; }
+      .cc-msg-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .cc-msg-grid { grid-template-columns: 1fr; }
+    }
+  `;
+  document.head.appendChild(s);
+};
+
+// ══════════════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ══════════════════════════════════════════════════════════════
+function CommandCentre() {
+  useEffect(() => { injectStyles(); }, []);
+
+  const [coachees, setCoachees]     = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [view, setView]             = useState('dashboard'); // dashboard | add | detail | generate
+  const [selected, setSelected]     = useState(null);
+  const [activeMsgType, setActiveMsgType] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [generatedMsg, setGeneratedMsg]   = useState('');
+  const [copied, setCopied]         = useState(false);
+  const [sessionNotes, setSessionNotes]   = useState('');
+  const [error, setError]           = useState('');
+  const [editId, setEditId]         = useState(null);
+  const [form, setForm] = useState({ name:'', goal:'', intake:'', concession:false, weekNumber:1 });
+  const [selectedPattern, setSelectedPattern] = useState(null);
+  const [coacheePresentation, setCoacheePresentation] = useState('');
+  const [stressSignals, setStressSignals] = useState([]);
+  const [generateMode, setGenerateMode] = useState('pattern'); // 'pattern' | 'grounding'
+  const [relationshipPosition, setRelationshipPosition] = useState(null);
+  const [whyChain, setWhyChain] = useState([]); // [{question, answer}]
+  const [whyStep, setWhyStep] = useState(0); // 0-5
+  const [whyPresenting, setWhyPresenting] = useState('');
+  const [currentWhyQ, setCurrentWhyQ] = useState('');
+  const [currentWhyA, setCurrentWhyA] = useState('');
+  const [generatingWhy, setGeneratingWhy] = useState(false);
+  const [rootCauseSummary, setRootCauseSummary] = useState('');
+  const [generatingRoot, setGeneratingRoot] = useState(false);
+  const [sabbath, setSabbath] = useState({ firstDate:'', dates:[] });
+  const [loopItems, setLoopItems] = useState([]);
+  const [loopGenerated, setLoopGenerated] = useState({});
+  const [loopGenerating, setLoopGenerating] = useState({});
+  const [loopCopied, setLoopCopied] = useState({});
+  const [sentIds, setSentIds] = useState([]);
+  const [sabbathInput, setSabbathInput] = useState('');
+
+  useEffect(() => {
+    Promise.all([
+      load(),
+      loadSabbath(),
+      loadSentIds(),
+    ]).then(([coacheesData, sabbathData, sentData]) => {
+      setCoachees(coacheesData);
+      setSabbath(sabbathData);
+      setSabbathInput(sabbathData.firstDate || '');
+      setSentIds(sentData);
+      setLoopItems(getLoopItems(coacheesData, sabbathData.dates || [], sentData));
+      setLoading(false);
+    });
+  }, []);
+
+  const persist = async (updated) => {
+    setCoachees(updated);
+    await save(updated);
+    setLoopItems(getLoopItems(updated, sabbath.dates || [], sentIds));
+  };
+
+  const submitForm = async () => {
+    if (!form.name.trim() || !form.goal.trim()) { setError('Please enter a name and goal.'); return; }
+    setError('');
+    let updated;
+    if (editId) {
+      updated = coachees.map(c => c.id === editId ? { ...c, ...form, weekNumber: parseInt(form.weekNumber)||1 } : c);
+    } else {
+      const now = new Date().toISOString();
+      updated = [...coachees, { ...form, id: uid(), weekNumber: parseInt(form.weekNumber)||1, createdAt: now, lastSession: now }];
+    }
+    await persist(updated);
+    setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 });
+    setEditId(null);
+    setView('dashboard');
+  };
+
+  const openEdit = (c) => {
+    setForm({ name:c.name, goal:c.goal, intake:c.intake||'', concession:c.concession||false, weekNumber:c.weekNumber });
+    setEditId(c.id);
+    setError('');
+    setView('add');
+  };
+
+  const advanceWeek = async (id) => {
+    const updated = coachees.map(c => c.id === id ? { ...c, weekNumber: c.weekNumber + 1, lastSession: new Date().toISOString() } : c);
+    await persist(updated);
+    if (selected?.id === id) setSelected(updated.find(c => c.id === id));
+  };
+
+  const removeCoachee = async (id) => {
+    if (!window.confirm('Remove this coachee? This cannot be undone.')) return;
+    const updated = coachees.filter(c => c.id !== id);
+    await persist(updated);
+    setView('dashboard'); setSelected(null);
+  };
+
+  const openGenerate = (coachee, type) => {
+    setSelected(coachee);
+    setActiveMsgType(type);
+    setGeneratedMsg('');
+    setSessionNotes('');
+    setSelectedPattern(null);
+    setCoacheePresentation('');
+    setStressSignals([]);
+    setGenerateMode('pattern');
+    setRelationshipPosition(null);
+    setWhyChain([]);
+    setWhyStep(0);
+    setWhyPresenting('');
+    setCurrentWhyQ('');
+    setCurrentWhyA('');
+    setRootCauseSummary('');
+    setError('');
+    setView('generate');
+  };
+
+  const generate = async () => {
+    if (!selected || !activeMsgType) return;
+    const stressLevel = getStressLevel(stressSignals);
+    if (activeMsgType === 'support' && generateMode === 'pattern' && !selectedPattern) {
+      setError('Please select a struggle pattern before generating.');
+      return;
+    }
+    setGenerating(true); setGeneratedMsg(''); setError('');
+    try {
+      let prompt;
+      if (activeMsgType === 'support' && generateMode === 'grounding') {
+        prompt = buildGroundingPrompt(selected, stressLevel, stressSignals, coacheePresentation);
+      } else if (activeMsgType === 'support') {
+        prompt = buildEnhancedSupportPrompt(selected, selectedPattern, coacheePresentation, relationshipPosition, stressLevel, stressSignals, rootCauseSummary, whyChain, whyPresenting);
+      } else {
+        prompt = buildPrompt(activeMsgType, selected, sessionNotes);
+      }
+      const msg = await callAI(prompt);
+      setGeneratedMsg(msg);
+    } catch(e) {
+      setError('Could not generate message. Check your connection and try again.');
+    }
+    setGenerating(false);
+  };
+
+  const updateSabbath = async () => {
+    if (!sabbathInput) return;
+    const dates = calcSabbaths(sabbathInput);
+    const updated = { firstDate: sabbathInput, dates };
+    setSabbath(updated);
+    await saveSabbath(updated);
+    setLoopItems(getLoopItems(coachees, dates, sentIds));
+  };
+
+  const generateLoopMsg = async (item) => {
+    setLoopGenerating(prev => ({ ...prev, [item.uid]: true }));
+    try {
+      const prompt = buildPrompt(item.msgType, item.coachee, '');
+      const msg = await callAI(prompt);
+      setLoopGenerated(prev => ({ ...prev, [item.uid]: msg }));
+    } catch(e) {
+      setLoopGenerated(prev => ({ ...prev, [item.uid]: 'Could not generate. Check connection and try again.' }));
+    }
+    setLoopGenerating(prev => ({ ...prev, [item.uid]: false }));
+  };
+
+  const markLoopSent = async (item) => {
+    const updated = [...sentIds, item.uid];
+    setSentIds(updated);
+    await saveSentIds(updated);
+    setLoopItems(prev => prev.filter(i => i.uid !== item.uid));
+  };
+
+  const copyLoopMsg = (item, text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setLoopCopied(prev => ({ ...prev, [item.uid]: true }));
+      setTimeout(() => setLoopCopied(prev => ({ ...prev, [item.uid]: false })), 2000);
+    });
+  };
+    if (!selected || !whyPresenting.trim()) return;
+    setGeneratingWhy(true);
+    try {
+      const prompt = buildWhyPrompt(selected, whyPresenting, whyChain, whyStep);
+      const q = await callAI(prompt);
+      setCurrentWhyQ(q.trim());
+      setCurrentWhyA('');
+    } catch(e) {
+      setError('Could not generate why question. Check connection.');
+    }
+    setGeneratingWhy(false);
+  };
+
+  const recordWhyAnswer = () => {
+    if (!currentWhyQ || !currentWhyA.trim()) return;
+    const updated = [...whyChain, { question: currentWhyQ, answer: currentWhyA.trim() }];
+    setWhyChain(updated);
+    setWhyStep(whyStep + 1);
+    setCurrentWhyQ('');
+    setCurrentWhyA('');
+  };
+
+  const generateRootSummary = async () => {
+    if (!selected || !whyChain.length) return;
+    setGeneratingRoot(true);
+    try {
+      const prompt = buildRootCauseSummaryPrompt(selected, whyPresenting, whyChain);
+      const summary = await callAI(prompt);
+      setRootCauseSummary(summary.trim());
+    } catch(e) {
+      setError('Could not generate root cause summary.');
+    }
+    setGeneratingRoot(false);
+  };
+
+  const resetWhys = () => {
+    setWhyChain([]);
+    setWhyStep(0);
+    setCurrentWhyQ('');
+    setCurrentWhyA('');
+    setRootCauseSummary('');
+  };
+    navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+  };
+
+  const nav = (v) => { setView(v); setError(''); setGeneratedMsg(''); };
+
+  // ── NAV ITEMS ──
+  const navItems = [
+    { id:'dashboard', label:'Dashboard',       icon:'⊞' },
+    { id:'loop',      label:"Today's Loop",    icon:'🔄' },
+    { id:'sabbath',   label:'Sabbath Tracker', icon:'🌙' },
+    { id:'add',       label:'Add Coachee',     icon:'+' },
+  ];
+
+  // ── SIDEBAR ──
+  const Sidebar = () => (
+    <div className="cc-sidebar">
+      <div style={{ padding:'28px 20px 16px' }}>
+        <div className="cc-serif" style={{ fontSize:20, color:C.white, fontWeight:300, lineHeight:1.2 }}>
+          Samuel Angus
+        </div>
+        <div style={{ fontSize:11, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginTop:4 }}>
+          Command Centre
+        </div>
+      </div>
+      <div style={{ height:1, background:'rgba(255,255,255,0.07)', margin:'0 20px 12px' }} />
+      {navItems.map(item => (
+        <button key={item.id} className={`cc-nav-item ${view === item.id ? 'active' : ''}`}
+          onClick={() => nav(item.id)}>
+          <span style={{ fontSize:16 }}>{item.icon}</span>
+          <span>{item.label}</span>
+          {item.id === 'loop' && loopItems.length > 0 && (
+            <span style={{ marginLeft:'auto', background:C.red, color:C.white,
+              borderRadius:'50%', width:18, height:18, fontSize:10, fontWeight:500,
+              display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              {loopItems.length}
+            </span>
+          )}
+        </button>
+      ))}
+      <div style={{ flex:1 }} />
+      <div style={{ padding:'16px 20px 24px', fontSize:11, color:'rgba(255,255,255,0.25)', lineHeight:1.6 }}>
+        <div style={{ fontStyle:'italic', marginBottom:4 }}>
+          "Counsel in the heart of man is like deep water..."
+        </div>
+        Proverbs 20:5 KJV
+      </div>
+    </div>
+  );
+
+  const BottomNav = () => (
+    <div className="cc-bottomnav">
+      {navItems.map(item => (
+        <button key={item.id} onClick={() => nav(item.id)}
+          style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column',
+            alignItems:'center', gap:3, padding:'4px 12px', color: view===item.id ? C.teal : 'rgba(255,255,255,0.5)',
+            position:'relative' }}>
+          <span style={{ fontSize:18 }}>{item.icon}</span>
+          <span style={{ fontSize:9, fontFamily:"'DM Sans', sans-serif" }}>{item.label}</span>
+          {item.id === 'loop' && loopItems.length > 0 && (
+            <span style={{ position:'absolute', top:0, right:6, background:C.red, color:C.white,
+              borderRadius:'50%', width:14, height:14, fontSize:9, fontWeight:500,
+              display:'flex', alignItems:'center', justifyContent:'center' }}>
+              {loopItems.length}
+            </span>
+          )}
+        </button>
+      ))}
+      {selected && (
+        <button onClick={() => nav('detail')}
+          style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column',
+            alignItems:'center', gap:3, padding:'4px 12px', color: view==='detail'||view==='generate' ? C.teal : 'rgba(255,255,255,0.5)' }}>
+          <span style={{ fontSize:18 }}>👤</span>
+          <span style={{ fontSize:9, fontFamily:"'DM Sans', sans-serif" }}>Coachee</span>
+        </button>
+      )}
+    </div>
+  );
+
+  // ── MOBILE HEADER ──
+  const MobileHeader = ({ title }) => (
+    <div className="cc-mobile-header" style={{ display:'none', background:C.navy, padding:'16px 20px',
+      alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:50 }}>
+      <div>
+        <div className="cc-serif" style={{ fontSize:16, color:C.white, fontWeight:300 }}>Samuel Angus</div>
+        <div style={{ fontSize:10, color:C.teal, letterSpacing:2, textTransform:'uppercase' }}>{title}</div>
+      </div>
+    </div>
+  );
+
+  // ── DASHBOARD VIEW ──
+  const DashboardView = () => (
+    <div style={{ padding:'28px 24px' }}>
+      <MobileHeader title="Dashboard" />
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
+        <div>
+          <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy }}>
+            Your Coachees
+          </div>
+          <div style={{ fontSize:13, color:C.slate, marginTop:2 }}>
+            {coachees.length} active {coachees.length === 1 ? 'coachee' : 'coachees'}
+          </div>
+        </div>
+        <button className="cc-btn" onClick={() => nav('add')}
+          style={{ background:C.teal, color:C.white, padding:'10px 20px', borderRadius:8, fontSize:14, fontWeight:500 }}>
+          + Add Coachee
+        </button>
+      </div>
+
+      {coachees.length === 0 ? (
+        <div style={{ textAlign:'center', padding:'60px 20px', background:C.white, borderRadius:16,
+          border:`1.5px dashed #DDE3EA` }}>
+          <div style={{ fontSize:36, marginBottom:12 }}>👤</div>
+          <div className="cc-serif" style={{ fontSize:22, color:C.navy, marginBottom:8 }}>No coachees yet</div>
+          <div style={{ fontSize:14, color:C.slate, marginBottom:20 }}>Add your first coachee to get started</div>
+          <button className="cc-btn" onClick={() => nav('add')}
+            style={{ background:C.teal, color:C.white, padding:'10px 24px', borderRadius:8, fontSize:14 }}>
+            Add First Coachee
+          </button>
+        </div>
+      ) : (
+        <div className="cc-card-grid">
+          {coachees.map(c => {
+            const days = daysSince(c.lastSession);
+            return (
+              <div key={c.id} className="cc-coachee-card cc-fade-in"
+                onClick={() => { setSelected(c); setView('detail'); }}>
+                <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:12 }}>
+                  <div style={{ width:44, height:44, borderRadius:'50%', background:C.navy,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:18, color:C.white, fontFamily:"'Cormorant Garamond', serif", flexShrink:0 }}>
+                    {c.name.charAt(0)}
+                  </div>
+                  <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+                    {c.concession && (
+                      <span style={{ background:C.goldLight, color:'#8A6A20', fontSize:10, fontWeight:500,
+                        padding:'2px 8px', borderRadius:20, letterSpacing:1, textTransform:'uppercase' }}>
+                        Concession
+                      </span>
+                    )}
+                    <span style={{ background:weekBadgeColor(c.weekNumber) + '20', color:weekBadgeColor(c.weekNumber),
+                      fontSize:11, fontWeight:500, padding:'3px 10px', borderRadius:20 }}>
+                      Wk {c.weekNumber}
+                    </span>
+                  </div>
+                </div>
+                <div style={{ fontSize:17, fontWeight:500, color:C.navy, marginBottom:4 }}>{c.name}</div>
+                <div style={{ fontSize:13, color:C.slate, lineHeight:1.5, marginBottom:14,
+                  overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>
+                  {c.goal}
+                </div>
+                <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                  <button className="cc-btn" onClick={e => { e.stopPropagation(); setSelected(c); nav('detail'); }}
+                    style={{ background:C.light, color:C.slate, padding:'7px 14px', borderRadius:6, fontSize:12, fontWeight:500 }}>
+                    View Profile
+                  </button>
+                  <button className="cc-btn" onClick={e => { e.stopPropagation(); openGenerate(c, 'midweek'); }}
+                    style={{ background:C.tealLight, color:C.teal, padding:'7px 14px', borderRadius:6, fontSize:12, fontWeight:500 }}>
+                    💬 Quick Message
+                  </button>
+                </div>
+                {days >= 5 && (
+                  <div style={{ marginTop:12, padding:'6px 10px', background:'#FFF3E0', borderRadius:6,
+                    fontSize:11, color:'#E65100', fontWeight:500 }}>
+                    ⚠ {days} days since last session
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
+  // ── ADD / EDIT COACHEE VIEW ──
+  const AddView = () => (
+    <div style={{ padding:'28px 24px', maxWidth:560 }}>
+      <MobileHeader title={editId ? 'Edit Coachee' : 'Add Coachee'} />
+      <button onClick={() => { nav('dashboard'); setEditId(null); setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 }); }}
+        style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
+          marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
+        ← Back to Dashboard
+      </button>
+      <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy, marginBottom:24 }}>
+        {editId ? 'Edit Coachee' : 'Add New Coachee'}
+      </div>
+
+      {error && (
+        <div style={{ background:'#FFEBEE', border:'1px solid #FFCDD2', borderRadius:8,
+          padding:'10px 14px', fontSize:13, color:C.red, marginBottom:16 }}>
+          {error}
+        </div>
+      )}
+
+      <div style={{ display:'flex', flexDirection:'column', gap:18 }}>
+        <div>
+          <label className="cc-label">Full Name *</label>
+          <input className="cc-input" placeholder="e.g. Jordan Smith"
+            value={form.name} onChange={e => setForm({...form, name:e.target.value})} />
+        </div>
+        <div>
+          <label className="cc-label">Coaching Goal *</label>
+          <textarea className="cc-textarea" placeholder="What is this person working toward? Be specific — this informs every message generated."
+            value={form.goal} onChange={e => setForm({...form, goal:e.target.value})} style={{ minHeight:80 }} />
+        </div>
+        <div>
+          <label className="cc-label">Intake Notes (optional)</label>
+          <textarea className="cc-textarea" placeholder="Current situation, what has held them back, anything from your first conversation..."
+            value={form.intake} onChange={e => setForm({...form, intake:e.target.value})} style={{ minHeight:70 }} />
+        </div>
+        <div>
+          <label className="cc-label">Current Week Number</label>
+          <input className="cc-input" type="number" min="1" max="52"
+            value={form.weekNumber} onChange={e => setForm({...form, weekNumber:e.target.value})} style={{ width:100 }} />
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <input type="checkbox" id="concession" checked={form.concession}
+            onChange={e => setForm({...form, concession:e.target.checked})}
+            style={{ width:16, height:16, cursor:'pointer', accentColor:C.teal }} />
+          <label htmlFor="concession" style={{ fontSize:14, color:C.slate, cursor:'pointer' }}>
+            Concession rate (student / NHS / faith community referral)
+          </label>
+        </div>
+        <div style={{ display:'flex', gap:12, marginTop:4 }}>
+          <button className="cc-btn" onClick={submitForm}
+            style={{ background:C.teal, color:C.white, padding:'12px 28px', borderRadius:8, fontSize:15, fontWeight:500 }}>
+            {editId ? 'Save Changes' : 'Add Coachee'}
+          </button>
+          <button className="cc-btn" onClick={() => { nav('dashboard'); setEditId(null); setError(''); }}
+            style={{ background:C.light, color:C.slate, padding:'12px 20px', borderRadius:8, fontSize:14 }}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── COACHEE DETAIL VIEW ──
+  const DetailView = () => {
+    if (!selected) return null;
+    const c = coachees.find(x => x.id === selected.id) || selected;
+    return (
+      <div style={{ padding:'28px 24px' }}>
+        <MobileHeader title="Coachee Profile" />
+        <button onClick={() => nav('dashboard')}
+          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
+            marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
+          ← Back to Dashboard
+        </button>
+
+        {/* Profile header */}
+        <div style={{ background:C.navy, borderRadius:16, padding:'28px 28px 24px', marginBottom:24 }}>
+          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
+            <div style={{ display:'flex', gap:16, alignItems:'center' }}>
+              <div style={{ width:56, height:56, borderRadius:'50%', background:C.teal,
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:24, color:C.white, fontFamily:"'Cormorant Garamond',serif", flexShrink:0 }}>
+                {c.name.charAt(0)}
+              </div>
+              <div>
+                <div className="cc-serif" style={{ fontSize:24, color:C.white, fontWeight:300 }}>{c.name}</div>
+                <div style={{ display:'flex', gap:8, marginTop:4, flexWrap:'wrap' }}>
+                  <span style={{ background:weekBadgeColor(c.weekNumber) + '30', color:weekBadgeColor(c.weekNumber),
+                    fontSize:11, padding:'3px 10px', borderRadius:20, fontWeight:500 }}>
+                    Week {c.weekNumber}
+                  </span>
+                  {c.concession && (
+                    <span style={{ background:C.goldLight, color:C.gold, fontSize:11, padding:'3px 10px', borderRadius:20, fontWeight:500 }}>
+                      Concession
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div style={{ display:'flex', gap:8 }}>
+              <button className="cc-btn" onClick={() => openEdit(c)}
+                style={{ background:'rgba(255,255,255,0.1)', color:C.white, padding:'8px 16px', borderRadius:6, fontSize:13 }}>
+                Edit
+              </button>
+              <button className="cc-btn" onClick={() => advanceWeek(c.id)}
+                style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:13, fontWeight:500 }}>
+                + Advance Week
+              </button>
+              <button onClick={() => removeCoachee(c.id)} title="Remove coachee" className="cc-delete-btn">✕</button>
+            </div>
+          </div>
+          <div style={{ marginTop:20, padding:'14px 18px', background:'rgba(255,255,255,0.06)', borderRadius:10 }}>
+            <div style={{ fontSize:10, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Coaching Goal</div>
+            <div style={{ fontSize:14, color:'rgba(255,255,255,0.85)', lineHeight:1.7 }}>{c.goal}</div>
+          </div>
+          {c.intake && (
+            <div style={{ marginTop:12, padding:'14px 18px', background:'rgba(255,255,255,0.04)', borderRadius:10 }}>
+              <div style={{ fontSize:10, color:C.gold, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Intake Notes</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>{c.intake}</div>
+            </div>
+          )}
+        </div>
+
+        {/* Message generators */}
+        <div style={{ marginBottom:16 }}>
+          <div style={{ fontSize:12, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
+            Generate a Message
+          </div>
+          <div className="cc-msg-grid">
+            {MSG_TYPES.filter(mt => mt.id !== 'support').map(mt => (
+              <button key={mt.id} className={`cc-msg-type-btn ${activeMsgType===mt.id&&view==='generate'?'active':''}`}
+                onClick={() => openGenerate(c, mt.id)}>
+                <div style={{ fontSize:22, marginBottom:6 }}>{mt.icon}</div>
+                <div style={{ fontSize:13, fontWeight:500, color:C.navy, marginBottom:3 }}>{mt.label}</div>
+                <div style={{ fontSize:11, color:C.slate, lineHeight:1.4 }}>{mt.desc}</div>
+              </button>
+            ))}
+          </div>
+
+          {/* Support mode — full width prominent button */}
+          <button onClick={() => openGenerate(c, 'support')}
+            style={{ marginTop:12, width:'100%', background: C.navy,
+              border:`1.5px solid rgba(201,168,76,0.4)`, borderRadius:12,
+              padding:'16px 20px', cursor:'pointer', textAlign:'left',
+              fontFamily:"'DM Sans',sans-serif", transition:'all 0.15s',
+              display:'flex', alignItems:'center', gap:16 }}>
+            <div style={{ fontSize:28 }}>🆘</div>
+            <div>
+              <div style={{ fontSize:14, fontWeight:500, color:C.gold, marginBottom:3 }}>
+                Struggling Coachee Support
+              </div>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', lineHeight:1.5 }}>
+                Identify the struggle pattern — avoidance, self-criticism, overwhelm, disengagement, or plateau — and generate a diagnostically-informed message that addresses the root without naming it.
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // ── GENERATE VIEW ──
+  const GenerateView = () => {
+    if (!selected || !activeMsgType) return null;
+    const mt = MSG_TYPES.find(m => m.id === activeMsgType);
+    const needsNotes = activeMsgType === 'post';
+    return (
+      <div style={{ padding:'28px 24px', maxWidth:640 }}>
+        <MobileHeader title="Generate Message" />
+        <button onClick={() => { setView('detail'); setGeneratedMsg(''); }}
+          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
+            marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
+          ← Back to {selected.name}
+        </button>
+
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:24 }}>
+          <div style={{ width:48, height:48, borderRadius:'50%', background:C.navy,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            fontSize:20, color:C.white, fontFamily:"'Cormorant Garamond',serif", flexShrink:0 }}>
+            {selected.name.charAt(0)}
+          </div>
+          <div>
+            <div style={{ fontSize:11, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:2 }}>
+              {mt?.icon} {mt?.label}
+            </div>
+            <div className="cc-serif" style={{ fontSize:22, color:C.navy, fontWeight:300 }}>{selected.name}</div>
+          </div>
+        </div>
+
+        {/* Context pills */}
+        <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:20 }}>
+          <span style={{ background:C.tealLight, color:C.teal, fontSize:12, padding:'4px 12px', borderRadius:20 }}>
+            Week {selected.weekNumber}
+          </span>
+          <span style={{ background:C.light, color:C.slate, fontSize:12, padding:'4px 12px', borderRadius:20,
+            maxWidth:280, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+            Goal: {selected.goal.substring(0,60)}{selected.goal.length>60?'...':''}
+          </span>
+        </div>
+
+        {/* Post-session notes input */}
+        {needsNotes && (
+          <div style={{ marginBottom:20 }}>
+            <label className="cc-label">Your Session Notes</label>
+            <textarea className="cc-textarea"
+              placeholder="Add 2–4 bullet points from the session — key themes, insights, what was said, the next step agreed..."
+              value={sessionNotes}
+              onChange={e => setSessionNotes(e.target.value)}
+              style={{ minHeight:100 }} />
+            <div style={{ fontSize:11, color:C.slate, marginTop:6 }}>
+              The AI will turn these into a warm, personal summary for {selected.name}.
+            </div>
+          </div>
+        )}
+
+        {/* ── SUPPORT MODE — THREE-STEP ASSESSMENT ── */}
+        {activeMsgType === 'support' && (() => {
+          const stressLevel = getStressLevel(stressSignals);
+          const sc = STRESS_CONFIG[stressLevel];
+          const helpPos = HELP_POSITIONS.find(h => h.id === relationshipPosition);
+          const toggleSignal = (id) => {
+            setStressSignals(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+            setGeneratedMsg('');
+          };
+
+          return (
+            <div style={{ marginBottom: 20 }}>
+
+              {/* ── STEP 0: FIVE WHYS ROOT CAUSE ANALYSIS ── */}
+              <div style={{ background: '#0D4A63', borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: '#5DADE2', fontWeight: 500 }}>
+                    Step 0 — Root Cause Analysis
+                  </div>
+                  {whyChain.length > 0 && (
+                    <button onClick={resetWhys}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', fontSize: 11, fontFamily: "'DM Sans',sans-serif" }}>
+                      Reset
+                    </button>
+                  )}
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
+                  Five Whys · Wiegers — The problem first presented is rarely the real problem. Ask why up to five times to reach the root.
+                </div>
+
+                {/* Presenting problem input */}
+                {whyStep === 0 && !currentWhyQ && (
+                  <div style={{ marginBottom: 12 }}>
+                    <label className="cc-label" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                      What did {selected?.name} present or say?
+                    </label>
+                    <textarea className="cc-textarea"
+                      placeholder="Describe the presenting problem or what the coachee said — this becomes Why 1..."
+                      value={whyPresenting}
+                      onChange={e => setWhyPresenting(e.target.value)}
+                      style={{ minHeight: 70, marginBottom: 10 }} />
+                    <button className="cc-btn" onClick={generateNextWhy} disabled={generatingWhy || !whyPresenting.trim()}
+                      style={{ background: generatingWhy ? C.slate : '#1A6B8A', color: C.white,
+                        padding: '9px 18px', borderRadius: 7, fontSize: 13, fontWeight: 500,
+                        display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {generatingWhy ? <><div className="cc-spinner" /> Generating...</> : '🔍 Generate Why 1'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Why chain so far */}
+                {whyChain.length > 0 && (
+                  <div style={{ marginBottom: 12 }}>
+                    {whyChain.map((item, i) => (
+                      <div key={i} style={{ marginBottom: 8, padding: '10px 12px',
+                        background: 'rgba(255,255,255,0.06)', borderRadius: 8,
+                        borderLeft: `3px solid #5DADE2` }}>
+                        <div style={{ fontSize: 10, color: '#5DADE2', fontWeight: 500, marginBottom: 4 }}>
+                          WHY {i + 1}
+                        </div>
+                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>{item.question}</div>
+                        <div style={{ fontSize: 12, color: C.gold, fontStyle: 'italic' }}>→ {item.answer}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Current why question — enter answer */}
+                {currentWhyQ && whyStep < 5 && (
+                  <div className="cc-fade-in" style={{ marginBottom: 12 }}>
+                    <div style={{ padding: '12px 14px', background: 'rgba(93,173,226,0.12)',
+                      borderRadius: 8, borderLeft: `3px solid #5DADE2`, marginBottom: 10 }}>
+                      <div style={{ fontSize: 10, color: '#5DADE2', fontWeight: 500, marginBottom: 4 }}>
+                        WHY {whyStep + 1} — Question to ask {selected?.name}:
+                      </div>
+                      <div style={{ fontSize: 13, color: C.white, fontWeight: 500 }}>{currentWhyQ}</div>
+                    </div>
+                    <label className="cc-label" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                      {selected?.name}'s answer:
+                    </label>
+                    <textarea className="cc-textarea"
+                      placeholder="Record what they said..."
+                      value={currentWhyA}
+                      onChange={e => setCurrentWhyA(e.target.value)}
+                      style={{ minHeight: 60, marginBottom: 8 }} />
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button className="cc-btn" onClick={recordWhyAnswer} disabled={!currentWhyA.trim()}
+                        style={{ background: '#1A6B8A', color: C.white, padding: '8px 16px', borderRadius: 7, fontSize: 12, fontWeight: 500 }}>
+                        Record Answer
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Generate next why button */}
+                {whyChain.length > 0 && !currentWhyQ && whyStep < 5 && !rootCauseSummary && (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button className="cc-btn" onClick={generateNextWhy} disabled={generatingWhy}
+                      style={{ background: generatingWhy ? C.slate : '#1A6B8A', color: C.white,
+                        padding: '9px 16px', borderRadius: 7, fontSize: 12, fontWeight: 500,
+                        display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {generatingWhy ? <><div className="cc-spinner" /> Generating...</> : `🔍 Generate Why ${whyStep + 1}`}
+                    </button>
+                    <button className="cc-btn" onClick={generateRootSummary} disabled={generatingRoot}
+                      style={{ background: generatingRoot ? C.slate : C.teal, color: C.white,
+                        padding: '9px 16px', borderRadius: 7, fontSize: 12, fontWeight: 500,
+                        display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {generatingRoot ? <><div className="cc-spinner" /> Summarising...</> : '✓ Root Cause Found — Summarise'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Five reached — auto offer summary */}
+                {whyStep >= 5 && !currentWhyQ && !rootCauseSummary && (
+                  <button className="cc-btn" onClick={generateRootSummary} disabled={generatingRoot}
+                    style={{ background: generatingRoot ? C.slate : C.teal, color: C.white,
+                      padding: '9px 16px', borderRadius: 7, fontSize: 13, fontWeight: 500,
+                      display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {generatingRoot ? <><div className="cc-spinner" /> Summarising...</> : '✓ Generate Root Cause Summary'}
+                  </button>
+                )}
+
+                {/* Root cause summary */}
+                {rootCauseSummary && (
+                  <div className="cc-fade-in" style={{ marginTop: 10, padding: '14px 16px',
+                    background: C.tealLight, borderRadius: 8, border: `1px solid ${C.teal}40` }}>
+                    <div style={{ fontSize: 10, color: C.teal, fontWeight: 500, letterSpacing: 2,
+                      textTransform: 'uppercase', marginBottom: 8 }}>Root Cause — Carry into Steps 1–3</div>
+                    <div style={{ fontSize: 13, color: C.navy, lineHeight: 1.7 }}>{rootCauseSummary}</div>
+                  </div>
+                )}
+
+                {/* Skip option */}
+                {whyChain.length === 0 && !currentWhyQ && (
+                  <div style={{ marginTop: 10, fontSize: 11, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>
+                    Skip this step if the root cause is already clear — scroll to Step 1.
+                  </div>
+                )}
+              </div>
+
+              {/* ── STEP 1: RELATIONSHIP TO HELP ── */}
+              <div style={{ background: C.navy, borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
+                <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: C.gold, fontWeight: 500, marginBottom: 4 }}>
+                  Step 1 — Relationship to Help
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
+                  Tomm · Burnham · Cecchin — How does {selected?.name} position themselves in relation to receiving help?
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
+                  {HELP_POSITIONS.map(h => (
+                    <button key={h.id} onClick={() => { setRelationshipPosition(h.id); setGeneratedMsg(''); }}
+                      style={{
+                        background: relationshipPosition === h.id ? h.colour + '25' : 'rgba(255,255,255,0.05)',
+                        border: `1.5px solid ${relationshipPosition === h.id ? h.colour : 'rgba(255,255,255,0.1)'}`,
+                        borderRadius: 8, padding: '12px 14px', cursor: 'pointer',
+                        textAlign: 'left', fontFamily: "'DM Sans',sans-serif", transition: 'all 0.15s'
+                      }}>
+                      <div style={{ fontSize: 16, marginBottom: 4 }}>{h.icon}</div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: relationshipPosition === h.id ? h.colour : C.white, marginBottom: 2 }}>
+                        {h.label}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>{h.subtitle}</div>
+                    </button>
+                  ))}
+                </div>
+                {helpPos && (
+                  <div className="cc-fade-in" style={{ marginTop: 12, padding: '12px 14px',
+                    background: helpPos.colour + '15', borderRadius: 8,
+                    borderLeft: `3px solid ${helpPos.colour}` }}>
+                    <div style={{ fontSize: 11, color: helpPos.colour, fontWeight: 500, marginBottom: 4 }}>{helpPos.tomm}</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{helpPos.burnham}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* STEP 2 — STRESS ASSESSMENT */}
+              <div style={{ background: C.white, borderRadius: 12, padding: '18px 20px', marginBottom: 14,
+                border: '1.5px solid #DDE3EA' }}>
+                <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
+                  Step 2 — Stress Assessment
+                </div>
+                <div style={{ fontSize: 11, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
+                  Selye · Amygdala-HPA Axis — Which stress signals is {selected?.name} presenting?
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+                  {STRESS_SIGNALS.map(sig => (
+                    <label key={sig.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
+                      <input type="checkbox" checked={stressSignals.includes(sig.id)}
+                        onChange={() => toggleSignal(sig.id)}
+                        style={{ marginTop: 2, accentColor: sig.clinical ? C.red : C.teal, flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: sig.clinical ? C.red : C.navy, lineHeight: 1.5,
+                        fontWeight: sig.clinical ? 500 : 400 }}>
+                        {sig.label}
+                        {sig.clinical && <span style={{ fontSize: 10, marginLeft: 6, background: '#FFEBEE',
+                          color: C.red, padding: '1px 6px', borderRadius: 10, fontWeight: 500 }}>Psychological safety signal</span>}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                {/* Stress level indicator */}
+                <div style={{ padding: '12px 14px', background: sc.bg,
+                  borderRadius: 8, border: `1px solid ${sc.colour}30` }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: stressLevel !== 'none' ? 6 : 0 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: sc.colour, flexShrink: 0 }} />
+                    <span style={{ fontSize: 12, fontWeight: 500, color: sc.colour }}>{sc.label}</span>
+                  </div>
+                  {stressLevel !== 'none' && (
+                    <div style={{ fontSize: 12, color: C.slate, lineHeight: 1.6 }}>{sc.message}</div>
+                  )}
+                </div>
+
+                {/* Psychological safety flag */}
+                {stressLevel === 'high' && (
+                  <div className="cc-fade-in" style={{ marginTop: 12, padding: '14px 16px',
+                    background: '#FFEBEE', borderRadius: 8, border: `1.5px solid ${C.red}40` }}>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: C.red, marginBottom: 8 }}>
+                      ⚠ Psychological Safety Flag — Consider Referral
+                    </div>
+                    <div style={{ fontSize: 12, color: '#7B0000', lineHeight: 1.7, marginBottom: 10 }}>
+                      Psychological safety may not be sufficiently established for coaching
+                      to be effective right now. A grounding message is appropriate.
+                      Consider whether referral to a GP, counsellor, or appropriate
+                      psychological intervention is needed before coaching continues.
+                    </div>
+                    <div style={{ fontSize: 11, color: '#7B0000', fontWeight: 500, marginBottom: 4 }}>Suggested language:</div>
+                    <div style={{ fontSize: 11, color: '#7B0000', fontStyle: 'italic', lineHeight: 1.6,
+                      padding: '8px 12px', background: 'rgba(192,57,43,0.08)', borderRadius: 6 }}>
+                      "I want to make sure you have the right support around you right now.
+                      It might be worth having a conversation with your GP or someone you trust.
+                      I am here when you are ready to continue our work together."
+                    </div>
+                  </div>
+                )}
+
+                {/* Mode selector */}
+                {stressLevel !== 'none' && (
+                  <div className="cc-fade-in" style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                    <button onClick={() => { setGenerateMode('grounding'); setGeneratedMsg(''); }}
+                      style={{ flex: 1, padding: '10px 14px', borderRadius: 8, cursor: 'pointer',
+                        border: `1.5px solid ${generateMode === 'grounding' ? C.teal : '#DDE3EA'}`,
+                        background: generateMode === 'grounding' ? C.tealLight : C.white,
+                        fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500,
+                        color: generateMode === 'grounding' ? C.teal : C.slate }}>
+                      🌿 Generate Grounding Message
+                    </button>
+                    {(stressLevel === 'low' || stressLevel === 'moderate') && (
+                      <button onClick={() => { setGenerateMode('pattern'); setGeneratedMsg(''); }}
+                        style={{ flex: 1, padding: '10px 14px', borderRadius: 8, cursor: 'pointer',
+                          border: `1.5px solid ${generateMode === 'pattern' ? C.navy : '#DDE3EA'}`,
+                          background: generateMode === 'pattern' ? C.navy : C.white,
+                          fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500,
+                          color: generateMode === 'pattern' ? C.white : C.slate }}>
+                        🎯 Pattern-Based Message
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* STEP 3 — STRUGGLE PATTERN (only when stress is none/low/moderate and mode is pattern) */}
+              {(stressLevel === 'none' || (stressLevel !== 'high' && generateMode === 'pattern')) && (
+                <div className="cc-fade-in" style={{ background: C.white, borderRadius: 12, padding: '18px 20px',
+                  marginBottom: 14, border: '1.5px solid #DDE3EA' }}>
+                  <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
+                    Step 3 — Struggle Pattern
+                  </div>
+                  <div style={{ fontSize: 11, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
+                    Bandura · Dweck · Mischel — What is the root dynamic for {selected?.name}?
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 14 }}>
+                    {STRUGGLE_PATTERNS.map(pat => (
+                      <button key={pat.id}
+                        onClick={() => { setSelectedPattern(pat); setGeneratedMsg(''); setError(''); }}
+                        style={{
+                          background: selectedPattern?.id === pat.id ? pat.colour + '15' : C.light,
+                          border: `1.5px solid ${selectedPattern?.id === pat.id ? pat.colour : 'transparent'}`,
+                          borderRadius: 8, padding: '12px 14px', cursor: 'pointer',
+                          textAlign: 'left', transition: 'all 0.15s', fontFamily: "'DM Sans',sans-serif"
+                        }}>
+                        <div style={{ fontSize: 18, marginBottom: 4 }}>{pat.icon}</div>
+                        <div style={{ fontSize: 12, fontWeight: 500,
+                          color: selectedPattern?.id === pat.id ? pat.colour : C.navy, marginBottom: 2 }}>
+                          {pat.label}
+                        </div>
+                        <div style={{ fontSize: 10, color: C.slate, lineHeight: 1.4 }}>{pat.subtitle}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {selectedPattern && (
+                    <div className="cc-fade-in" style={{ padding: '12px 14px', marginBottom: 14,
+                      background: selectedPattern.colour + '08',
+                      border: `1px solid ${selectedPattern.colour}25`, borderRadius: 8 }}>
+                      <div style={{ fontSize: 11, color: selectedPattern.colour, fontWeight: 500, marginBottom: 4 }}>
+                        {selectedPattern.icon} {selectedPattern.label} — {selectedPattern.approach}
+                      </div>
+                      <div style={{ fontSize: 11, color: C.slate, lineHeight: 1.6 }}>{selectedPattern.research}</div>
+                    </div>
+                  )}
+
+                  <label className="cc-label">What did {selected?.name} say or present?</label>
+                  <textarea className="cc-textarea"
+                    placeholder={`Their words, their tone, what you noticed. The more specific, the more precisely the message will land.`}
+                    value={coacheePresentation}
+                    onChange={e => setCoacheePresentation(e.target.value)}
+                    style={{ minHeight: 80 }} />
+                  <div style={{ fontSize: 11, color: C.slate, marginTop: 5 }}>
+                    Used by the AI to calibrate the message — never sent to {selected?.name}.
+                  </div>
+                </div>
+              )}
+
+              {/* Grounding — presentation context */}
+              {generateMode === 'grounding' && stressLevel !== 'none' && (
+                <div className="cc-fade-in" style={{ background: C.white, borderRadius: 12, padding: '18px 20px',
+                  marginBottom: 14, border: '1.5px solid #DDE3EA' }}>
+                  <label className="cc-label">What did {selected?.name} say or present?</label>
+                  <textarea className="cc-textarea"
+                    placeholder="Their words, tone, what you noticed — this helps calibrate the grounding message."
+                    value={coacheePresentation}
+                    onChange={e => setCoacheePresentation(e.target.value)}
+                    style={{ minHeight: 80 }} />
+                </div>
+              )}
+
+            </div>
+          );
+        })()}
+
+        {error && (
+          <div style={{ background:'#FFEBEE', borderRadius:8, padding:'10px 14px',
+            fontSize:13, color:C.red, marginBottom:16 }}>
+            {error}
+          </div>
+        )}
+
+        {/* Generate button */}
+        <button className="cc-btn" onClick={generate} disabled={generating}
+          style={{ background: generating ? C.slate : activeMsgType === 'support' && getStressLevel(stressSignals) === 'high' ? C.red : C.teal,
+            color: C.white, padding:'13px 28px', borderRadius:8, fontSize:15, fontWeight:500,
+            display:'flex', alignItems:'center', gap:10, marginBottom:24 }}>
+          {generating ? (
+            <><div className="cc-spinner" /> Generating...</>
+          ) : activeMsgType === 'support' && generateMode === 'grounding' ? (
+            <>🌿 Generate Grounding Message</>
+          ) : (
+            <>{mt?.icon} Generate {mt?.label}</>
+          )}
+        </button>
+
+        {/* Result */}
+        {generatedMsg && (
+          <div className="cc-fade-in">
+            <div style={{ fontSize:12, letterSpacing:3, textTransform:'uppercase', color:C.teal,
+              fontWeight:500, marginBottom:10 }}>Generated Message</div>
+            <div className="cc-result-box" style={{ marginBottom:14 }}>
+              {generatedMsg}
+            </div>
+            <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+              <button className="cc-btn" onClick={() => copy(generatedMsg)}
+                style={{ background: copied ? C.teal : C.navy, color:C.white,
+                  padding:'10px 20px', borderRadius:8, fontSize:13, fontWeight:500 }}>
+                {copied ? '✓ Copied' : '📋 Copy for WhatsApp / Email'}
+              </button>
+              <button className="cc-btn" onClick={generate}
+                style={{ background:C.light, color:C.slate, padding:'10px 16px', borderRadius:8, fontSize:13 }}>
+                ↻ Regenerate
+              </button>
+            </div>
+            <div style={{ marginTop:16, padding:'12px 16px', background:C.goldLight,
+              borderRadius:8, fontSize:12, color:'#8A6A20', lineHeight:1.6 }}>
+              <strong>Tip:</strong> Read this before sending. Add any personal detail you know about {selected.name}'s week before you hit send — one specific detail makes it feel unmistakably yours.
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // ── SABBATH VIEW ──
+  const SabbathView = () => {
+    const todaySab = isTodaySabbath(sabbath.dates || []);
+    const nextSab = nextSabbath(sabbath.dates || []);
+    const daysToNext = nextSab ? daysUntil(nextSab) : null;
+    return (
+      <div style={{ padding:'28px 24px', maxWidth:560 }}>
+        <MobileHeader title="Sabbath Tracker" />
+        <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy, marginBottom:8 }}>
+          Lunar Sabbath Tracker
+        </div>
+        <div style={{ fontSize:13, color:C.slate, marginBottom:24, lineHeight:1.6 }}>
+          Enter the first Sabbath of the current lunar month. The tracker calculates all four Sabbath days automatically and marks them in the Loop system.
+        </div>
+
+        {todaySab && (
+          <div style={{ background:C.goldLight, border:`1.5px solid ${C.gold}`, borderRadius:12,
+            padding:'16px 20px', marginBottom:20, textAlign:'center' }}>
+            <div style={{ fontSize:18 }}>🌙</div>
+            <div style={{ fontSize:14, fontWeight:500, color:'#8A6A20', marginTop:4 }}>
+              Today is your Sabbath rest day
+            </div>
+            <div style={{ fontSize:12, color:'#8A6A20', marginTop:4 }}>
+              The Loop is paused. No messages will be generated today. Rest well.
+            </div>
+          </div>
+        )}
+
+        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
+          <label className="cc-label">First Sabbath of this lunar month</label>
+          <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+            <input type="date" className="cc-input" value={sabbathInput}
+              onChange={e => setSabbathInput(e.target.value)}
+              style={{ flex:1 }} />
+            <button className="cc-btn" onClick={updateSabbath}
+              style={{ background:C.teal, color:C.white, padding:'11px 20px',
+                borderRadius:8, fontSize:14, fontWeight:500, whiteSpace:'nowrap' }}>
+              Calculate
+            </button>
+          </div>
+          <div style={{ fontSize:11, color:C.slate, marginTop:8, lineHeight:1.6 }}>
+            Update this at each new moon when your Sabbath day shifts for the month.
+          </div>
+        </div>
+
+        {(sabbath.dates||[]).length > 0 && (
+          <div style={{ background:C.navy, borderRadius:12, padding:'20px', marginBottom:20 }}>
+            <div style={{ fontSize:11, letterSpacing:3, textTransform:'uppercase', color:C.gold,
+              fontWeight:500, marginBottom:16 }}>This Month's Sabbath Days</div>
+            {sabbath.dates.map((d, i) => {
+              const isToday = d === todayStr();
+              const isPast = d < todayStr();
+              return (
+                <div key={d} style={{ display:'flex', alignItems:'center', gap:12,
+                  padding:'10px 14px', borderRadius:8, marginBottom:8,
+                  background: isToday ? C.goldLight : isPast ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)' }}>
+                  <div style={{ fontSize:18 }}>{isToday ? '🌙' : isPast ? '✓' : '○'}</div>
+                  <div>
+                    <div style={{ fontSize:13, fontWeight:500,
+                      color: isToday ? C.gold : isPast ? 'rgba(255,255,255,0.35)' : C.white }}>
+                      Sabbath {i+1} — {fmtDate(d)}
+                    </div>
+                    {isToday && <div style={{ fontSize:11, color:C.gold }}>Today — Rest day</div>}
+                    {!isPast && !isToday && daysUntil(d) <= 3 && (
+                      <div style={{ fontSize:11, color:C.teal }}>
+                        In {daysUntil(d)} day{daysUntil(d)!==1?'s':''} — reflection prompt due {daysUntil(d)===1?'today':'soon'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {nextSab && !todaySab && (
+              <div style={{ marginTop:12, padding:'10px 14px', background:C.tealLight,
+                borderRadius:8, fontSize:12, color:C.teal, fontWeight:500 }}>
+                Next Sabbath in {daysToNext} day{daysToNext!==1?'s':''} — {daysToNext<=2?'reflection prompts generating today in the Loop':'reminder set'}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div style={{ background:C.parch, borderRadius:12, padding:'16px 20px' }}>
+          <div style={{ fontSize:12, fontWeight:500, color:C.slate, marginBottom:8 }}>
+            Calendly reminder
+          </div>
+          <div style={{ fontSize:12, color:C.slate, lineHeight:1.7 }}>
+            Block these four dates in your Calendly availability settings each month so no sessions are booked on your Sabbath day. Go to Calendly → Availability → Date overrides → Add date.
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ── LOOP VIEW ──
+  const LoopView = () => {
+    const todaySab = isTodaySabbath(sabbath.dates || []);
+    const today = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    return (
+      <div style={{ padding:'28px 24px' }}>
+        <MobileHeader title="Today's Loop" />
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between',
+          marginBottom:20, flexWrap:'wrap', gap:12 }}>
+          <div>
+            <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy }}>
+              Today's Loop
+            </div>
+            <div style={{ fontSize:13, color:C.slate, marginTop:2 }}>{today}</div>
+          </div>
+          <button className="cc-btn" onClick={() => setLoopItems(getLoopItems(coachees, sabbath.dates||[], sentIds))}
+            style={{ background:C.light, color:C.slate, padding:'9px 16px', borderRadius:8, fontSize:13 }}>
+            ↻ Refresh
+          </button>
+        </div>
+
+        {todaySab ? (
+          <div style={{ background:C.navy, borderRadius:16, padding:'40px 28px', textAlign:'center' }}>
+            <div style={{ fontSize:40, marginBottom:12 }}>🌙</div>
+            <div className="cc-serif" style={{ fontSize:24, color:C.white, fontWeight:300, marginBottom:8 }}>
+              Sabbath Rest Day
+            </div>
+            <div style={{ fontSize:14, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>
+              The Loop is paused today. No messages will be generated on your Sabbath rest day. Come back tomorrow.
+            </div>
+            <div style={{ marginTop:16, fontFamily:"'Cormorant Garamond',serif", fontStyle:'italic',
+              fontSize:14, color:C.gold }}>
+              "Counsel in the heart of man is like deep water..." — Proverbs 20:5 KJV
+            </div>
+          </div>
+        ) : loopItems.length === 0 ? (
+          <div style={{ background:C.white, borderRadius:16, padding:'40px 28px', textAlign:'center',
+            border:`1.5px dashed #DDE3EA` }}>
+            <div style={{ fontSize:36, marginBottom:12 }}>✓</div>
+            <div className="cc-serif" style={{ fontSize:22, color:C.navy, marginBottom:8 }}>
+              All clear
+            </div>
+            <div style={{ fontSize:14, color:C.slate, lineHeight:1.7 }}>
+              No actions due today. All coachees are on track. The Loop will surface items automatically when action is needed.
+            </div>
+            {!(sabbath.dates||[]).length && (
+              <div style={{ marginTop:16, padding:'12px 16px', background:C.goldLight,
+                borderRadius:8, fontSize:12, color:'#8A6A20' }}>
+                Set your Sabbath dates in the 🌙 Sabbath Tracker to activate pre-Sabbath reflection prompts.
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+            <div style={{ fontSize:12, color:C.slate }}>
+              {loopItems.length} action{loopItems.length!==1?'s':''} due today — highest priority first
+            </div>
+            {loopItems.map(item => (
+              <div key={item.uid} className="cc-fade-in"
+                style={{ background:C.white, borderRadius:14, overflow:'hidden',
+                  border:`1.5px solid #DDE3EA`, boxShadow:'0 2px 8px rgba(28,43,58,0.06)' }}>
+
+                {/* Header */}
+                <div style={{ background:item.colour, padding:'12px 18px',
+                  display:'flex', alignItems:'center', gap:12 }}>
+                  <div style={{ fontSize:20 }}>{item.icon}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, fontWeight:500, color:C.white }}>{item.label}</div>
+                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.75)', marginTop:2 }}>{item.reason}</div>
+                  </div>
+                  <div style={{ width:36, height:36, borderRadius:'50%',
+                    background:'rgba(255,255,255,0.2)',
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:16, color:C.white, fontWeight:500, flexShrink:0 }}>
+                    {item.coachee.name.charAt(0)}
+                  </div>
+                </div>
+
+                {/* Coachee info */}
+                <div style={{ padding:'12px 18px', borderBottom:'1px solid #F0F0F0',
+                  display:'flex', alignItems:'center', gap:10 }}>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:500, color:C.navy }}>{item.coachee.name}</div>
+                    <div style={{ fontSize:12, color:C.slate, marginTop:2 }}>
+                      Week {item.coachee.weekNumber} · {item.coachee.goal.substring(0,60)}{item.coachee.goal.length>60?'...':''}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Generated message */}
+                {loopGenerated[item.uid] && (
+                  <div style={{ padding:'14px 18px', borderBottom:'1px solid #F0F0F0' }}>
+                    <div style={{ fontSize:11, color:C.teal, fontWeight:500, letterSpacing:2,
+                      textTransform:'uppercase', marginBottom:8 }}>Generated Message</div>
+                    <div style={{ fontSize:14, color:C.navy, lineHeight:1.8,
+                      background:C.parch, borderRadius:8, padding:'12px 14px',
+                      borderLeft:`3px solid ${item.colour}` }}>
+                      {loopGenerated[item.uid]}
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div style={{ padding:'12px 18px', display:'flex', gap:8, flexWrap:'wrap' }}>
+                  {!loopGenerated[item.uid] ? (
+                    <button className="cc-btn" onClick={() => generateLoopMsg(item)}
+                      disabled={loopGenerating[item.uid]}
+                      style={{ background: loopGenerating[item.uid] ? C.slate : item.colour,
+                        color:C.white, padding:'9px 16px', borderRadius:7, fontSize:13, fontWeight:500,
+                        display:'flex', alignItems:'center', gap:8 }}>
+                      {loopGenerating[item.uid]
+                        ? <><div className="cc-spinner" /> Generating...</>
+                        : `${item.icon} Generate Message`}
+                    </button>
+                  ) : (
+                    <>
+                      <button className="cc-btn"
+                        onClick={() => copyLoopMsg(item, loopGenerated[item.uid])}
+                        style={{ background: loopCopied[item.uid] ? C.teal : C.navy,
+                          color:C.white, padding:'9px 16px', borderRadius:7, fontSize:13, fontWeight:500 }}>
+                        {loopCopied[item.uid] ? '✓ Copied' : '📋 Copy for WhatsApp'}
+                      </button>
+                      <button className="cc-btn" onClick={() => generateLoopMsg(item)}
+                        style={{ background:C.light, color:C.slate, padding:'9px 14px', borderRadius:7, fontSize:12 }}>
+                        ↻ Regenerate
+                      </button>
+                    </>
+                  )}
+                  <button className="cc-btn" onClick={() => markLoopSent(item)}
+                    style={{ background:'transparent', color:C.teal, padding:'9px 14px',
+                      borderRadius:7, fontSize:12, border:`1px solid ${C.teal}`,
+                      marginLeft:'auto' }}>
+                    ✓ Mark Sent
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // ── ROOT RENDER ──
+  if (loading) return (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center',
+      height:'100vh', background:C.light, fontFamily:"'DM Sans',sans-serif", color:C.slate }}>
+      <div style={{ textAlign:'center' }}>
+        <div className="cc-spinner" style={{ borderTopColor:C.teal, borderColor:'rgba(46,139,114,0.2)', width:28, height:28, margin:'0 auto 12px' }} />
+        <div style={{ fontSize:14 }}>Loading Command Centre...</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="cc-layout" style={{ fontFamily:"'DM Sans', system-ui, sans-serif", background:C.light }}>
+      <Sidebar />
+      <main className="cc-main" style={{ padding:0 }}>
+        {view === 'dashboard' && <DashboardView />}
+        {view === 'add'       && <AddView />}
+        {view === 'detail'    && <DetailView />}
+        {view === 'generate'  && <GenerateView />}
+        {view === 'loop'      && <LoopView />}
+        {view === 'sabbath'   && <SabbathView />}
+      </main>
+      <BottomNav />
+    </div>
+  );
+}
+
+
+ReactDOM.createRoot(document.getElementById("root")).render(<CommandCentre />);
+
+</script>
+
+</body>
+</html>
