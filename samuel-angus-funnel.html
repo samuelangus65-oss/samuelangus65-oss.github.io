@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samuel Angus Coaching — The Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1C2B3A; --teal:#2E8B72; --gold:#C9A84C; --parch:#F5F0E8;
+  --slate:#2D4155; --light:#EEF3F7; --ink:#1A1A1A;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--parch); color:var(--ink);
+  padding:32px 20px; line-height:1.6;
+}
+.wrap { max-width:780px; margin:0 auto; }
+.head { text-align:center; margin-bottom:36px; }
+.head .name {
+  font-family:'Cormorant Garamond',serif; font-size:32px;
+  font-weight:300; color:var(--navy); letter-spacing:0.5px;
+}
+.head .role { font-size:13px; color:var(--teal); letter-spacing:2px; text-transform:uppercase; margin-top:4px; }
+.head .title {
+  font-family:'Cormorant Garamond',serif; font-size:26px;
+  color:var(--navy); margin-top:20px; font-weight:500;
+}
+.head .sub { font-size:14px; color:var(--slate); margin-top:8px; font-style:italic; }
+.intro {
+  background:#fff; border-radius:14px; padding:22px 26px; margin-bottom:28px;
+  border-left:4px solid var(--gold); font-size:14px; color:var(--slate); line-height:1.8;
+}
+.stage {
+  background:#fff; border-radius:14px; margin-bottom:16px; overflow:hidden;
+  box-shadow:0 2px 10px rgba(28,43,58,0.06); position:relative;
+}
+.stage-head {
+  display:flex; align-items:center; gap:16px;
+  padding:18px 24px; color:#fff;
+}
+.stage-num {
+  width:42px; height:42px; border-radius:50%; flex-shrink:0;
+  background:rgba(255,255,255,0.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:500;
+}
+.stage-titles { flex:1; }
+.stage-name { font-size:17px; font-weight:500; }
+.stage-tag { font-size:12px; opacity:0.85; margin-top:2px; }
+.stage-body { padding:18px 24px; }
+.stage-principle {
+  font-style:italic; color:var(--slate); font-size:13px;
+  margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid #eee;
+}
+.asset {
+  display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;
+  font-size:13.5px; color:var(--ink);
+}
+.asset:last-child { margin-bottom:0; }
+.asset-dot { color:var(--teal); font-weight:700; flex-shrink:0; margin-top:1px; }
+.asset strong { color:var(--navy); font-weight:500; }
+.connector {
+  text-align:center; color:var(--gold); font-size:20px;
+  margin:4px 0; line-height:1;
+}
+.s1 .stage-head { background:linear-gradient(135deg,#2E8B72,#1f6e59); }
+.s2 .stage-head { background:linear-gradient(135deg,#1C2B3A,#2D4155); }
+.s3 .stage-head { background:linear-gradient(135deg,#C9A84C,#a8893a); }
+.s4 .stage-head { background:linear-gradient(135deg,#2E8B72,#256b56); }
+.s5 .stage-head { background:linear-gradient(135deg,#1C2B3A,#0f1a24); }
+.principles {
+  background:var(--navy); color:#fff; border-radius:14px;
+  padding:26px 28px; margin-top:28px;
+}
+.principles h3 {
+  font-family:'Cormorant Garamond',serif; font-weight:500;
+  font-size:21px; color:var(--gold); margin-bottom:16px;
+}
+.principles .pr { display:flex; gap:12px; margin-bottom:12px; font-size:13.5px; color:rgba(255,255,255,0.85); }
+.principles .pr:last-child { margin-bottom:0; }
+.principles .pr span:first-child { color:var(--teal); flex-shrink:0; }
+.verse {
+  text-align:center; margin-top:28px; padding-top:24px;
+  border-top:1px solid rgba(201,168,76,0.4);
+  font-family:'Cormorant Garamond',serif; font-style:italic;
+  color:var(--slate); font-size:15px;
+}
+.verse .ref { display:block; color:var(--gold); font-size:13px; margin-top:6px; font-style:normal; }
+.note {
+  background:var(--light); border-radius:12px; padding:16px 20px;
+  margin-top:24px; font-size:13px; color:var(--slate); line-height:1.7;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="name">Samuel Angus</div>
+    <div class="role">Personal &amp; Professional Development Coach</div>
+    <div class="title">The Journey</div>
+    <div class="sub">How someone moves from first hearing of you to lasting partnership</div>
+  </div>
+
+  <div class="intro">
+    This is your funnel — but built on your own principles, not borrowed from anyone. <strong style="color:var(--navy);">Give first. Build trust. Love people well. Let them move at their own pace.</strong> Every stage below already exists in what you have built. Nothing here needs buying. It simply makes the system you already have visible, so it keeps working while you focus on the people in front of you.
+  </div>
+
+  <!-- STAGE 1 -->
+  <div class="stage s1">
+    <div class="stage-head">
+      <div class="stage-num">1</div>
+      <div class="stage-titles">
+        <div class="stage-name">Discover</div>
+        <div class="stage-tag">Someone first hears of you</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-principle">Give first — be found where people are already looking, and lead with their problem, not your title.</div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Your website</strong> — samuelanguscoach.co.uk, nationally positioned, clear on who you help</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Google Business Profile</strong> — passive discovery when people search</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>LinkedIn presence</strong> — your story and weekly insight posts</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Personal network &amp; referrals</strong> — warm introductions from people who know you</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Faith &amp; community networks</strong> — referrals from trusted leaders</span></div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <!-- STAGE 2 -->
+  <div class="stage s2">
+    <div class="stage-head">
+      <div class="stage-num">2</div>
+      <div class="stage-titles">
+        <div class="stage-name">Trust</div>
+        <div class="stage-tag">They decide you are worth a conversation</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-principle">Build trust — let your story, your values, and your clarity do the work. No pressure, no pitch.</div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Your story</strong> — a working lifetime of understanding people, across many worlds</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Clear positioning</strong> — what coaching is, and what it is not</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Scripture anchor &amp; tagline</strong> — Proverbs 20:5, "See clearly. Know yourself. Move forward."</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Accessible pricing</strong> — visible, fair, with a concession pathway</span></div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <!-- STAGE 3 -->
+  <div class="stage s3">
+    <div class="stage-head">
+      <div class="stage-num">3</div>
+      <div class="stage-titles">
+        <div class="stage-name">Begin</div>
+        <div class="stage-tag">The first low-barrier step</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-principle">Let them move at their own pace — a small, easy first step that proves the value before any commitment.</div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>£19 Discovery Session</strong> — 30 minutes, no pressure, a real conversation</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Calendly booking</strong> — simple, automated, with confirmation from info@</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Zoom session</strong> — unique link generated automatically per booking</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Concession screening</strong> — eligibility checked gently at this stage</span></div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <!-- STAGE 4 -->
+  <div class="stage s4">
+    <div class="stage-head">
+      <div class="stage-num">4</div>
+      <div class="stage-titles">
+        <div class="stage-name">Grow</div>
+        <div class="stage-tag">They commit to the work</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-principle">Love people well — consistent, structured support that helps them move toward what they want.</div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Weekly coaching</strong> — £45 standard or £25 concession, 30 min plus messaging</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>The Command Centre</strong> — your behind-the-scenes engine for every coachee</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Today's Loop</strong> — the right message to the right person at the right moment</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Support Mode</strong> — root cause, relationship to help, stress, and pattern layers</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Sabbath rhythm</strong> — sustainable practice that honours rest</span></div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <!-- STAGE 5 -->
+  <div class="stage s5">
+    <div class="stage-head">
+      <div class="stage-num">5</div>
+      <div class="stage-titles">
+        <div class="stage-name">Partner</div>
+        <div class="stage-tag">They become an advocate</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-principle">Transformation invites others — a client who has moved forward naturally brings the next person.</div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Referral system</strong> — every satisfied client asked for three introductions</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Referral reward</strong> — a free session for any introduction that becomes a client</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Outcome stories</strong> — shared with consent, real transformation not hype</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Community building</strong> — a free space where engaged members become clients in time</span></div>
+      <div class="asset"><span class="asset-dot">▪</span><span><strong>Strategic partnerships</strong> — organisations who send people your way, and you theirs</span></div>
+    </div>
+  </div>
+
+  <!-- PRINCIPLES -->
+  <div class="principles">
+    <h3>The principles holding it together</h3>
+    <div class="pr"><span>▪</span><span><strong style="color:#fff;">Relationships before reach</strong> — warm introductions convert faster than any advertising.</span></div>
+    <div class="pr"><span>▪</span><span><strong style="color:#fff;">Lead with the problem</strong> — people search for a way out of feeling stuck, not for a coach.</span></div>
+    <div class="pr"><span>▪</span><span><strong style="color:#fff;">Value before the ask</strong> — give generously; the invitation comes only after trust.</span></div>
+    <div class="pr"><span>▪</span><span><strong style="color:#fff;">Consistency over intensity</strong> — a few stages worked steadily beat many done in bursts.</span></div>
+    <div class="pr"><span>▪</span><span><strong style="color:#fff;">Honour rest</strong> — the Sabbath is protected; the system pauses so you do not have to.</span></div>
+  </div>
+
+  <div class="verse">
+    "Counsel in the heart of man is like deep water; but a man of understanding will draw it out."
+    <span class="ref">Proverbs 20:5 KJV</span>
+  </div>
+
+  <div class="note">
+    <strong style="color:var(--navy);">Why this matters:</strong> the funnel being sold to you online is this same five-stage journey, wrapped in a paid system. You already own every part of it. This page simply makes it visible — so the principles you live by keep working quietly in the background while you give your full attention to the people you are serving.
+  </div>
+
+</div>
+</body>
+</html>

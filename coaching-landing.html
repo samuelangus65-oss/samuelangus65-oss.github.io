@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samuel Angus — Personal & Professional Development Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:  #1C2B3A;
+  --teal:  #2E8B72;
+  --gold:  #C9A84C;
+  --parch: #F5F0E8;
+  --slate: #2D4155;
+  --white: #FFFFFF;
+  --light: #EEF3F7;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  color:var(--navy);
+  background:var(--white);
+  line-height:1.7;
+  overflow-x:hidden;
+}
+.container        { max-width:1080px; margin:0 auto; padding:0 20px; }
+.container-narrow { max-width:760px;  margin:0 auto; padding:0 20px; }
+
+/* ── NAV ── */
+nav {
+  background:var(--navy);
+  padding:16px 0;
+  position:sticky; top:0; z-index:100;
+}
+nav .inner {
+  max-width:1080px; margin:0 auto; padding:0 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.nav-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px; font-weight:400;
+  color:var(--white); letter-spacing:0.5px; flex-shrink:1;
+}
+.nav-name span { color:var(--gold); }
+.nav-cta {
+  background:var(--teal); color:var(--white);
+  padding:10px 18px; border-radius:6px;
+  font-size:13px; font-weight:500;
+  text-decoration:none; white-space:nowrap; flex-shrink:0;
+}
+
+/* ── HERO ── */
+.hero {
+  background:var(--navy);
+  padding:72px 0 64px;
+  text-align:center;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute;
+  top:-120px; left:50%; transform:translateX(-50%);
+  width:600px; height:600px; border-radius:50%;
+  border:1px solid rgba(201,168,76,0.12); pointer-events:none;
+}
+.hero-eyebrow {
+  display:inline-block;
+  font-size:10px; letter-spacing:4px;
+  text-transform:uppercase; color:var(--teal);
+  font-weight:500; margin-bottom:24px;
+}
+.hero h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300; font-size:clamp(38px,7vw,76px);
+  line-height:1.1; color:var(--white); margin-bottom:16px;
+}
+.hero h1 em { font-style:italic; color:var(--gold); }
+.hero-sub {
+  font-size:16px; color:rgba(255,255,255,0.65);
+  max-width:520px; margin:0 auto 40px;
+  line-height:1.8; font-weight:300;
+}
+.hero-actions {
+  display:flex; gap:12px;
+  justify-content:center; flex-wrap:wrap;
+}
+.btn-primary {
+  background:var(--teal); color:var(--white);
+  padding:14px 28px; border-radius:8px;
+  font-size:15px; font-weight:500;
+  text-decoration:none; display:inline-block;
+  transition:background 0.2s;
+}
+.btn-primary:hover { background:#268c6e; }
+.btn-ghost {
+  border:1.5px solid rgba(255,255,255,0.3);
+  color:rgba(255,255,255,0.8);
+  padding:13px 28px; border-radius:8px;
+  font-size:15px; font-weight:400;
+  text-decoration:none; display:inline-block;
+  transition:all 0.2s;
+}
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+.hero-verse {
+  margin-top:48px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:14px;
+  color:rgba(255,255,255,0.3); padding:0 16px;
+}
+
+/* ── TRUST BAR ── */
+.trust-bar {
+  background:var(--parch);
+  padding:20px 0;
+  border-bottom:1px solid rgba(28,43,58,0.08);
+}
+.trust-bar .inner {
+  max-width:1080px; margin:0 auto; padding:0 20px;
+  display:flex; gap:16px 32px;
+  align-items:center; justify-content:center; flex-wrap:wrap;
+}
+.trust-item {
+  display:flex; align-items:center; gap:8px;
+  font-size:12px; color:var(--slate); font-weight:400;
+}
+.trust-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--teal); flex-shrink:0;
+}
+
+/* ── PROBLEM ── */
+.problem { padding:72px 0; background:var(--white); }
+.section-label {
+  font-size:10px; letter-spacing:4px;
+  text-transform:uppercase; color:var(--teal);
+  font-weight:500; display:block; margin-bottom:16px;
+}
+.problem h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,5vw,52px);
+  font-weight:300; line-height:1.15; color:var(--navy); margin-bottom:20px;
+}
+.problem-lead {
+  font-size:17px; color:var(--slate);
+  line-height:1.8; margin-bottom:40px; max-width:580px;
+}
+.problem-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:14px; margin-top:32px;
+}
+.problem-card {
+  background:var(--light);
+  border-left:3px solid var(--teal);
+  padding:18px 20px; border-radius:0 8px 8px 0;
+}
+.problem-card p { font-size:14px; color:var(--navy); font-weight:400; line-height:1.55; }
+
+/* ── HOW IT WORKS ── */
+.how { background:var(--navy); padding:72px 0; }
+.how .section-label { color:var(--gold); }
+.how h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,5vw,52px);
+  font-weight:300; line-height:1.15; color:var(--white); margin-bottom:12px;
+}
+.how-sub {
+  font-size:15px; color:rgba(255,255,255,0.6);
+  max-width:500px; margin-bottom:48px; line-height:1.75;
+}
+.how-steps {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:24px;
+}
+.step {
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px; padding:32px 28px;
+}
+.step-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:44px; font-weight:300;
+  color:rgba(201,168,76,0.25); line-height:1; margin-bottom:14px;
+}
+.step h3 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px; font-weight:400; color:var(--white); margin-bottom:8px;
+}
+.step p { font-size:14px; color:rgba(255,255,255,0.55); line-height:1.75; }
+.step-price {
+  display:inline-block; margin-top:18px;
+  background:rgba(46,139,114,0.2); color:var(--teal);
+  padding:5px 12px; border-radius:20px;
+  font-size:12px; font-weight:500;
+}
+
+/* ── ABOUT ── */
+.about { padding:72px 0; background:var(--parch); }
+.about-inner {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:64px; align-items:center;
+}
+.about .section-label { color:var(--teal); }
+.about h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,4vw,46px);
+  font-weight:300; line-height:1.2; color:var(--navy); margin-bottom:20px;
+}
+.about-body { font-size:15px; color:var(--slate); line-height:1.85; margin-bottom:16px; }
+.credentials { margin-top:28px; display:flex; flex-direction:column; gap:12px; }
+.credential { display:flex; gap:12px; align-items:flex-start; }
+.credential-dot {
+  width:20px; height:20px; background:var(--teal);
+  border-radius:50%; flex-shrink:0; margin-top:2px;
+  display:flex; align-items:center; justify-content:center;
+}
+.credential-dot svg { width:10px; height:10px; }
+.credential p { font-size:13px; color:var(--navy); font-weight:400; line-height:1.55; }
+.about-panel { background:var(--navy); border-radius:16px; padding:44px 36px; }
+.about-panel blockquote {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:24px;
+  font-weight:300; color:var(--white); line-height:1.5; margin-bottom:24px;
+}
+.about-panel blockquote span { color:var(--gold); }
+.about-verse { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:1px; text-transform:uppercase; }
+
+/* ══════════════════════════════════════
+   PRICING — THREE TIERS
+══════════════════════════════════════ */
+.pricing { padding:72px 0; background:var(--white); text-align:center; }
+.pricing .section-label { color:var(--teal); }
+.pricing h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,5vw,52px);
+  font-weight:300; line-height:1.15; color:var(--navy); margin-bottom:14px;
+}
+.pricing-sub {
+  font-size:15px; color:var(--slate);
+  max-width:500px; margin:0 auto 52px; line-height:1.75;
+}
+.pricing-cards {
+  display:flex; gap:20px;
+  justify-content:center; flex-wrap:wrap; align-items:flex-start;
+}
+
+/* card base */
+.price-card {
+  background:var(--light); border-radius:16px;
+  padding:36px 28px; width:280px; text-align:left;
+  border:1.5px solid transparent; transition:border-color 0.2s;
+  display:flex; flex-direction:column;
+}
+.price-card:hover { border-color:var(--teal); }
+
+/* featured (middle) card */
+.price-card.featured {
+  background:var(--navy); border-color:var(--gold);
+  position:relative; transform:translateY(-8px);
+}
+@media (max-width:640px) {
+  .price-card.featured { transform:none; }
+}
+
+/* concession (right) card */
+.price-card.concession {
+  background:var(--parch); border-color:rgba(201,168,76,0.3);
+}
+
+.featured-badge {
+  position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+  background:var(--gold); color:var(--navy);
+  font-size:10px; font-weight:500;
+  padding:4px 14px; border-radius:20px;
+  letter-spacing:1px; text-transform:uppercase; white-space:nowrap;
+}
+.concession-badge {
+  display:inline-block; margin-bottom:12px;
+  background:rgba(201,168,76,0.15); color:#9A7A30;
+  font-size:10px; font-weight:500;
+  padding:4px 12px; border-radius:20px;
+  letter-spacing:1px; text-transform:uppercase;
+}
+
+.price-card h3 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px; font-weight:400; color:var(--navy); margin-bottom:6px;
+}
+.price-card.featured h3 { color:var(--white); }
+.price-card.concession h3 { color:var(--navy); }
+
+.price-amount {
+  font-family:'Cormorant Garamond',serif;
+  font-size:48px; font-weight:300;
+  color:var(--navy); line-height:1; margin:14px 0 4px;
+}
+.price-card.featured .price-amount { color:var(--gold); }
+
+.price-was {
+  font-size:12px; color:#7A9BB5;
+  margin-bottom:2px; text-decoration:line-through;
+}
+.price-saving {
+  display:inline-block;
+  background:rgba(46,139,114,0.12); color:var(--teal);
+  font-size:11px; font-weight:500;
+  padding:2px 10px; border-radius:20px; margin-bottom:4px;
+}
+
+.price-period { font-size:12px; color:#7A9BB5; margin-bottom:20px; }
+.price-card.featured .price-period { color:rgba(255,255,255,0.45); }
+.price-card.concession .price-period { color:#8A9BB0; }
+
+.price-divider { height:1px; background:rgba(28,43,58,0.1); margin:20px 0; }
+.price-card.featured .price-divider { background:rgba(255,255,255,0.1); }
+.price-card.concession .price-divider { background:rgba(28,43,58,0.08); }
+
+.price-features {
+  list-style:none; display:flex; flex-direction:column;
+  gap:10px; margin-bottom:28px; flex:1;
+}
+.price-features li {
+  font-size:13px; color:var(--slate);
+  display:flex; gap:8px; align-items:flex-start; line-height:1.5;
+}
+.price-card.featured .price-features li { color:rgba(255,255,255,0.7); }
+.price-features li::before { content:'✓'; color:var(--teal); font-weight:500; flex-shrink:0; }
+.price-card.featured .price-features li::before { color:var(--gold); }
+
+.price-btn {
+  display:block; width:100%; padding:13px;
+  border-radius:8px; font-size:14px; font-weight:500;
+  text-align:center; text-decoration:none;
+  background:var(--teal); color:var(--white); transition:all 0.2s;
+}
+.price-btn:hover { background:#268c6e; }
+.price-card.featured .price-btn { background:var(--gold); color:var(--navy); }
+.price-card.featured .price-btn:hover { background:#d4b35a; }
+.price-card.concession .price-btn {
+  background:transparent;
+  border:1.5px solid var(--teal);
+  color:var(--teal);
+}
+.price-card.concession .price-btn:hover { background:var(--teal); color:var(--white); }
+
+.price-note { margin-top:32px; font-size:12px; color:#7A9BB5; line-height:1.7; }
+
+/* concession eligibility note */
+.concession-note {
+  margin-top:40px;
+  background:var(--parch);
+  border-radius:12px;
+  padding:24px 28px;
+  text-align:left;
+  max-width:840px;
+  margin-left:auto; margin-right:auto;
+}
+.concession-note h4 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px; font-weight:400; color:var(--navy);
+  margin-bottom:8px;
+}
+.concession-note p { font-size:13px; color:var(--slate); line-height:1.75; }
+.concession-note strong { color:var(--navy); font-weight:500; }
+
+/* ── COMPARISON ── */
+.compare { background:var(--light); padding:72px 0; }
+.compare h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,4vw,40px);
+  font-weight:300; color:var(--navy);
+  text-align:center; margin-bottom:8px;
+}
+.compare-hint {
+  text-align:center; font-size:12px;
+  color:var(--teal); margin-bottom:28px; display:none;
+}
+.compare-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
+.compare-table { width:100%; border-collapse:collapse; font-size:13px; min-width:480px; }
+.compare-table th {
+  padding:14px 16px; text-align:center;
+  font-weight:500; font-size:12px; letter-spacing:0.5px;
+  background:var(--light);
+}
+.compare-table th:first-child { text-align:left; }
+.compare-table th.highlight { background:var(--navy); color:var(--gold); }
+.compare-table td {
+  padding:13px 16px; text-align:center;
+  border-bottom:1px solid rgba(28,43,58,0.07); color:var(--slate);
+}
+.compare-table td:first-child { text-align:left; font-weight:400; color:var(--navy); }
+.compare-table td.highlight { background:rgba(28,43,58,0.04); color:var(--navy); font-weight:500; }
+.check { color:var(--teal); font-size:15px; }
+.cross { color:#C4C4C4; font-size:15px; }
+
+/* ── FINAL CTA ── */
+.cta-section { background:var(--navy); padding:80px 0; text-align:center; }
+.cta-section h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,6vw,60px);
+  font-weight:300; color:var(--white); line-height:1.15; margin-bottom:18px;
+}
+.cta-section h2 em { font-style:italic; color:var(--gold); }
+.cta-sub {
+  font-size:15px; color:rgba(255,255,255,0.55);
+  max-width:460px; margin:0 auto 40px; line-height:1.75;
+}
+.cta-verse {
+  margin-top:48px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:13px;
+  color:rgba(255,255,255,0.3); padding:0 16px;
+}
+
+/* ── FOOTER ── */
+footer { background:#111D27; padding:24px 0; }
+footer .inner {
+  max-width:1080px; margin:0 auto; padding:0 20px;
+  display:flex; justify-content:space-between;
+  align-items:center; flex-wrap:wrap; gap:12px;
+}
+footer p { font-size:11px; color:rgba(255,255,255,0.3); }
+.footer-links { display:flex; gap:20px; flex-wrap:wrap; }
+footer a { font-size:11px; color:rgba(255,255,255,0.3); text-decoration:none; }
+footer a:hover { color:var(--gold); }
+
+/* ══════════════════════════════════════
+   MOBILE
+══════════════════════════════════════ */
+@media (max-width:640px) {
+  .nav-name { font-size:15px; }
+  .nav-cta  { font-size:12px; padding:9px 14px; }
+  .hero { padding:56px 0 48px; }
+  .hero-sub { font-size:15px; }
+  .btn-primary, .btn-ghost { width:100%; text-align:center; padding:14px 20px; font-size:14px; }
+  .hero-actions { flex-direction:column; align-items:center; }
+  .hero-verse { font-size:13px; }
+  .trust-bar .inner { gap:12px 20px; justify-content:flex-start; }
+  .trust-item { font-size:11px; }
+  .problem { padding:56px 0; }
+  .problem-grid { grid-template-columns:1fr; }
+  .how { padding:56px 0; }
+  .how-steps { grid-template-columns:1fr; }
+  .about { padding:56px 0; }
+  .about-inner { grid-template-columns:1fr; gap:0; }
+  .about-panel { display:none; }
+  .pricing { padding:56px 0; }
+  .price-card { width:100%; max-width:340px; }
+  .compare { padding:56px 0; }
+  .compare-hint { display:block; }
+  .cta-section { padding:64px 0; }
+  .cta-section .btn-primary { width:100%; max-width:320px; font-size:14px; padding:14px 20px; }
+  footer .inner { flex-direction:column; align-items:flex-start; gap:8px; }
+  .footer-links { flex-direction:column; gap:6px; }
+  .concession-note { padding:20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <span class="nav-name">Samuel Angus <span>·</span> Coach</span>
+    <a href="https://calendly.com/samuel-angus65/30min" class="nav-cta">Book a Session</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <span class="hero-eyebrow">Personal &amp; Professional Development Coach</span>
+    <h1>You already know<br><em>what needs to change.</em></h1>
+    <p class="hero-sub">The work is drawing it out. Weekly coaching sessions that give you structure, clarity, and someone in your corner who has seen what people are truly capable of.</p>
+    <div class="hero-actions">
+      <a href="https://calendly.com/samuel-angus65/30min" class="btn-primary">Start with a Discovery Session — £19</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+    <p class="hero-verse">"Counsel in the heart of man is like deep water; but a man of understanding will draw it out." — Proverbs 20:5 KJV</p>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="inner">
+    <div class="trust-item"><div class="trust-dot"></div>ILM Level 5 Qualified Coach</div>
+    <div class="trust-item"><div class="trust-dot"></div>20+ Years NHS Experience</div>
+    <div class="trust-item"><div class="trust-dot"></div>Systemic &amp; Relational Practice</div>
+    <div class="trust-item"><div class="trust-dot"></div>UK-Wide &amp; International — Online via Zoom</div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <span class="section-label">The Challenge</span>
+    <h2>Knowing what to do<br>and actually doing it<br>are two different things.</h2>
+    <p class="problem-lead">Most people do not lack ability or intelligence. They lack a clear structure and someone to think alongside. That is where coaching changes everything.</p>
+    <div class="problem-grid">
+      <div class="problem-card"><p>You feel stuck despite being capable and experienced</p></div>
+      <div class="problem-card"><p>You are carrying decisions alone that deserve a proper conversation</p></div>
+      <div class="problem-card"><p>You know your next step but cannot seem to take it</p></div>
+      <div class="problem-card"><p>You want to grow professionally but are not sure where to start</p></div>
+      <div class="problem-card"><p>You are navigating a transition — career, health, identity, purpose</p></div>
+      <div class="problem-card"><p>You have been told what to do your whole life and want to find your own voice</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <span class="section-label">The Process</span>
+    <h2>Simple by design.<br>Consistent by commitment.</h2>
+    <p class="how-sub">Three steps that build a genuine weekly rhythm — not a one-off conversation but an ongoing structure that keeps you moving forward.</p>
+    <div class="how-steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Begin</h3>
+        <p>A 30-minute discovery session to understand where you are, where you want to be, and whether we are a good fit. No pressure. No commitment beyond that first conversation.</p>
+        <span class="step-price">£19 — one session</span>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Focus</h3>
+        <p>One goal. Not ten. We identify the thing that, once shifted, changes everything else. This is where two decades of people-centred NHS experience, and the systemic principles I trained in, earn their place.</p>
+        <span class="step-price">Weekly · 30 minutes</span>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Move</h3>
+        <p>Weekly live sessions plus ongoing message support between sessions. You are not left to figure things out alone between calls. The rhythm holds you accountable.</p>
+        <span class="step-price">£45/week · cancel anytime</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about">
+  <div class="container">
+    <div class="about-inner">
+      <div>
+        <span class="section-label">About Samuel</span>
+        <h2>Experience that goes beyond the qualification.</h2>
+        <p class="about-body">My working life has always been about people. Long before coaching, I worked in senior retail sales — learning to read what someone really needs beneath what they first say, to earn trust quickly, and to guide a decision without ever pushing. Those instincts never left me.</p>
+        <p class="about-body">I joined the NHS in the early 2000s and spent over two decades there, holding various roles across my Trust — but the work was always about people. Much of it was alongside carers in mental health services, making sure their voices and concerns were heard while they supported their loved ones through difficult times. I also worked in equality and diversity, and served as a Cultural Inclusion Ambassador. In time I found systemic family therapy, working within the service on secondment and later full time. That training shaped how I understand people — not in isolation, but within the relationships, families, and systems that surround them. I have drawn on those systemic principles and techniques in my practice ever since. Today I also run a commercial business, where looking after people well is the work itself.</p>
+        <p class="about-body">Alongside this, I have served on management committees for third sector organisations — work that gave me a real understanding of governance, accountability, and the particular pressures faced by mission-driven organisations running on limited resources. I know the world charity and community leaders live in, because I have sat at that table.</p>
+        <p class="about-body">So the thread running through everything I have done is the same one that sits at the heart of coaching — understanding people, earning their trust, and helping them move toward what they need. My ILM Level 5 formalised a craft I have been refining my whole adult life.</p>
+        <p class="about-body">Coaching, for me, is not a technique. It is a practice of drawing out what is already within a person — the counsel, the clarity, the capacity — and helping them trust it.</p>
+        <div class="credentials">
+          <div class="credential">
+            <div class="credential-dot"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <p>ILM Level 5 Leadership &amp; Management Coaching</p>
+          </div>
+          <div class="credential">
+            <div class="credential-dot"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <p>Over two decades in the NHS — various people-centred roles, including carer support, equality &amp; diversity, and systemic family therapy</p>
+          </div>
+          <div class="credential">
+            <div class="credential-dot"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <p>Cultural Inclusion Ambassador — Diversity &amp; Equality Practice</p>
+          </div>
+          <div class="credential">
+            <div class="credential-dot"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <p>Available online to clients across the UK and internationally via Zoom</p>
+          </div>
+        </div>
+      </div>
+      <div class="about-panel">
+        <blockquote>"Counsel in the heart of man is like deep water; but a man of understanding will <span>draw it out.</span>"</blockquote>
+        <p class="about-verse">Proverbs 20:5 KJV</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <span class="section-label">Investment</span>
+    <h2>The right level of support<br>at the right price.</h2>
+    <p class="pricing-sub">Accessible pricing for clients across the UK and internationally — with a verified concession rate for students, NHS staff, and those referred through recognised Abrahamic faith communities.</p>
+
+    <div class="pricing-cards">
+
+      <!-- DISCOVERY -->
+      <div class="price-card">
+        <h3>Discovery Session</h3>
+        <div class="price-amount">£19</div>
+        <p class="price-period">one session · 30 minutes</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>30-minute video session via Zoom</li>
+          <li>Understand your situation and goals</li>
+          <li>No obligation to continue</li>
+          <li>Full focus on you from the first minute</li>
+        </ul>
+        <a href="https://calendly.com/samuel-angus65/30min" class="price-btn">Book Now</a>
+      </div>
+
+      <!-- WEEKLY — FEATURED -->
+      <div class="price-card featured">
+        <div class="featured-badge">Most Popular</div>
+        <h3>Weekly Coaching</h3>
+        <div class="price-amount">£45</div>
+        <p class="price-period">per week · billed fortnightly</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Weekly 30-minute live session</li>
+          <li>Ongoing message support between sessions</li>
+          <li>One clear goal — properly worked through</li>
+          <li>Weekly reflection and progress check-ins</li>
+          <li>Cancel at any time — no lock-in</li>
+        </ul>
+        <a href="https://calendly.com/samuel-angus65/30min" class="price-btn">Get Started</a>
+      </div>
+
+      <!-- CONCESSION -->
+      <div class="price-card concession">
+        <span class="concession-badge">Concession Rate</span>
+        <h3>Weekly Coaching</h3>
+        <p class="price-was">£45/week</p>
+        <div class="price-amount">£25</div>
+        <p class="price-period">per week · billed fortnightly</p>
+        <span class="price-saving">Save £20/week</span>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Everything in the standard weekly rate</li>
+          <li>Available to eligible students, NHS staff &amp; Abrahamic faith community referrals</li>
+          <li>Verification required at or before the first session</li>
+          <li>Cancel at any time — no lock-in</li>
+        </ul>
+        <a href="https://calendly.com/samuel-angus65/30min" class="price-btn">Apply for Concession Rate</a>
+      </div>
+
+    </div>
+
+    <!-- ELIGIBILITY NOTE -->
+    <div class="concession-note">
+      <h4>Who qualifies for the concession rate?</h4>
+      <p>
+        <strong>Students</strong> — Full-time students at a UK higher education institution. Bring a valid student ID to your first session, or provide a named referral from a university pastoral team, student union, or academic tutor when booking.
+      </p>
+      <br>
+      <p>
+        <strong>NHS Staff</strong> — Current NHS employees or those who have left the NHS within the past 24 months. Verified by NHS email address used at booking, or NHS staff ID or recent payslip shown at the first session.
+      </p>
+      <br>
+      <p>
+        <strong>Faith Community Referrals</strong> — Individuals referred by a named leader within a recognised Abrahamic faith congregation — including Hebrew Roots and Israelite communities, Christian churches, and Muslim mosques. The referral must come directly from a pastor, elder, imam, rabbi, or equivalent community leader. Self-referral under this category is not accepted.
+      </p>
+      <br>
+      <p>Samuel Angus Personal & Professional Development Coach reserves the right to decline or withdraw the concession rate at its sole discretion. If you are unsure whether you qualify, contact us directly before booking.</p>
+    </div>
+
+    <p class="price-note">All sessions delivered online via Zoom — available to clients across the UK and internationally &nbsp;·&nbsp; info@samuelanguscoach.co.uk</p>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="compare">
+  <div class="container-narrow">
+    <h2>Why coaching — and why now.</h2>
+    <p class="compare-hint">Swipe to see full comparison →</p>
+    <div class="compare-scroll">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="highlight">Samuel Angus</th>
+            <th>Traditional Coach</th>
+            <th>AI Tool</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Weekly rhythm built in</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Real human accountability</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Message support between sessions</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>20+ years NHS professional experience</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Accessible concession pricing</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Cancel anytime</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>See clearly.<br><em>Know yourself.</em><br>Move forward.</h2>
+    <p class="cta-sub">Your first session is one step away. Book a 30-minute discovery call and let us begin the conversation.</p>
+    <a href="https://calendly.com/samuel-angus65/30min" class="btn-primary">Book Your Discovery Session — £19</a>
+    <p class="cta-verse">"Counsel in the heart of man is like deep water; but a man of understanding will draw it out." — Proverbs 20:5 KJV</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="inner">
+    <p>© 2026 Samuel Angus Personal &amp; Professional Development Coaching</p>
+    <div class="footer-links">
+      <a href="mailto:info@samuelanguscoach.co.uk">info@samuelanguscoach.co.uk</a>
+      <a href="https://www.samuelanguscoach.co.uk">samuelanguscoach.co.uk</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
