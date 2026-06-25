@@ -823,11 +823,12 @@ function CommandCentre() {
     });
   };
 
-  const generateNextWhy = async () => {
-    if (!selected || !whyPresenting.trim()) return;
+  const generateNextWhy = async (overridePresenting) => {
+    const presenting = overridePresenting !== undefined ? overridePresenting : whyPresenting;
+    if (!selected || !presenting.trim()) return;
     setGeneratingWhy(true);
     try {
-      const prompt = buildWhyPrompt(selected, whyPresenting, whyChain, whyStep);
+      const prompt = buildWhyPrompt(selected, presenting, whyChain, whyStep);
       const q = await callAI(prompt);
       setCurrentWhyQ(q.trim());
       setCurrentWhyA('');
@@ -837,9 +838,10 @@ function CommandCentre() {
     setGeneratingWhy(false);
   };
 
-  const recordWhyAnswer = () => {
-    if (!currentWhyQ || !currentWhyA.trim()) return;
-    const updated = [...whyChain, { question: currentWhyQ, answer: currentWhyA.trim() }];
+  const recordWhyAnswer = (overrideAnswer) => {
+    const answer = overrideAnswer !== undefined ? overrideAnswer : currentWhyA;
+    if (!currentWhyQ || !answer.trim()) return;
+    const updated = [...whyChain, { question: currentWhyQ, answer: answer.trim() }];
     setWhyChain(updated);
     setWhyStep(whyStep + 1);
     setCurrentWhyQ('');
@@ -1311,12 +1313,12 @@ function CommandCentre() {
                     <label className="cc-label" style={{ color: 'rgba(255,255,255,0.6)' }}>
                       What did {selected?.name} present or say?
                     </label>
-                    <textarea className="cc-textarea"
+                    <textarea id="why-presenting-input" className="cc-textarea"
                       placeholder="Describe the presenting problem or what the coachee said — this becomes Why 1..."
                       defaultValue={whyPresenting}
                       onBlur={e => setWhyPresenting(e.target.value)}
                       style={{ minHeight: 70, marginBottom: 10 }} />
-                    <button className="cc-btn" onClick={generateNextWhy} disabled={generatingWhy || !whyPresenting.trim()}
+                    <button className="cc-btn" onClick={() => { const el = document.getElementById('why-presenting-input'); const val = el ? el.value : whyPresenting; setWhyPresenting(val); generateNextWhy(val); }} disabled={generatingWhy}
                       style={{ background: generatingWhy ? C.slate : '#1A6B8A', color: C.white,
                         padding: '9px 18px', borderRadius: 7, fontSize: 16, fontWeight: 500,
                         display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1355,13 +1357,13 @@ function CommandCentre() {
                     <label className="cc-label" style={{ color: 'rgba(255,255,255,0.6)' }}>
                       {selected?.name}'s answer:
                     </label>
-                    <textarea className="cc-textarea"
+                    <textarea id="why-answer-input" className="cc-textarea"
                       placeholder="Record what they said..."
                       defaultValue={currentWhyA}
                       onBlur={e => setCurrentWhyA(e.target.value)}
                       style={{ minHeight: 60, marginBottom: 8 }} />
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <button className="cc-btn" onClick={recordWhyAnswer} disabled={!currentWhyA.trim()}
+                      <button className="cc-btn" onClick={() => { const el = document.getElementById('why-answer-input'); const val = el ? el.value : currentWhyA; setCurrentWhyA(val); recordWhyAnswer(val); }} disabled={false}
                         style={{ background: '#1A6B8A', color: C.white, padding: '8px 16px', borderRadius: 7, fontSize: 15, fontWeight: 500 }}>
                         Record Answer
                       </button>
@@ -1444,8 +1446,8 @@ function CommandCentre() {
                   <div className="cc-fade-in" style={{ marginTop: 12, padding: '12px 14px',
                     background: helpPos.colour + '15', borderRadius: 8,
                     borderLeft: `3px solid ${helpPos.colour}` }}>
-                    <div style={{ fontSize: 15, color: helpPos.colour, fontWeight: 500, marginBottom: 4 }}>{helpPos.tomm}</div>
-                    <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{helpPos.burnham}</div>
+                    <div style={{ fontSize: 15, color: C.white, fontWeight: 500, marginBottom: 4 }}>{helpPos.tomm}</div>
+                    <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>{helpPos.burnham}</div>
                   </div>
                 )}
               </div>
