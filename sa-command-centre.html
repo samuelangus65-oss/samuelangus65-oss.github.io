@@ -23,11 +23,11 @@ body { font-family: "DM Sans", system-ui, sans-serif; }
   font-family: "Cormorant Garamond", serif;
   font-size: 28px; font-weight: 300; color: #1C2B3A; margin-bottom: 8px;
 }
-.setup-card p { font-size: 14px; color: #4B5563; line-height: 1.7; margin-bottom: 20px; }
-.setup-card label { font-size: 12px; font-weight: 500; color: #2D4155; display: block; margin-bottom: 6px; }
+.setup-card p { font-size: 16px; color: #4B5563; line-height: 1.7; margin-bottom: 20px; }
+.setup-card label { font-size: 15px; font-weight: 500; color: #2D4155; display: block; margin-bottom: 6px; }
 .setup-card input {
   width: 100%; padding: 11px 14px; border: 1.5px solid #DDE3EA;
-  border-radius: 8px; font-size: 14px; color: #1C2B3A;
+  border-radius: 8px; font-size: 16px; color: #1C2B3A;
   font-family: "DM Sans", sans-serif; outline: none; margin-bottom: 16px;
 }
 .setup-card input:focus { border-color: #2E8B72; }
@@ -38,7 +38,7 @@ body { font-family: "DM Sans", system-ui, sans-serif; }
 }
 .setup-btn:hover { background: #268c6e; }
 .setup-note {
-  margin-top: 16px; font-size: 12px; color: #9CA3AF; line-height: 1.6;
+  margin-top: 16px; font-size: 15px; color: #9CA3AF; line-height: 1.6;
 }
 .setup-note a { color: #2E8B72; }
 </style>
@@ -611,7 +611,7 @@ const injectStyles = () => {
     .cc-msg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
     .cc-btn { cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
     .cc-btn:active { transform: scale(0.97); }
-    .cc-nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 20px; cursor: pointer; border-radius: 8px; margin: 2px 12px; font-size: 14px; font-family: 'DM Sans', sans-serif; transition: background 0.15s; color: rgba(255,255,255,0.65); border: none; background: none; width: calc(100% - 24px); text-align: left; }
+    .cc-nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 20px; cursor: pointer; border-radius: 8px; margin: 2px 12px; font-size: 16px; font-family: 'DM Sans', sans-serif; transition: background 0.15s; color: rgba(255,255,255,0.65); border: none; background: none; width: calc(100% - 24px); text-align: left; }
     .cc-nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
     .cc-nav-item.active { background: rgba(46,139,114,0.25); color: ${C.teal}; }
     .cc-coachee-card { background: white; border-radius: 14px; padding: 22px; border: 1.5px solid transparent; transition: all 0.15s; cursor: pointer; }
@@ -619,12 +619,12 @@ const injectStyles = () => {
     .cc-msg-type-btn { background: white; border: 1.5px solid ${C.light}; border-radius: 12px; padding: 16px; cursor: pointer; text-align: left; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
     .cc-msg-type-btn:hover { border-color: ${C.teal}; background: ${C.tealLight}; }
     .cc-msg-type-btn.active { border-color: ${C.teal}; background: ${C.tealLight}; }
-    .cc-input { width: 100%; padding: 11px 14px; border: 1.5px solid #DDE3EA; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: ${C.navy}; background: white; outline: none; transition: border-color 0.15s; }
+    .cc-input { width: 100%; padding: 12px 14px; border: 1.5px solid #DDE3EA; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: ${C.navy}; background: white; outline: none; transition: border-color 0.15s; }
     .cc-input:focus { border-color: ${C.teal}; }
-    .cc-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #DDE3EA; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: ${C.navy}; background: white; outline: none; resize: vertical; min-height: 90px; transition: border-color 0.15s; }
+    .cc-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #DDE3EA; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: ${C.navy}; background: white; outline: none; resize: vertical; min-height: 90px; transition: border-color 0.15s; }
     .cc-textarea:focus { border-color: ${C.teal}; }
-    .cc-label { font-size: 12px; font-weight: 500; color: ${C.slate}; margin-bottom: 6px; display: block; letter-spacing: 0.3px; }
-    .cc-result-box { background: ${C.parch}; border-radius: 12px; padding: 20px; border-left: 3px solid ${C.teal}; font-size: 14px; line-height: 1.8; color: ${C.navy}; white-space: pre-wrap; font-family: 'DM Sans', sans-serif; }
+    .cc-label { font-size: 15px; font-weight: 500; color: ${C.slate}; margin-bottom: 6px; display: block; letter-spacing: 0.3px; }
+    .cc-result-box { background: ${C.parch}; border-radius: 12px; padding: 20px; border-left: 3px solid ${C.teal}; font-size: 16px; line-height: 1.8; color: ${C.navy}; white-space: pre-wrap; font-family: 'DM Sans', sans-serif; }
     .cc-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: cc-spin 0.7s linear infinite; }
     @keyframes cc-spin { to { transform: rotate(360deg); } }
     @keyframes cc-fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
@@ -888,7 +888,7 @@ function CommandCentre() {
         <div className="cc-serif" style={{ fontSize:20, color:C.white, fontWeight:300, lineHeight:1.2 }}>
           Samuel Angus
         </div>
-        <div style={{ fontSize:11, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginTop:4 }}>
+        <div style={{ fontSize:17, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginTop:4 }}>
           Command Centre
         </div>
       </div>
@@ -900,7 +900,7 @@ function CommandCentre() {
           <span>{item.label}</span>
           {item.id === 'loop' && loopItems.length > 0 && (
             <span style={{ marginLeft:'auto', background:C.red, color:C.white,
-              borderRadius:'50%', width:18, height:18, fontSize:10, fontWeight:500,
+              borderRadius:'50%', width:18, height:18, fontSize:16, fontWeight:500,
               display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
               {loopItems.length}
             </span>
@@ -908,7 +908,7 @@ function CommandCentre() {
         </button>
       ))}
       <div style={{ flex:1 }} />
-      <div style={{ padding:'16px 20px 24px', fontSize:11, color:'rgba(255,255,255,0.25)', lineHeight:1.6 }}>
+      <div style={{ padding:'16px 20px 24px', fontSize:17, color:'rgba(255,255,255,0.25)', lineHeight:1.6 }}>
         <div style={{ fontStyle:'italic', marginBottom:4 }}>
           "Counsel in the heart of man is like deep water..."
         </div>
@@ -925,10 +925,10 @@ function CommandCentre() {
             alignItems:'center', gap:3, padding:'4px 12px', color: view===item.id ? C.teal : 'rgba(255,255,255,0.5)',
             position:'relative' }}>
           <span style={{ fontSize:18 }}>{item.icon}</span>
-          <span style={{ fontSize:9, fontFamily:"'DM Sans', sans-serif" }}>{item.label}</span>
+          <span style={{ fontSize:16, fontFamily:"'DM Sans', sans-serif" }}>{item.label}</span>
           {item.id === 'loop' && loopItems.length > 0 && (
             <span style={{ position:'absolute', top:0, right:6, background:C.red, color:C.white,
-              borderRadius:'50%', width:14, height:14, fontSize:9, fontWeight:500,
+              borderRadius:'50%', width:14, height:14, fontSize:16, fontWeight:500,
               display:'flex', alignItems:'center', justifyContent:'center' }}>
               {loopItems.length}
             </span>
@@ -940,7 +940,7 @@ function CommandCentre() {
           style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column',
             alignItems:'center', gap:3, padding:'4px 12px', color: view==='detail'||view==='generate' ? C.teal : 'rgba(255,255,255,0.5)' }}>
           <span style={{ fontSize:18 }}>👤</span>
-          <span style={{ fontSize:9, fontFamily:"'DM Sans', sans-serif" }}>Coachee</span>
+          <span style={{ fontSize:16, fontFamily:"'DM Sans', sans-serif" }}>Coachee</span>
         </button>
       )}
     </div>
@@ -952,7 +952,7 @@ function CommandCentre() {
       alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:50 }}>
       <div>
         <div className="cc-serif" style={{ fontSize:16, color:C.white, fontWeight:300 }}>Samuel Angus</div>
-        <div style={{ fontSize:10, color:C.teal, letterSpacing:2, textTransform:'uppercase' }}>{title}</div>
+        <div style={{ fontSize:16, color:C.teal, letterSpacing:2, textTransform:'uppercase' }}>{title}</div>
       </div>
     </div>
   );
@@ -963,15 +963,15 @@ function CommandCentre() {
       <MobileHeader title="Dashboard" />
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
         <div>
-          <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy }}>
+          <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy }}>
             Your Coachees
           </div>
-          <div style={{ fontSize:13, color:C.slate, marginTop:2 }}>
+          <div style={{ fontSize:16, color:C.slate, marginTop:2 }}>
             {coachees.length} active {coachees.length === 1 ? 'coachee' : 'coachees'}
           </div>
         </div>
         <button className="cc-btn" onClick={() => nav('add')}
-          style={{ background:C.teal, color:C.white, padding:'10px 20px', borderRadius:8, fontSize:14, fontWeight:500 }}>
+          style={{ background:C.teal, color:C.white, padding:'10px 20px', borderRadius:8, fontSize:17, fontWeight:500 }}>
           + Add Coachee
         </button>
       </div>
@@ -980,10 +980,10 @@ function CommandCentre() {
         <div style={{ textAlign:'center', padding:'60px 20px', background:C.white, borderRadius:16,
           border:`1.5px dashed #DDE3EA` }}>
           <div style={{ fontSize:36, marginBottom:12 }}>👤</div>
-          <div className="cc-serif" style={{ fontSize:22, color:C.navy, marginBottom:8 }}>No coachees yet</div>
-          <div style={{ fontSize:14, color:C.slate, marginBottom:20 }}>Add your first coachee to get started</div>
+          <div className="cc-serif" style={{ fontSize:24, color:C.navy, marginBottom:8 }}>No coachees yet</div>
+          <div style={{ fontSize:17, color:C.slate, marginBottom:20 }}>Add your first coachee to get started</div>
           <button className="cc-btn" onClick={() => nav('add')}
-            style={{ background:C.teal, color:C.white, padding:'10px 24px', borderRadius:8, fontSize:14 }}>
+            style={{ background:C.teal, color:C.white, padding:'10px 24px', borderRadius:8, fontSize:17 }}>
             Add First Coachee
           </button>
         </div>
@@ -1002,35 +1002,35 @@ function CommandCentre() {
                   </div>
                   <div style={{ display:'flex', gap:6, alignItems:'center' }}>
                     {c.concession && (
-                      <span style={{ background:C.goldLight, color:'#8A6A20', fontSize:10, fontWeight:500,
+                      <span style={{ background:C.goldLight, color:'#8A6A20', fontSize:16, fontWeight:500,
                         padding:'2px 8px', borderRadius:20, letterSpacing:1, textTransform:'uppercase' }}>
                         Concession
                       </span>
                     )}
                     <span style={{ background:weekBadgeColor(c.weekNumber) + '20', color:weekBadgeColor(c.weekNumber),
-                      fontSize:11, fontWeight:500, padding:'3px 10px', borderRadius:20 }}>
+                      fontSize:17, fontWeight:500, padding:'3px 10px', borderRadius:20 }}>
                       Wk {c.weekNumber}
                     </span>
                   </div>
                 </div>
                 <div style={{ fontSize:17, fontWeight:500, color:C.navy, marginBottom:4 }}>{c.name}</div>
-                <div style={{ fontSize:13, color:C.slate, lineHeight:1.5, marginBottom:14,
+                <div style={{ fontSize:16, color:C.slate, lineHeight:1.5, marginBottom:14,
                   overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>
                   {c.goal}
                 </div>
                 <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
                   <button className="cc-btn" onClick={e => { e.stopPropagation(); setSelected(c); nav('detail'); }}
-                    style={{ background:C.light, color:C.slate, padding:'7px 14px', borderRadius:6, fontSize:12, fontWeight:500 }}>
+                    style={{ background:C.light, color:C.slate, padding:'7px 14px', borderRadius:6, fontSize:18, fontWeight:500 }}>
                     View Profile
                   </button>
                   <button className="cc-btn" onClick={e => { e.stopPropagation(); openGenerate(c, 'midweek'); }}
-                    style={{ background:C.tealLight, color:C.teal, padding:'7px 14px', borderRadius:6, fontSize:12, fontWeight:500 }}>
+                    style={{ background:C.tealLight, color:C.teal, padding:'7px 14px', borderRadius:6, fontSize:18, fontWeight:500 }}>
                     💬 Quick Message
                   </button>
                 </div>
                 {days >= 5 && (
                   <div style={{ marginTop:12, padding:'6px 10px', background:'#FFF3E0', borderRadius:6,
-                    fontSize:11, color:'#E65100', fontWeight:500 }}>
+                    fontSize:17, color:'#E65100', fontWeight:500 }}>
                     ⚠ {days} days since last session
                   </div>
                 )}
@@ -1064,17 +1064,17 @@ function CommandCentre() {
       <div style={{ padding:'28px 24px', maxWidth:560 }}>
         <MobileHeader title={editId ? 'Edit Coachee' : 'Add Coachee'} />
         <button onClick={() => { nav('dashboard'); setEditId(null); setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 }); }}
-          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
+          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:16,
             marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
           ← Back to Dashboard
         </button>
-        <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy, marginBottom:24 }}>
+        <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:24 }}>
           {editId ? 'Edit Coachee' : 'Add New Coachee'}
         </div>
 
         {error && (
           <div style={{ background:'#FFEBEE', border:'1px solid #FFCDD2', borderRadius:8,
-            padding:'10px 14px', fontSize:13, color:C.red, marginBottom:16 }}>
+            padding:'10px 14px', fontSize:16, color:C.red, marginBottom:16 }}>
             {error}
           </div>
         )}
@@ -1102,17 +1102,17 @@ function CommandCentre() {
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <input ref={concessionRef} type="checkbox" id="concession" defaultChecked={form.concession||false}
               style={{ width:16, height:16, cursor:'pointer', accentColor:C.teal }} />
-            <label htmlFor="concession" style={{ fontSize:14, color:C.slate, cursor:'pointer' }}>
+            <label htmlFor="concession" style={{ fontSize:17, color:C.slate, cursor:'pointer' }}>
               Concession rate (student / NHS / faith community referral)
             </label>
           </div>
           <div style={{ display:'flex', gap:12, marginTop:4 }}>
             <button className="cc-btn" onClick={handleSubmit}
-              style={{ background:C.teal, color:C.white, padding:'12px 28px', borderRadius:8, fontSize:15, fontWeight:500 }}>
+              style={{ background:C.teal, color:C.white, padding:'12px 28px', borderRadius:8, fontSize:18, fontWeight:500 }}>
               {editId ? 'Save Changes' : 'Add Coachee'}
             </button>
             <button className="cc-btn" onClick={() => { nav('dashboard'); setEditId(null); setError(''); }}
-              style={{ background:C.light, color:C.slate, padding:'12px 20px', borderRadius:8, fontSize:14 }}>
+              style={{ background:C.light, color:C.slate, padding:'12px 20px', borderRadius:8, fontSize:17 }}>
               Cancel
             </button>
           </div>
@@ -1129,7 +1129,7 @@ function CommandCentre() {
       <div style={{ padding:'28px 24px' }}>
         <MobileHeader title="Coachee Profile" />
         <button onClick={() => nav('dashboard')}
-          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
+          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:16,
             marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
           ← Back to Dashboard
         </button>
@@ -1147,11 +1147,11 @@ function CommandCentre() {
                 <div className="cc-serif" style={{ fontSize:24, color:C.white, fontWeight:300 }}>{c.name}</div>
                 <div style={{ display:'flex', gap:8, marginTop:4, flexWrap:'wrap' }}>
                   <span style={{ background:weekBadgeColor(c.weekNumber) + '30', color:weekBadgeColor(c.weekNumber),
-                    fontSize:11, padding:'3px 10px', borderRadius:20, fontWeight:500 }}>
+                    fontSize:17, padding:'3px 10px', borderRadius:20, fontWeight:500 }}>
                     Week {c.weekNumber}
                   </span>
                   {c.concession && (
-                    <span style={{ background:C.goldLight, color:C.gold, fontSize:11, padding:'3px 10px', borderRadius:20, fontWeight:500 }}>
+                    <span style={{ background:C.goldLight, color:C.gold, fontSize:17, padding:'3px 10px', borderRadius:20, fontWeight:500 }}>
                       Concession
                     </span>
                   )}
@@ -1160,40 +1160,40 @@ function CommandCentre() {
             </div>
             <div style={{ display:'flex', gap:8 }}>
               <button className="cc-btn" onClick={() => openEdit(c)}
-                style={{ background:'rgba(255,255,255,0.1)', color:C.white, padding:'8px 16px', borderRadius:6, fontSize:13 }}>
+                style={{ background:'rgba(255,255,255,0.1)', color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16 }}>
                 Edit
               </button>
               <button className="cc-btn" onClick={() => advanceWeek(c.id)}
-                style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:13, fontWeight:500 }}>
+                style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16, fontWeight:500 }}>
                 + Advance Week
               </button>
               <button onClick={() => removeCoachee(c.id)} title="Remove coachee" className="cc-delete-btn">✕</button>
             </div>
           </div>
           <div style={{ marginTop:20, padding:'14px 18px', background:'rgba(255,255,255,0.06)', borderRadius:10 }}>
-            <div style={{ fontSize:10, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Coaching Goal</div>
-            <div style={{ fontSize:14, color:'rgba(255,255,255,0.85)', lineHeight:1.7 }}>{c.goal}</div>
+            <div style={{ fontSize:16, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Coaching Goal</div>
+            <div style={{ fontSize:17, color:'rgba(255,255,255,0.85)', lineHeight:1.7 }}>{c.goal}</div>
           </div>
           {c.intake && (
             <div style={{ marginTop:12, padding:'14px 18px', background:'rgba(255,255,255,0.04)', borderRadius:10 }}>
-              <div style={{ fontSize:10, color:C.gold, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Intake Notes</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>{c.intake}</div>
+              <div style={{ fontSize:16, color:C.gold, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Intake Notes</div>
+              <div style={{ fontSize:16, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>{c.intake}</div>
             </div>
           )}
         </div>
 
         {/* Message generators */}
         <div style={{ marginBottom:16 }}>
-          <div style={{ fontSize:12, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
+          <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
             Generate a Message
           </div>
           <div className="cc-msg-grid">
             {MSG_TYPES.filter(mt => mt.id !== 'support').map(mt => (
               <button key={mt.id} className={`cc-msg-type-btn ${activeMsgType===mt.id&&view==='generate'?'active':''}`}
                 onClick={() => openGenerate(c, mt.id)}>
-                <div style={{ fontSize:22, marginBottom:6 }}>{mt.icon}</div>
-                <div style={{ fontSize:13, fontWeight:500, color:C.navy, marginBottom:3 }}>{mt.label}</div>
-                <div style={{ fontSize:11, color:C.slate, lineHeight:1.4 }}>{mt.desc}</div>
+                <div style={{ fontSize:24, marginBottom:6 }}>{mt.icon}</div>
+                <div style={{ fontSize:16, fontWeight:500, color:C.navy, marginBottom:3 }}>{mt.label}</div>
+                <div style={{ fontSize:17, color:C.slate, lineHeight:1.4 }}>{mt.desc}</div>
               </button>
             ))}
           </div>
@@ -1205,12 +1205,12 @@ function CommandCentre() {
               padding:'16px 20px', cursor:'pointer', textAlign:'left',
               fontFamily:"'DM Sans',sans-serif", transition:'all 0.15s',
               display:'flex', alignItems:'center', gap:16 }}>
-            <div style={{ fontSize:28 }}>🆘</div>
+            <div style={{ fontSize:30 }}>🆘</div>
             <div>
-              <div style={{ fontSize:14, fontWeight:500, color:C.gold, marginBottom:3 }}>
+              <div style={{ fontSize:17, fontWeight:500, color:C.gold, marginBottom:3 }}>
                 Struggling Coachee Support
               </div>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', lineHeight:1.5 }}>
+              <div style={{ fontSize:18, color:'rgba(255,255,255,0.55)', lineHeight:1.5 }}>
                 Identify the struggle pattern — avoidance, self-criticism, overwhelm, disengagement, or plateau — and generate a diagnostically-informed message that addresses the root without naming it.
               </div>
             </div>
@@ -1229,7 +1229,7 @@ function CommandCentre() {
       <div style={{ padding:'28px 24px', maxWidth:640 }}>
         <MobileHeader title="Generate Message" />
         <button onClick={() => { setView('detail'); setGeneratedMsg(''); }}
-          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
+          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:16,
             marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
           ← Back to {selected.name}
         </button>
@@ -1242,19 +1242,19 @@ function CommandCentre() {
             {selected.name.charAt(0)}
           </div>
           <div>
-            <div style={{ fontSize:11, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:2 }}>
+            <div style={{ fontSize:17, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:2 }}>
               {mt?.icon} {mt?.label}
             </div>
-            <div className="cc-serif" style={{ fontSize:22, color:C.navy, fontWeight:300 }}>{selected.name}</div>
+            <div className="cc-serif" style={{ fontSize:24, color:C.navy, fontWeight:300 }}>{selected.name}</div>
           </div>
         </div>
 
         {/* Context pills */}
         <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:20 }}>
-          <span style={{ background:C.tealLight, color:C.teal, fontSize:12, padding:'4px 12px', borderRadius:20 }}>
+          <span style={{ background:C.tealLight, color:C.teal, fontSize:18, padding:'4px 12px', borderRadius:20 }}>
             Week {selected.weekNumber}
           </span>
-          <span style={{ background:C.light, color:C.slate, fontSize:12, padding:'4px 12px', borderRadius:20,
+          <span style={{ background:C.light, color:C.slate, fontSize:18, padding:'4px 12px', borderRadius:20,
             maxWidth:280, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
             Goal: {selected.goal.substring(0,60)}{selected.goal.length>60?'...':''}
           </span>
@@ -1266,10 +1266,10 @@ function CommandCentre() {
             <label className="cc-label">Your Session Notes</label>
             <textarea className="cc-textarea"
               placeholder="Add 2–4 bullet points from the session — key themes, insights, what was said, the next step agreed..."
-              value={sessionNotes}
-              onChange={e => setSessionNotes(e.target.value)}
+              defaultValue={sessionNotes}
+              onBlur={e => setSessionNotes(e.target.value)}
               style={{ minHeight:100 }} />
-            <div style={{ fontSize:11, color:C.slate, marginTop:6 }}>
+            <div style={{ fontSize:17, color:C.slate, marginTop:6 }}>
               The AI will turn these into a warm, personal summary for {selected.name}.
             </div>
           </div>
@@ -1291,17 +1291,17 @@ function CommandCentre() {
               {/* ── STEP 0: FIVE WHYS ROOT CAUSE ANALYSIS ── */}
               <div style={{ background: '#0D4A63', borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: '#5DADE2', fontWeight: 500 }}>
+                  <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: '#5DADE2', fontWeight: 500 }}>
                     Step 0 — Root Cause Analysis
                   </div>
                   {whyChain.length > 0 && (
                     <button onClick={resetWhys}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', fontSize: 11, fontFamily: "'DM Sans',sans-serif" }}>
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', fontSize: 15, fontFamily: "'DM Sans',sans-serif" }}>
                       Reset
                     </button>
                   )}
                 </div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
                   Five Whys · Wiegers — The problem first presented is rarely the real problem. Ask why up to five times to reach the root.
                 </div>
 
@@ -1313,12 +1313,12 @@ function CommandCentre() {
                     </label>
                     <textarea className="cc-textarea"
                       placeholder="Describe the presenting problem or what the coachee said — this becomes Why 1..."
-                      value={whyPresenting}
-                      onChange={e => setWhyPresenting(e.target.value)}
+                      defaultValue={whyPresenting}
+                      onBlur={e => setWhyPresenting(e.target.value)}
                       style={{ minHeight: 70, marginBottom: 10 }} />
                     <button className="cc-btn" onClick={generateNextWhy} disabled={generatingWhy || !whyPresenting.trim()}
                       style={{ background: generatingWhy ? C.slate : '#1A6B8A', color: C.white,
-                        padding: '9px 18px', borderRadius: 7, fontSize: 13, fontWeight: 500,
+                        padding: '9px 18px', borderRadius: 7, fontSize: 16, fontWeight: 500,
                         display: 'flex', alignItems: 'center', gap: 8 }}>
                       {generatingWhy ? <><div className="cc-spinner" /> Generating...</> : '🔍 Generate Why 1'}
                     </button>
@@ -1332,11 +1332,11 @@ function CommandCentre() {
                       <div key={i} style={{ marginBottom: 8, padding: '10px 12px',
                         background: 'rgba(255,255,255,0.06)', borderRadius: 8,
                         borderLeft: `3px solid #5DADE2` }}>
-                        <div style={{ fontSize: 10, color: '#5DADE2', fontWeight: 500, marginBottom: 4 }}>
+                        <div style={{ fontSize: 16, color: '#5DADE2', fontWeight: 500, marginBottom: 4 }}>
                           WHY {i + 1}
                         </div>
-                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>{item.question}</div>
-                        <div style={{ fontSize: 12, color: C.gold, fontStyle: 'italic' }}>→ {item.answer}</div>
+                        <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>{item.question}</div>
+                        <div style={{ fontSize: 15, color: C.gold, fontStyle: 'italic' }}>→ {item.answer}</div>
                       </div>
                     ))}
                   </div>
@@ -1347,22 +1347,22 @@ function CommandCentre() {
                   <div className="cc-fade-in" style={{ marginBottom: 12 }}>
                     <div style={{ padding: '12px 14px', background: 'rgba(93,173,226,0.12)',
                       borderRadius: 8, borderLeft: `3px solid #5DADE2`, marginBottom: 10 }}>
-                      <div style={{ fontSize: 10, color: '#5DADE2', fontWeight: 500, marginBottom: 4 }}>
+                      <div style={{ fontSize: 16, color: '#5DADE2', fontWeight: 500, marginBottom: 4 }}>
                         WHY {whyStep + 1} — Question to ask {selected?.name}:
                       </div>
-                      <div style={{ fontSize: 13, color: C.white, fontWeight: 500 }}>{currentWhyQ}</div>
+                      <div style={{ fontSize: 16, color: C.white, fontWeight: 500 }}>{currentWhyQ}</div>
                     </div>
                     <label className="cc-label" style={{ color: 'rgba(255,255,255,0.6)' }}>
                       {selected?.name}'s answer:
                     </label>
                     <textarea className="cc-textarea"
                       placeholder="Record what they said..."
-                      value={currentWhyA}
-                      onChange={e => setCurrentWhyA(e.target.value)}
+                      defaultValue={currentWhyA}
+                      onBlur={e => setCurrentWhyA(e.target.value)}
                       style={{ minHeight: 60, marginBottom: 8 }} />
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button className="cc-btn" onClick={recordWhyAnswer} disabled={!currentWhyA.trim()}
-                        style={{ background: '#1A6B8A', color: C.white, padding: '8px 16px', borderRadius: 7, fontSize: 12, fontWeight: 500 }}>
+                        style={{ background: '#1A6B8A', color: C.white, padding: '8px 16px', borderRadius: 7, fontSize: 15, fontWeight: 500 }}>
                         Record Answer
                       </button>
                     </div>
@@ -1374,13 +1374,13 @@ function CommandCentre() {
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button className="cc-btn" onClick={generateNextWhy} disabled={generatingWhy}
                       style={{ background: generatingWhy ? C.slate : '#1A6B8A', color: C.white,
-                        padding: '9px 16px', borderRadius: 7, fontSize: 12, fontWeight: 500,
+                        padding: '9px 16px', borderRadius: 7, fontSize: 15, fontWeight: 500,
                         display: 'flex', alignItems: 'center', gap: 8 }}>
                       {generatingWhy ? <><div className="cc-spinner" /> Generating...</> : `🔍 Generate Why ${whyStep + 1}`}
                     </button>
                     <button className="cc-btn" onClick={generateRootSummary} disabled={generatingRoot}
                       style={{ background: generatingRoot ? C.slate : C.teal, color: C.white,
-                        padding: '9px 16px', borderRadius: 7, fontSize: 12, fontWeight: 500,
+                        padding: '9px 16px', borderRadius: 7, fontSize: 15, fontWeight: 500,
                         display: 'flex', alignItems: 'center', gap: 8 }}>
                       {generatingRoot ? <><div className="cc-spinner" /> Summarising...</> : '✓ Root Cause Found — Summarise'}
                     </button>
@@ -1391,7 +1391,7 @@ function CommandCentre() {
                 {whyStep >= 5 && !currentWhyQ && !rootCauseSummary && (
                   <button className="cc-btn" onClick={generateRootSummary} disabled={generatingRoot}
                     style={{ background: generatingRoot ? C.slate : C.teal, color: C.white,
-                      padding: '9px 16px', borderRadius: 7, fontSize: 13, fontWeight: 500,
+                      padding: '9px 16px', borderRadius: 7, fontSize: 16, fontWeight: 500,
                       display: 'flex', alignItems: 'center', gap: 8 }}>
                     {generatingRoot ? <><div className="cc-spinner" /> Summarising...</> : '✓ Generate Root Cause Summary'}
                   </button>
@@ -1401,15 +1401,15 @@ function CommandCentre() {
                 {rootCauseSummary && (
                   <div className="cc-fade-in" style={{ marginTop: 10, padding: '14px 16px',
                     background: C.tealLight, borderRadius: 8, border: `1px solid ${C.teal}40` }}>
-                    <div style={{ fontSize: 10, color: C.teal, fontWeight: 500, letterSpacing: 2,
+                    <div style={{ fontSize: 16, color: C.teal, fontWeight: 500, letterSpacing: 2,
                       textTransform: 'uppercase', marginBottom: 8 }}>Root Cause — Carry into Steps 1–3</div>
-                    <div style={{ fontSize: 13, color: C.navy, lineHeight: 1.7 }}>{rootCauseSummary}</div>
+                    <div style={{ fontSize: 16, color: C.navy, lineHeight: 1.7 }}>{rootCauseSummary}</div>
                   </div>
                 )}
 
                 {/* Skip option */}
                 {whyChain.length === 0 && !currentWhyQ && (
-                  <div style={{ marginTop: 10, fontSize: 11, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>
+                  <div style={{ marginTop: 10, fontSize: 15, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>
                     Skip this step if the root cause is already clear — scroll to Step 1.
                   </div>
                 )}
@@ -1417,10 +1417,10 @@ function CommandCentre() {
 
               {/* ── STEP 1: RELATIONSHIP TO HELP ── */}
               <div style={{ background: C.navy, borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
-                <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: C.gold, fontWeight: 500, marginBottom: 4 }}>
+                <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.gold, fontWeight: 500, marginBottom: 4 }}>
                   Step 1 — Relationship to Help
                 </div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
                   Tomm · Burnham · Cecchin — How does {selected?.name} position themselves in relation to receiving help?
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
@@ -1433,10 +1433,10 @@ function CommandCentre() {
                         textAlign: 'left', fontFamily: "'DM Sans',sans-serif", transition: 'all 0.15s'
                       }}>
                       <div style={{ fontSize: 16, marginBottom: 4 }}>{h.icon}</div>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: relationshipPosition === h.id ? h.colour : C.white, marginBottom: 2 }}>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: relationshipPosition === h.id ? h.colour : C.white, marginBottom: 2 }}>
                         {h.label}
                       </div>
-                      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>{h.subtitle}</div>
+                      <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.75)', lineHeight: 1.4 }}>{h.subtitle}</div>
                     </button>
                   ))}
                 </div>
@@ -1444,8 +1444,8 @@ function CommandCentre() {
                   <div className="cc-fade-in" style={{ marginTop: 12, padding: '12px 14px',
                     background: helpPos.colour + '15', borderRadius: 8,
                     borderLeft: `3px solid ${helpPos.colour}` }}>
-                    <div style={{ fontSize: 11, color: helpPos.colour, fontWeight: 500, marginBottom: 4 }}>{helpPos.tomm}</div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{helpPos.burnham}</div>
+                    <div style={{ fontSize: 15, color: helpPos.colour, fontWeight: 500, marginBottom: 4 }}>{helpPos.tomm}</div>
+                    <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{helpPos.burnham}</div>
                   </div>
                 )}
               </div>
@@ -1453,10 +1453,10 @@ function CommandCentre() {
               {/* STEP 2 — STRESS ASSESSMENT */}
               <div style={{ background: C.white, borderRadius: 12, padding: '18px 20px', marginBottom: 14,
                 border: '1.5px solid #DDE3EA' }}>
-                <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
+                <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
                   Step 2 — Stress Assessment
                 </div>
-                <div style={{ fontSize: 11, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 15, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
                   Selye · Amygdala-HPA Axis — Which stress signals is {selected?.name} presenting?
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
@@ -1465,10 +1465,10 @@ function CommandCentre() {
                       <input type="checkbox" checked={stressSignals.includes(sig.id)}
                         onChange={() => toggleSignal(sig.id)}
                         style={{ marginTop: 2, accentColor: sig.clinical ? C.red : C.teal, flexShrink: 0 }} />
-                      <span style={{ fontSize: 13, color: sig.clinical ? C.red : C.navy, lineHeight: 1.5,
+                      <span style={{ fontSize: 16, color: sig.clinical ? C.red : C.navy, lineHeight: 1.5,
                         fontWeight: sig.clinical ? 500 : 400 }}>
                         {sig.label}
-                        {sig.clinical && <span style={{ fontSize: 10, marginLeft: 6, background: '#FFEBEE',
+                        {sig.clinical && <span style={{ fontSize: 16, marginLeft: 6, background: '#FFEBEE',
                           color: C.red, padding: '1px 6px', borderRadius: 10, fontWeight: 500 }}>Psychological safety signal</span>}
                       </span>
                     </label>
@@ -1480,10 +1480,10 @@ function CommandCentre() {
                   borderRadius: 8, border: `1px solid ${sc.colour}30` }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: stressLevel !== 'none' ? 6 : 0 }}>
                     <div style={{ width: 10, height: 10, borderRadius: '50%', background: sc.colour, flexShrink: 0 }} />
-                    <span style={{ fontSize: 12, fontWeight: 500, color: sc.colour }}>{sc.label}</span>
+                    <span style={{ fontSize: 15, fontWeight: 500, color: sc.colour }}>{sc.label}</span>
                   </div>
                   {stressLevel !== 'none' && (
-                    <div style={{ fontSize: 12, color: C.slate, lineHeight: 1.6 }}>{sc.message}</div>
+                    <div style={{ fontSize: 15, color: C.slate, lineHeight: 1.6 }}>{sc.message}</div>
                   )}
                 </div>
 
@@ -1491,17 +1491,17 @@ function CommandCentre() {
                 {stressLevel === 'high' && (
                   <div className="cc-fade-in" style={{ marginTop: 12, padding: '14px 16px',
                     background: '#FFEBEE', borderRadius: 8, border: `1.5px solid ${C.red}40` }}>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: C.red, marginBottom: 8 }}>
+                    <div style={{ fontSize: 15, fontWeight: 500, color: C.red, marginBottom: 8 }}>
                       ⚠ Psychological Safety Flag — Consider Referral
                     </div>
-                    <div style={{ fontSize: 12, color: '#7B0000', lineHeight: 1.7, marginBottom: 10 }}>
+                    <div style={{ fontSize: 15, color: '#7B0000', lineHeight: 1.7, marginBottom: 10 }}>
                       Psychological safety may not be sufficiently established for coaching
                       to be effective right now. A grounding message is appropriate.
                       Consider whether referral to a GP, counsellor, or appropriate
                       psychological intervention is needed before coaching continues.
                     </div>
-                    <div style={{ fontSize: 11, color: '#7B0000', fontWeight: 500, marginBottom: 4 }}>Suggested language:</div>
-                    <div style={{ fontSize: 11, color: '#7B0000', fontStyle: 'italic', lineHeight: 1.6,
+                    <div style={{ fontSize: 15, color: '#7B0000', fontWeight: 500, marginBottom: 4 }}>Suggested language:</div>
+                    <div style={{ fontSize: 15, color: '#7B0000', fontStyle: 'italic', lineHeight: 1.6,
                       padding: '8px 12px', background: 'rgba(192,57,43,0.08)', borderRadius: 6 }}>
                       "I want to make sure you have the right support around you right now.
                       It might be worth having a conversation with your GP or someone you trust.
@@ -1517,7 +1517,7 @@ function CommandCentre() {
                       style={{ flex: 1, padding: '10px 14px', borderRadius: 8, cursor: 'pointer',
                         border: `1.5px solid ${generateMode === 'grounding' ? C.teal : '#DDE3EA'}`,
                         background: generateMode === 'grounding' ? C.tealLight : C.white,
-                        fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500,
+                        fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 500,
                         color: generateMode === 'grounding' ? C.teal : C.slate }}>
                       🌿 Generate Grounding Message
                     </button>
@@ -1526,7 +1526,7 @@ function CommandCentre() {
                         style={{ flex: 1, padding: '10px 14px', borderRadius: 8, cursor: 'pointer',
                           border: `1.5px solid ${generateMode === 'pattern' ? C.navy : '#DDE3EA'}`,
                           background: generateMode === 'pattern' ? C.navy : C.white,
-                          fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500,
+                          fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 500,
                           color: generateMode === 'pattern' ? C.white : C.slate }}>
                         🎯 Pattern-Based Message
                       </button>
@@ -1539,10 +1539,10 @@ function CommandCentre() {
               {(stressLevel === 'none' || (stressLevel !== 'high' && generateMode === 'pattern')) && (
                 <div className="cc-fade-in" style={{ background: C.white, borderRadius: 12, padding: '18px 20px',
                   marginBottom: 14, border: '1.5px solid #DDE3EA' }}>
-                  <div style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
+                  <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
                     Step 3 — Struggle Pattern
                   </div>
-                  <div style={{ fontSize: 11, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
+                  <div style={{ fontSize: 15, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
                     Bandura · Dweck · Mischel — What is the root dynamic for {selected?.name}?
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 14 }}>
@@ -1556,11 +1556,11 @@ function CommandCentre() {
                           textAlign: 'left', transition: 'all 0.15s', fontFamily: "'DM Sans',sans-serif"
                         }}>
                         <div style={{ fontSize: 18, marginBottom: 4 }}>{pat.icon}</div>
-                        <div style={{ fontSize: 12, fontWeight: 500,
+                        <div style={{ fontSize: 15, fontWeight: 500,
                           color: selectedPattern?.id === pat.id ? pat.colour : C.navy, marginBottom: 2 }}>
                           {pat.label}
                         </div>
-                        <div style={{ fontSize: 10, color: C.slate, lineHeight: 1.4 }}>{pat.subtitle}</div>
+                        <div style={{ fontSize: 16, color: C.slate, lineHeight: 1.4 }}>{pat.subtitle}</div>
                       </button>
                     ))}
                   </div>
@@ -1569,20 +1569,20 @@ function CommandCentre() {
                     <div className="cc-fade-in" style={{ padding: '12px 14px', marginBottom: 14,
                       background: selectedPattern.colour + '08',
                       border: `1px solid ${selectedPattern.colour}25`, borderRadius: 8 }}>
-                      <div style={{ fontSize: 11, color: selectedPattern.colour, fontWeight: 500, marginBottom: 4 }}>
+                      <div style={{ fontSize: 15, color: selectedPattern.colour, fontWeight: 500, marginBottom: 4 }}>
                         {selectedPattern.icon} {selectedPattern.label} — {selectedPattern.approach}
                       </div>
-                      <div style={{ fontSize: 11, color: C.slate, lineHeight: 1.6 }}>{selectedPattern.research}</div>
+                      <div style={{ fontSize: 15, color: C.slate, lineHeight: 1.6 }}>{selectedPattern.research}</div>
                     </div>
                   )}
 
                   <label className="cc-label">What did {selected?.name} say or present?</label>
                   <textarea className="cc-textarea"
                     placeholder={`Their words, their tone, what you noticed. The more specific, the more precisely the message will land.`}
-                    value={coacheePresentation}
-                    onChange={e => setCoacheePresentation(e.target.value)}
+                    defaultValue={coacheePresentation}
+                    onBlur={e => setCoacheePresentation(e.target.value)}
                     style={{ minHeight: 80 }} />
-                  <div style={{ fontSize: 11, color: C.slate, marginTop: 5 }}>
+                  <div style={{ fontSize: 15, color: C.slate, marginTop: 5 }}>
                     Used by the AI to calibrate the message — never sent to {selected?.name}.
                   </div>
                 </div>
@@ -1595,8 +1595,8 @@ function CommandCentre() {
                   <label className="cc-label">What did {selected?.name} say or present?</label>
                   <textarea className="cc-textarea"
                     placeholder="Their words, tone, what you noticed — this helps calibrate the grounding message."
-                    value={coacheePresentation}
-                    onChange={e => setCoacheePresentation(e.target.value)}
+                    defaultValue={coacheePresentation}
+                    onBlur={e => setCoacheePresentation(e.target.value)}
                     style={{ minHeight: 80 }} />
                 </div>
               )}
@@ -1607,7 +1607,7 @@ function CommandCentre() {
 
         {error && (
           <div style={{ background:'#FFEBEE', borderRadius:8, padding:'10px 14px',
-            fontSize:13, color:C.red, marginBottom:16 }}>
+            fontSize:16, color:C.red, marginBottom:16 }}>
             {error}
           </div>
         )}
@@ -1615,7 +1615,7 @@ function CommandCentre() {
         {/* Generate button */}
         <button className="cc-btn" onClick={generate} disabled={generating}
           style={{ background: generating ? C.slate : activeMsgType === 'support' && getStressLevel(stressSignals) === 'high' ? C.red : C.teal,
-            color: C.white, padding:'13px 28px', borderRadius:8, fontSize:15, fontWeight:500,
+            color: C.white, padding:'13px 28px', borderRadius:8, fontSize:18, fontWeight:500,
             display:'flex', alignItems:'center', gap:10, marginBottom:24 }}>
           {generating ? (
             <><div className="cc-spinner" /> Generating...</>
@@ -1629,7 +1629,7 @@ function CommandCentre() {
         {/* Result */}
         {generatedMsg && (
           <div className="cc-fade-in">
-            <div style={{ fontSize:12, letterSpacing:3, textTransform:'uppercase', color:C.teal,
+            <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal,
               fontWeight:500, marginBottom:10 }}>Generated Message</div>
             <div className="cc-result-box" style={{ marginBottom:14 }}>
               {generatedMsg}
@@ -1637,16 +1637,16 @@ function CommandCentre() {
             <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
               <button className="cc-btn" onClick={() => copy(generatedMsg)}
                 style={{ background: copied ? C.teal : C.navy, color:C.white,
-                  padding:'10px 20px', borderRadius:8, fontSize:13, fontWeight:500 }}>
+                  padding:'10px 20px', borderRadius:8, fontSize:16, fontWeight:500 }}>
                 {copied ? '✓ Copied' : '📋 Copy for WhatsApp / Email'}
               </button>
               <button className="cc-btn" onClick={generate}
-                style={{ background:C.light, color:C.slate, padding:'10px 16px', borderRadius:8, fontSize:13 }}>
+                style={{ background:C.light, color:C.slate, padding:'10px 16px', borderRadius:8, fontSize:16 }}>
                 ↻ Regenerate
               </button>
             </div>
             <div style={{ marginTop:16, padding:'12px 16px', background:C.goldLight,
-              borderRadius:8, fontSize:12, color:'#8A6A20', lineHeight:1.6 }}>
+              borderRadius:8, fontSize:18, color:'#8A6A20', lineHeight:1.6 }}>
               <strong>Tip:</strong> Read this before sending. Add any personal detail you know about {selected.name}'s week before you hit send — one specific detail makes it feel unmistakably yours.
             </div>
           </div>
@@ -1663,10 +1663,10 @@ function CommandCentre() {
     return (
       <div style={{ padding:'28px 24px', maxWidth:560 }}>
         <MobileHeader title="Sabbath Tracker" />
-        <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy, marginBottom:8 }}>
+        <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:8 }}>
           Lunar Sabbath Tracker
         </div>
-        <div style={{ fontSize:13, color:C.slate, marginBottom:24, lineHeight:1.6 }}>
+        <div style={{ fontSize:16, color:C.slate, marginBottom:24, lineHeight:1.6 }}>
           Enter the first Sabbath of the current lunar month. The tracker calculates all four Sabbath days automatically and marks them in the Loop system.
         </div>
 
@@ -1674,10 +1674,10 @@ function CommandCentre() {
           <div style={{ background:C.goldLight, border:`1.5px solid ${C.gold}`, borderRadius:12,
             padding:'16px 20px', marginBottom:20, textAlign:'center' }}>
             <div style={{ fontSize:18 }}>🌙</div>
-            <div style={{ fontSize:14, fontWeight:500, color:'#8A6A20', marginTop:4 }}>
+            <div style={{ fontSize:17, fontWeight:500, color:'#8A6A20', marginTop:4 }}>
               Today is your Sabbath rest day
             </div>
-            <div style={{ fontSize:12, color:'#8A6A20', marginTop:4 }}>
+            <div style={{ fontSize:18, color:'#8A6A20', marginTop:4 }}>
               The Loop is paused. No messages will be generated today. Rest well.
             </div>
           </div>
@@ -1691,18 +1691,18 @@ function CommandCentre() {
               style={{ flex:1 }} />
             <button className="cc-btn" onClick={updateSabbath}
               style={{ background:C.teal, color:C.white, padding:'11px 20px',
-                borderRadius:8, fontSize:14, fontWeight:500, whiteSpace:'nowrap' }}>
+                borderRadius:8, fontSize:17, fontWeight:500, whiteSpace:'nowrap' }}>
               Calculate
             </button>
           </div>
-          <div style={{ fontSize:11, color:C.slate, marginTop:8, lineHeight:1.6 }}>
+          <div style={{ fontSize:17, color:C.slate, marginTop:8, lineHeight:1.6 }}>
             Update this at each new moon when your Sabbath day shifts for the month.
           </div>
         </div>
 
         {(sabbath.dates||[]).length > 0 && (
           <div style={{ background:C.navy, borderRadius:12, padding:'20px', marginBottom:20 }}>
-            <div style={{ fontSize:11, letterSpacing:3, textTransform:'uppercase', color:C.gold,
+            <div style={{ fontSize:17, letterSpacing:3, textTransform:'uppercase', color:C.gold,
               fontWeight:500, marginBottom:16 }}>This Month's Sabbath Days</div>
             {sabbath.dates.map((d, i) => {
               const isToday = d === todayStr();
@@ -1713,13 +1713,13 @@ function CommandCentre() {
                   background: isToday ? C.goldLight : isPast ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)' }}>
                   <div style={{ fontSize:18 }}>{isToday ? '🌙' : isPast ? '✓' : '○'}</div>
                   <div>
-                    <div style={{ fontSize:13, fontWeight:500,
+                    <div style={{ fontSize:16, fontWeight:500,
                       color: isToday ? C.gold : isPast ? 'rgba(255,255,255,0.35)' : C.white }}>
                       Sabbath {i+1} — {fmtDate(d)}
                     </div>
-                    {isToday && <div style={{ fontSize:11, color:C.gold }}>Today — Rest day</div>}
+                    {isToday && <div style={{ fontSize:17, color:C.gold }}>Today — Rest day</div>}
                     {!isPast && !isToday && daysUntil(d) <= 3 && (
-                      <div style={{ fontSize:11, color:C.teal }}>
+                      <div style={{ fontSize:17, color:C.teal }}>
                         In {daysUntil(d)} day{daysUntil(d)!==1?'s':''} — reflection prompt due {daysUntil(d)===1?'today':'soon'}
                       </div>
                     )}
@@ -1729,7 +1729,7 @@ function CommandCentre() {
             })}
             {nextSab && !todaySab && (
               <div style={{ marginTop:12, padding:'10px 14px', background:C.tealLight,
-                borderRadius:8, fontSize:12, color:C.teal, fontWeight:500 }}>
+                borderRadius:8, fontSize:18, color:C.teal, fontWeight:500 }}>
                 Next Sabbath in {daysToNext} day{daysToNext!==1?'s':''} — {daysToNext<=2?'reflection prompts generating today in the Loop':'reminder set'}
               </div>
             )}
@@ -1737,10 +1737,10 @@ function CommandCentre() {
         )}
 
         <div style={{ background:C.parch, borderRadius:12, padding:'16px 20px' }}>
-          <div style={{ fontSize:12, fontWeight:500, color:C.slate, marginBottom:8 }}>
+          <div style={{ fontSize:18, fontWeight:500, color:C.slate, marginBottom:8 }}>
             Calendly reminder
           </div>
-          <div style={{ fontSize:12, color:C.slate, lineHeight:1.7 }}>
+          <div style={{ fontSize:18, color:C.slate, lineHeight:1.7 }}>
             Block these four dates in your Calendly availability settings each month so no sessions are booked on your Sabbath day. Go to Calendly → Availability → Date overrides → Add date.
           </div>
         </div>
@@ -1758,13 +1758,13 @@ function CommandCentre() {
         <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between',
           marginBottom:20, flexWrap:'wrap', gap:12 }}>
           <div>
-            <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy }}>
+            <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy }}>
               Today's Loop
             </div>
-            <div style={{ fontSize:13, color:C.slate, marginTop:2 }}>{today}</div>
+            <div style={{ fontSize:16, color:C.slate, marginTop:2 }}>{today}</div>
           </div>
           <button className="cc-btn" onClick={() => setLoopItems(getLoopItems(coachees, sabbath.dates||[], sentIds))}
-            style={{ background:C.light, color:C.slate, padding:'9px 16px', borderRadius:8, fontSize:13 }}>
+            style={{ background:C.light, color:C.slate, padding:'9px 16px', borderRadius:8, fontSize:16 }}>
             ↻ Refresh
           </button>
         </div>
@@ -1775,11 +1775,11 @@ function CommandCentre() {
             <div className="cc-serif" style={{ fontSize:24, color:C.white, fontWeight:300, marginBottom:8 }}>
               Sabbath Rest Day
             </div>
-            <div style={{ fontSize:14, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>
+            <div style={{ fontSize:17, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>
               The Loop is paused today. No messages will be generated on your Sabbath rest day. Come back tomorrow.
             </div>
             <div style={{ marginTop:16, fontFamily:"'Cormorant Garamond',serif", fontStyle:'italic',
-              fontSize:14, color:C.gold }}>
+              fontSize:17, color:C.gold }}>
               "Counsel in the heart of man is like deep water..." — Proverbs 20:5 KJV
             </div>
           </div>
@@ -1787,22 +1787,22 @@ function CommandCentre() {
           <div style={{ background:C.white, borderRadius:16, padding:'40px 28px', textAlign:'center',
             border:`1.5px dashed #DDE3EA` }}>
             <div style={{ fontSize:36, marginBottom:12 }}>✓</div>
-            <div className="cc-serif" style={{ fontSize:22, color:C.navy, marginBottom:8 }}>
+            <div className="cc-serif" style={{ fontSize:24, color:C.navy, marginBottom:8 }}>
               All clear
             </div>
-            <div style={{ fontSize:14, color:C.slate, lineHeight:1.7 }}>
+            <div style={{ fontSize:17, color:C.slate, lineHeight:1.7 }}>
               No actions due today. All coachees are on track. The Loop will surface items automatically when action is needed.
             </div>
             {!(sabbath.dates||[]).length && (
               <div style={{ marginTop:16, padding:'12px 16px', background:C.goldLight,
-                borderRadius:8, fontSize:12, color:'#8A6A20' }}>
+                borderRadius:8, fontSize:18, color:'#8A6A20' }}>
                 Set your Sabbath dates in the 🌙 Sabbath Tracker to activate pre-Sabbath reflection prompts.
               </div>
             )}
           </div>
         ) : (
           <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-            <div style={{ fontSize:12, color:C.slate }}>
+            <div style={{ fontSize:18, color:C.slate }}>
               {loopItems.length} action{loopItems.length!==1?'s':''} due today — highest priority first
             </div>
             {loopItems.map(item => (
@@ -1815,8 +1815,8 @@ function CommandCentre() {
                   display:'flex', alignItems:'center', gap:12 }}>
                   <div style={{ fontSize:20 }}>{item.icon}</div>
                   <div style={{ flex:1 }}>
-                    <div style={{ fontSize:13, fontWeight:500, color:C.white }}>{item.label}</div>
-                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.75)', marginTop:2 }}>{item.reason}</div>
+                    <div style={{ fontSize:16, fontWeight:500, color:C.white }}>{item.label}</div>
+                    <div style={{ fontSize:17, color:'rgba(255,255,255,0.75)', marginTop:2 }}>{item.reason}</div>
                   </div>
                   <div style={{ width:36, height:36, borderRadius:'50%',
                     background:'rgba(255,255,255,0.2)',
@@ -1830,8 +1830,8 @@ function CommandCentre() {
                 <div style={{ padding:'12px 18px', borderBottom:'1px solid #F0F0F0',
                   display:'flex', alignItems:'center', gap:10 }}>
                   <div>
-                    <div style={{ fontSize:14, fontWeight:500, color:C.navy }}>{item.coachee.name}</div>
-                    <div style={{ fontSize:12, color:C.slate, marginTop:2 }}>
+                    <div style={{ fontSize:17, fontWeight:500, color:C.navy }}>{item.coachee.name}</div>
+                    <div style={{ fontSize:18, color:C.slate, marginTop:2 }}>
                       Week {item.coachee.weekNumber} · {item.coachee.goal.substring(0,60)}{item.coachee.goal.length>60?'...':''}
                     </div>
                   </div>
@@ -1840,9 +1840,9 @@ function CommandCentre() {
                 {/* Generated message */}
                 {loopGenerated[item.uid] && (
                   <div style={{ padding:'14px 18px', borderBottom:'1px solid #F0F0F0' }}>
-                    <div style={{ fontSize:11, color:C.teal, fontWeight:500, letterSpacing:2,
+                    <div style={{ fontSize:17, color:C.teal, fontWeight:500, letterSpacing:2,
                       textTransform:'uppercase', marginBottom:8 }}>Generated Message</div>
-                    <div style={{ fontSize:14, color:C.navy, lineHeight:1.8,
+                    <div style={{ fontSize:17, color:C.navy, lineHeight:1.8,
                       background:C.parch, borderRadius:8, padding:'12px 14px',
                       borderLeft:`3px solid ${item.colour}` }}>
                       {loopGenerated[item.uid]}
@@ -1856,7 +1856,7 @@ function CommandCentre() {
                     <button className="cc-btn" onClick={() => generateLoopMsg(item)}
                       disabled={loopGenerating[item.uid]}
                       style={{ background: loopGenerating[item.uid] ? C.slate : item.colour,
-                        color:C.white, padding:'9px 16px', borderRadius:7, fontSize:13, fontWeight:500,
+                        color:C.white, padding:'9px 16px', borderRadius:7, fontSize:16, fontWeight:500,
                         display:'flex', alignItems:'center', gap:8 }}>
                       {loopGenerating[item.uid]
                         ? <><div className="cc-spinner" /> Generating...</>
@@ -1867,18 +1867,18 @@ function CommandCentre() {
                       <button className="cc-btn"
                         onClick={() => copyLoopMsg(item, loopGenerated[item.uid])}
                         style={{ background: loopCopied[item.uid] ? C.teal : C.navy,
-                          color:C.white, padding:'9px 16px', borderRadius:7, fontSize:13, fontWeight:500 }}>
+                          color:C.white, padding:'9px 16px', borderRadius:7, fontSize:16, fontWeight:500 }}>
                         {loopCopied[item.uid] ? '✓ Copied' : '📋 Copy for WhatsApp'}
                       </button>
                       <button className="cc-btn" onClick={() => generateLoopMsg(item)}
-                        style={{ background:C.light, color:C.slate, padding:'9px 14px', borderRadius:7, fontSize:12 }}>
+                        style={{ background:C.light, color:C.slate, padding:'9px 14px', borderRadius:7, fontSize:18 }}>
                         ↻ Regenerate
                       </button>
                     </>
                   )}
                   <button className="cc-btn" onClick={() => markLoopSent(item)}
                     style={{ background:'transparent', color:C.teal, padding:'9px 14px',
-                      borderRadius:7, fontSize:12, border:`1px solid ${C.teal}`,
+                      borderRadius:7, fontSize:18, border:`1px solid ${C.teal}`,
                       marginLeft:'auto' }}>
                     ✓ Mark Sent
                   </button>
@@ -1897,7 +1897,7 @@ function CommandCentre() {
       height:'100vh', background:C.light, fontFamily:"'DM Sans',sans-serif", color:C.slate }}>
       <div style={{ textAlign:'center' }}>
         <div className="cc-spinner" style={{ borderTopColor:C.teal, borderColor:'rgba(46,139,114,0.2)', width:28, height:28, margin:'0 auto 12px' }} />
-        <div style={{ fontSize:14 }}>Loading Command Centre...</div>
+        <div style={{ fontSize:17 }}>Loading Command Centre...</div>
       </div>
     </div>
   );
