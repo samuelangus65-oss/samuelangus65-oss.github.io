@@ -46,7 +46,7 @@ body { font-family: "DM Sans", system-ui, sans-serif; }
 <body>
 
 <!-- API KEY SETUP SCREEN -->
-<div id="setup-screen" style="display:none;">
+<div id="setup-screen" style="display:flex;">
   <div class="setup-card">
     <h1>Samuel Angus<br>Command Centre</h1>
     <p style="font-family:Georgia,serif;font-style:italic;color:#2E8B72;margin-bottom:20px;">
@@ -75,43 +75,24 @@ body { font-family: "DM Sans", system-ui, sans-serif; }
 <div id="root" style="display:none;"></div>
 
 <script>
-function checkSetup() {
-  const key = localStorage.getItem("sa-api-key");
-  if (!key) {
-    document.getElementById("setup-screen").style.display = "flex";
-    document.getElementById("root").style.display = "none";
-  } else {
+(function() {
+  if (localStorage.getItem("sa-api-key")) {
     document.getElementById("setup-screen").style.display = "none";
-    document.getElementById("root").style.display = "block";
-    // Mount React app after Babel has finished compiling
-    setTimeout(function() {
-      if (window.__mountApp) window.__mountApp();
-    }, 500);
   }
-}
-
+})();
 
 function saveApiKey() {
   const key = document.getElementById("api-key-input").value.trim();
   if (!key || key.length < 10) {
-    alert("Please enter a valid Anthropic API key starting with sk-");
+    alert("Please enter a valid Anthropic API key.");
     return;
   }
-  try {
-    localStorage.setItem("sa-api-key", key);
-    const check = localStorage.getItem("sa-api-key");
-    if (!check) {
-      alert("Storage error — your browser may be blocking local storage for file:// pages. Try opening the file in Chrome and ensure cookies/storage are not blocked.");
-      return;
-    }
-    alert("API key saved successfully! Your Command Centre is opening now.");
-    window.location.reload();
-  } catch(e) {
-    alert("Could not save key: " + e.message + "\n\nTry opening the file in Chrome and check that local storage is not blocked in your browser settings.");
-  }
+  try { localStorage.setItem("sa-api-key", key); }
+  catch(e) { alert("Could not save key: " + e.message); return; }
+  document.getElementById("setup-screen").style.display = "none";
+  document.getElementById("root").style.display = "block";
+  if (window.__mountApp) window.__mountApp();
 }
-
-window.addEventListener("load", checkSetup);
 </script>
 
 <script type="text/babel">
@@ -726,15 +707,15 @@ function CommandCentre() {
     setLoopItems(getLoopItems(updated, sabbath.dates || [], sentIds));
   };
 
-  const submitForm = async () => {
-    if (!form.name.trim() || !form.goal.trim()) { setError('Please enter a name and goal.'); return; }
+  const submitForm = async (formData) => {
+    if (!formData.name || !formData.goal) { setError('Please enter a name and goal.'); return; }
     setError('');
     let updated;
     if (editId) {
-      updated = coachees.map(c => c.id === editId ? { ...c, ...form, weekNumber: parseInt(form.weekNumber)||1 } : c);
+      updated = coachees.map(c => c.id === editId ? { ...c, ...formData } : c);
     } else {
       const now = new Date().toISOString();
-      updated = [...coachees, { ...form, id: uid(), weekNumber: parseInt(form.weekNumber)||1, createdAt: now, lastSession: now }];
+      updated = [...coachees, { ...formData, id: uid(), createdAt: now, lastSession: now }];
     }
     await persist(updated);
     setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 });
@@ -841,6 +822,8 @@ function CommandCentre() {
       setTimeout(() => setLoopCopied(prev => ({ ...prev, [item.uid]: false })), 2000);
     });
   };
+
+  const startWhy = async () => {
     if (!selected || !whyPresenting.trim()) return;
     setGeneratingWhy(true);
     try {
@@ -883,6 +866,8 @@ function CommandCentre() {
     setCurrentWhyA('');
     setRootCauseSummary('');
   };
+
+  const copyText = (text) => {
     navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
   };
 
@@ -1058,67 +1043,83 @@ function CommandCentre() {
   );
 
   // ── ADD / EDIT COACHEE VIEW ──
-  const AddView = () => (
-    <div style={{ padding:'28px 24px', maxWidth:560 }}>
-      <MobileHeader title={editId ? 'Edit Coachee' : 'Add Coachee'} />
-      <button onClick={() => { nav('dashboard'); setEditId(null); setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 }); }}
-        style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
-          marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
-        ← Back to Dashboard
-      </button>
-      <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy, marginBottom:24 }}>
-        {editId ? 'Edit Coachee' : 'Add New Coachee'}
-      </div>
+  const AddView = () => {
+    const nameRef = React.useRef(null);
+    const goalRef = React.useRef(null);
+    const intakeRef = React.useRef(null);
+    const weekRef = React.useRef(null);
+    const concessionRef = React.useRef(null);
 
-      {error && (
-        <div style={{ background:'#FFEBEE', border:'1px solid #FFCDD2', borderRadius:8,
-          padding:'10px 14px', fontSize:13, color:C.red, marginBottom:16 }}>
-          {error}
-        </div>
-      )}
+    const handleSubmit = () => {
+      submitForm({
+        name: nameRef.current.value.trim(),
+        goal: goalRef.current.value.trim(),
+        intake: intakeRef.current.value.trim(),
+        weekNumber: parseInt(weekRef.current.value) || 1,
+        concession: concessionRef.current.checked,
+      });
+    };
 
-      <div style={{ display:'flex', flexDirection:'column', gap:18 }}>
-        <div>
-          <label className="cc-label">Full Name *</label>
-          <input className="cc-input" placeholder="e.g. Jordan Smith"
-            value={form.name} onChange={e => setForm({...form, name:e.target.value})} />
+    return (
+      <div style={{ padding:'28px 24px', maxWidth:560 }}>
+        <MobileHeader title={editId ? 'Edit Coachee' : 'Add Coachee'} />
+        <button onClick={() => { nav('dashboard'); setEditId(null); setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 }); }}
+          style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:13,
+            marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
+          ← Back to Dashboard
+        </button>
+        <div className="cc-serif" style={{ fontSize:28, fontWeight:300, color:C.navy, marginBottom:24 }}>
+          {editId ? 'Edit Coachee' : 'Add New Coachee'}
         </div>
-        <div>
-          <label className="cc-label">Coaching Goal *</label>
-          <textarea className="cc-textarea" placeholder="What is this person working toward? Be specific — this informs every message generated."
-            value={form.goal} onChange={e => setForm({...form, goal:e.target.value})} style={{ minHeight:80 }} />
-        </div>
-        <div>
-          <label className="cc-label">Intake Notes (optional)</label>
-          <textarea className="cc-textarea" placeholder="Current situation, what has held them back, anything from your first conversation..."
-            value={form.intake} onChange={e => setForm({...form, intake:e.target.value})} style={{ minHeight:70 }} />
-        </div>
-        <div>
-          <label className="cc-label">Current Week Number</label>
-          <input className="cc-input" type="number" min="1" max="52"
-            value={form.weekNumber} onChange={e => setForm({...form, weekNumber:e.target.value})} style={{ width:100 }} />
-        </div>
-        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-          <input type="checkbox" id="concession" checked={form.concession}
-            onChange={e => setForm({...form, concession:e.target.checked})}
-            style={{ width:16, height:16, cursor:'pointer', accentColor:C.teal }} />
-          <label htmlFor="concession" style={{ fontSize:14, color:C.slate, cursor:'pointer' }}>
-            Concession rate (student / NHS / faith community referral)
-          </label>
-        </div>
-        <div style={{ display:'flex', gap:12, marginTop:4 }}>
-          <button className="cc-btn" onClick={submitForm}
-            style={{ background:C.teal, color:C.white, padding:'12px 28px', borderRadius:8, fontSize:15, fontWeight:500 }}>
-            {editId ? 'Save Changes' : 'Add Coachee'}
-          </button>
-          <button className="cc-btn" onClick={() => { nav('dashboard'); setEditId(null); setError(''); }}
-            style={{ background:C.light, color:C.slate, padding:'12px 20px', borderRadius:8, fontSize:14 }}>
-            Cancel
-          </button>
+
+        {error && (
+          <div style={{ background:'#FFEBEE', border:'1px solid #FFCDD2', borderRadius:8,
+            padding:'10px 14px', fontSize:13, color:C.red, marginBottom:16 }}>
+            {error}
+          </div>
+        )}
+
+        <div style={{ display:'flex', flexDirection:'column', gap:18 }}>
+          <div>
+            <label className="cc-label">Full Name *</label>
+            <input ref={nameRef} className="cc-input" placeholder="e.g. Jordan Smith" defaultValue={form.name||''} />
+          </div>
+          <div>
+            <label className="cc-label">Coaching Goal *</label>
+            <textarea ref={goalRef} className="cc-textarea" placeholder="What is this person working toward? Be specific — this informs every message generated."
+              defaultValue={form.goal||''} style={{ minHeight:80 }} />
+          </div>
+          <div>
+            <label className="cc-label">Intake Notes (optional)</label>
+            <textarea ref={intakeRef} className="cc-textarea" placeholder="Current situation, what has held them back, anything from your first conversation..."
+              defaultValue={form.intake||''} style={{ minHeight:70 }} />
+          </div>
+          <div>
+            <label className="cc-label">Current Week Number</label>
+            <input ref={weekRef} className="cc-input" type="number" min="1" max="52"
+              defaultValue={form.weekNumber||1} style={{ width:100 }} />
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+            <input ref={concessionRef} type="checkbox" id="concession" defaultChecked={form.concession||false}
+              style={{ width:16, height:16, cursor:'pointer', accentColor:C.teal }} />
+            <label htmlFor="concession" style={{ fontSize:14, color:C.slate, cursor:'pointer' }}>
+              Concession rate (student / NHS / faith community referral)
+            </label>
+          </div>
+          <div style={{ display:'flex', gap:12, marginTop:4 }}>
+            <button className="cc-btn" onClick={handleSubmit}
+              style={{ background:C.teal, color:C.white, padding:'12px 28px', borderRadius:8, fontSize:15, fontWeight:500 }}>
+              {editId ? 'Save Changes' : 'Add Coachee'}
+            </button>
+            <button className="cc-btn" onClick={() => { nav('dashboard'); setEditId(null); setError(''); }}
+              style={{ background:C.light, color:C.slate, padding:'12px 20px', borderRadius:8, fontSize:14 }}>
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // ── COACHEE DETAIL VIEW ──
   const DetailView = () => {
@@ -1919,7 +1920,16 @@ function CommandCentre() {
 
 
 window.__mountApp = function() {
+  window.__mountApp = function() {
   ReactDOM.createRoot(document.getElementById("root")).render(<CommandCentre />);
+};
+(function() {
+  if (localStorage.getItem("sa-api-key")) {
+    document.getElementById("setup-screen").style.display = "none";
+    document.getElementById("root").style.display = "block";
+    window.__mountApp();
+  }
+})();
 };
 
 </script>
