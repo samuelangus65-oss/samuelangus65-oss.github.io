@@ -823,7 +823,7 @@ function CommandCentre() {
     });
   };
 
-  const startWhy = async () => {
+  const generateNextWhy = async () => {
     if (!selected || !whyPresenting.trim()) return;
     setGeneratingWhy(true);
     try {
