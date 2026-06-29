@@ -1374,7 +1374,7 @@ function CommandCentre() {
                 {/* Generate next why button */}
                 {whyChain.length > 0 && !currentWhyQ && whyStep < 5 && !rootCauseSummary && (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <button className="cc-btn" onClick={generateNextWhy} disabled={generatingWhy}
+                    <button className="cc-btn" onClick={() => { const el = document.getElementById('why-answer-input'); const val = el ? el.value : currentWhyA; setCurrentWhyA(val); recordWhyAnswer(val); setTimeout(() => generateNextWhy(), 50); }} disabled={generatingWhy}
                       style={{ background: generatingWhy ? C.slate : '#1A6B8A', color: C.white,
                         padding: '9px 16px', borderRadius: 7, fontSize: 15, fontWeight: 500,
                         display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1446,8 +1446,8 @@ function CommandCentre() {
                   <div className="cc-fade-in" style={{ marginTop: 12, padding: '12px 14px',
                     background: helpPos.colour + '15', borderRadius: 8,
                     borderLeft: `3px solid ${helpPos.colour}` }}>
-                    <div style={{ fontSize: 15, color: C.white, fontWeight: 500, marginBottom: 4 }}>{helpPos.tomm}</div>
-                    <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>{helpPos.burnham}</div>
+                    <div style={{ fontSize: 15, color: helpPos.id === 'visitor' ? C.white : helpPos.colour, fontWeight: 500, marginBottom: 4 }}>{helpPos.tomm}</div>
+                    <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>{helpPos.burnham}</div>
                   </div>
                 )}
               </div>
