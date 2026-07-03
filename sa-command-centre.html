@@ -482,7 +482,7 @@ const HELP_POSITIONS = [
 ];
 
 // ── ENHANCED SUPPORT PROMPT — with Relationship to Help ───────
-function buildEnhancedSupportPrompt(coachee, pattern, presentation, helpPosition, stressLevel, stressSignals, rootCauseSummary, whyChain, whyPresenting) {
+function buildEnhancedSupportPrompt(coachee, pattern, presentation, helpPosition, stressLevel, stressSignals, rootCauseSummary, whyChain, whyPresenting, frameworkId) {
   const phase = coachee.weekNumber <= 2 ? 'early stage'
     : coachee.weekNumber <= 5 ? 'middle stage' : 'later stage';
   const signalLabels = stressSignals.map(id => STRESS_SIGNALS.find(s => s.id === id)?.label).filter(Boolean).join('; ');
@@ -503,6 +503,13 @@ Position: ${pos ? pos.label + ' — ' + pos.subtitle : 'Not assessed'}
 ${pos ? 'Approach: ' + pos.approach : ''}
 ${stressLevel !== 'none' ? `Stress level: ${stressLevel.toUpperCase()} — signals: ${signalLabels}` : ''}
 ${whyContext}
+
+${frameworkId ? `COACHING FRAMEWORK SELECTED (Decision Map — inform structure and questioning approach):
+Framework: ${COACHING_FRAMEWORKS.find(f => f.id === frameworkId)?.label || frameworkId}
+Client state this addresses: ${COACHING_FRAMEWORKS.find(f => f.id === frameworkId)?.client || ''}
+Core purpose: ${COACHING_FRAMEWORKS.find(f => f.id === frameworkId)?.why || ''}
+Opening question suggested: ${COACHING_FRAMEWORKS.find(f => f.id === frameworkId)?.ask || ''}
+Use this framework to inform the depth and angle of your message — do not name it directly.` : ''}
 
 STRUGGLE PATTERN (Bandura/Dweck/Mischel — inform question choice only):
 Pattern: ${pattern.label} — ${pattern.subtitle}
@@ -838,7 +845,7 @@ function CommandCentre() {
       if (activeMsgType === 'support' && generateMode === 'grounding') {
         prompt = buildGroundingPrompt(selected, stressLevel, stressSignals, coacheePresentation);
       } else if (activeMsgType === 'support') {
-        prompt = buildEnhancedSupportPrompt(selected, selectedPattern, coacheePresentation, relationshipPosition, stressLevel, stressSignals, rootCauseSummary, whyChain, whyPresenting);
+        prompt = buildEnhancedSupportPrompt(selected, selectedPattern, coacheePresentation, relationshipPosition, stressLevel, stressSignals, rootCauseSummary, whyChain, whyPresenting, selectedFramework);
       } else {
         prompt = buildPrompt(activeMsgType, selected, sessionNotes);
       }
