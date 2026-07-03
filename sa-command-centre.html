@@ -201,7 +201,7 @@ function buildPrompt(type, coachee, extra = '') {
     ? 'middle stage — deepen the work, surface what is really getting in the way, begin to stretch and challenge'
     : 'later stage — consolidate growth, embed new patterns, look forward with clarity';
 
-  const base = `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's coaching approach draws out what is already within each person. His voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always feels personal. He signs off simply as Samuel.
+  const base = `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's coaching approach draws out what is already within each person. His voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always feels personal. He signs off with 'Many thanks, Samuel'.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -246,7 +246,7 @@ function buildSupportPrompt(coachee, pattern, presentation) {
     ? 'middle stage — the work has deepened but the coachee is struggling'
     : 'later stage — the coachee has been working for some time but progress has stalled';
 
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always personal. He signs off simply as Samuel.
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always personal. He signs off with 'Many thanks, Samuel'.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -362,7 +362,7 @@ const STRESS_CONFIG = {
 // ── GROUNDING PROMPT BUILDER ──────────────────────────────────
 function buildGroundingPrompt(coachee, stressLevel, signals, presentation) {
   const signalLabels = signals.map(id => STRESS_SIGNALS.find(s => s.id === id)?.label).filter(Boolean).join('; ');
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy. He signs off simply as Samuel.
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy. He signs off with 'Many thanks, Samuel'.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -491,7 +491,7 @@ function buildEnhancedSupportPrompt(coachee, pattern, presentation, helpPosition
     ? `\nROOT CAUSE ANALYSIS (Five Whys — do not reference directly, use to inform depth and question choice):\nPresenting problem: "${whyPresenting}"\n${whyChain.map((c,i)=>`Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`).join('\n')}\n${rootCauseSummary ? `Root cause summary: ${rootCauseSummary}` : ''}`
     : '';
 
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy, always personal. He signs off simply as Samuel.
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy, always personal. He signs off with 'Many thanks, Samuel'.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -1508,7 +1508,7 @@ function CommandCentre() {
                   const fw = COACHING_FRAMEWORKS.find(f => f.id === selectedFramework);
                   return (
                     <div style={{ background: fw.colour + '18', border: `1px solid ${fw.colour}`, borderRadius: 8, padding: '12px 16px' }}>
-                      <div style={{ fontSize: 15, color: fw.colour, fontWeight: 500, marginBottom: 4 }}>Why this framework: {fw.why}</div>
+                      <div style={{ fontSize: 15, color: C.white, fontWeight: 500, marginBottom: 4 }}>Why this framework: {fw.why}</div>
                       <div style={{ fontSize: 15, color: C.white }}>Opening question: {fw.ask}</div>
                     </div>
                   );
@@ -1734,9 +1734,14 @@ function CommandCentre() {
           <div className="cc-fade-in">
             <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal,
               fontWeight:500, marginBottom:10 }}>Generated Message</div>
-            <div className="cc-result-box" style={{ marginBottom:14 }}>
-              {generatedMsg}
-            </div>
+            <textarea
+              style={{ width:'100%', background:C.light, borderRadius:10, padding:'14px 16px',
+                fontSize:15, color:C.navy, lineHeight:1.8, border:`1px solid ${C.border}`,
+                fontFamily:"'DM Sans',sans-serif", resize:'vertical', minHeight:180,
+                marginBottom:14, boxSizing:'border-box' }}
+              value={generatedMsg}
+              onChange={e => setGeneratedMsg(e.target.value)}
+            />
             <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
               <button className="cc-btn" onClick={() => copy(generatedMsg)}
                 style={{ background: copied ? C.teal : C.navy, color:C.white,
