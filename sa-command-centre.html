@@ -233,7 +233,7 @@ This coachee has just reached a meaningful milestone at week ${coachee.weekNumbe
 
     reengage: `${base}
 
-This coachee has been quiet for about 5 days. Write a gentle re-engagement message (2-3 sentences maximum). No pressure. No guilt. Just warmth and an open door. One light question at the end. Short. Human.`,
+This coachee has been quiet for about 14 days. Write a gentle re-engagement message (2-3 sentences maximum). No pressure. No guilt. Just warmth and an open door. One light question at the end. Short. Human.`,
   };
   return types[type] || types.midweek;
 }
@@ -390,6 +390,64 @@ The coachee must feel that Samuel has noticed, that they do not have to perform,
 }
 
 // ── RELATIONSHIP TO HELP — Tomm, Burnham, Cecchin ────────────
+
+const COACHING_FRAMEWORKS = [
+  {
+    id: 'grow',
+    label: 'GROW Model',
+    subtitle: 'Goal · Reality · Options · Will',
+    client: 'Unclear. Cannot decide. No direction. Feels stuck.',
+    why: 'Create clarity before action.',
+    ask: '"What would success actually look like?"',
+    colour: '#2E8B72',
+  },
+  {
+    id: 'scarf',
+    label: 'SCARF Model',
+    subtitle: 'Status · Certainty · Autonomy · Relatedness · Fairness',
+    client: 'Emotionally overwhelmed. Threatened. Defensive.',
+    why: 'Reduce perceived threat.',
+    ask: '"What feels most at risk here?"',
+    colour: '#8E44AD',
+  },
+  {
+    id: 'ladder',
+    label: 'Ladder of Inference',
+    subtitle: 'Actions · Patterns · Meaning · Assumptions · Conclusions · Beliefs',
+    client: 'Repeating same story. Making assumptions. Drawing conclusions.',
+    why: 'Separate facts from interpretation.',
+    ask: '"What do you know for certain?"',
+    colour: '#2980B9',
+  },
+  {
+    id: 'drama',
+    label: 'Drama Triangle',
+    subtitle: 'Victim · Persecutor · Rescuer → Creator · Challenger · Coach',
+    client: 'Blaming circumstances. Waiting for others. Feeling powerless.',
+    why: 'Restore ownership and agency.',
+    ask: '"What influence do you have?"',
+    colour: '#C0392B',
+  },
+  {
+    id: 'immunity',
+    label: 'Immunity to Change',
+    subtitle: 'Big Goal · Doing/Not Doing · Hidden Commitment · Assumptions · Immunity',
+    client: 'Deeply insightful — but never follows through.',
+    why: 'Surface hidden commitments.',
+    ask: '"What might this behaviour be protecting?"',
+    colour: '#E67E22',
+  },
+  {
+    id: 'woop',
+    label: 'WOOP',
+    subtitle: 'Wish · Outcome · Obstacle · Plan',
+    client: 'Committed. Ready. Needs action.',
+    why: 'Turn intention into behaviour.',
+    ask: '"What's the first obstacle you'll face?"',
+    colour: '#27AE60',
+  },
+];
+
 const HELP_POSITIONS = [
   {
     id: 'customer',
@@ -498,11 +556,14 @@ const LOOP_SENT_KEY = 'samuel-loop-sent-v1';
 // ── SABBATH CALCULATIONS ──────────────────────────────────────
 function calcSabbaths(firstDateStr) {
   if (!firstDateStr) return [];
-  const first = new Date(firstDateStr + 'T00:00:00');
-  return [0, 7, 14, 21].map(days => {
-    const d = new Date(first);
-    d.setDate(d.getDate() + days);
-    return d.toISOString().split('T')[0];
+  // Parse date parts directly to avoid timezone offset shifting the date
+  const [y, m, d] = firstDateStr.split('-').map(Number);
+  return [0, 7, 14, 21].map(offset => {
+    const dt = new Date(y, m - 1, d + offset);
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   });
 }
 const todayStr = () => new Date().toISOString().split('T')[0];
@@ -525,7 +586,7 @@ function getLoopItems(coachees, sabbaths, sentIds) {
     const baseId = (type) => `${coachee.id}-${type}-${todayStr()}`;
 
     // Priority 1 — Re-engagement (5+ days silence)
-    if (days >= 5 && !sentIds.includes(baseId('reengage'))) {
+    if (days >= 14 && !sentIds.includes(baseId('reengage'))) {
       items.push({ uid: baseId('reengage'), coachee, priority: 1, msgType: 'reengage',
         icon: '🤝', label: 'Re-engagement needed',
         reason: `${days} days since last contact — ${coachee.name} may need a gentle nudge`,
@@ -666,6 +727,7 @@ function CommandCentre() {
   const [editId, setEditId]         = useState(null);
   const [form, setForm] = useState({ name:'', goal:'', intake:'', concession:false, weekNumber:1 });
   const [selectedPattern, setSelectedPattern] = useState(null);
+  const [selectedFramework, setSelectedFramework] = useState(null);
   const [coacheePresentation, setCoacheePresentation] = useState('');
   const [stressSignals, setStressSignals] = useState([]);
   const [generateMode, setGenerateMode] = useState('pattern'); // 'pattern' | 'grounding'
@@ -1415,6 +1477,45 @@ function CommandCentre() {
                     Skip this step if the root cause is already clear — scroll to Step 1.
                   </div>
                 )}
+              </div>
+
+
+              {/* ── STEP 0.5: FRAMEWORK DECISION MAP ── */}
+              <div style={{ background: C.navy, borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
+                <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.gold, fontWeight: 500, marginBottom: 4 }}>
+                  Step 0.5 — Coaching Framework
+                </div>
+                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
+                  Decision Map — What does {selected?.name} need right now? Choose the framework that fits the conversation you are actually having.
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8, marginBottom: 14 }}>
+                  {COACHING_FRAMEWORKS.map(fw => (
+                    <button key={fw.id} onClick={() => { setSelectedFramework(fw.id); setGeneratedMsg(''); }}
+                      style={{
+                        background: selectedFramework === fw.id ? fw.colour + '30' : 'rgba(255,255,255,0.05)',
+                        border: `2px solid ${selectedFramework === fw.id ? fw.colour : 'rgba(255,255,255,0.1)'}`,
+                        borderRadius: 10, padding: '12px 14px', cursor: 'pointer', textAlign: 'left',
+                      }}>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: selectedFramework === fw.id ? fw.colour : C.white, marginBottom: 4 }}>
+                        {fw.label}
+                      </div>
+                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 6, lineHeight: 1.4 }}>{fw.subtitle}</div>
+                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', marginBottom: 6 }}>Client is: {fw.client}</div>
+                    </button>
+                  ))}
+                </div>
+                {selectedFramework && (() => {
+                  const fw = COACHING_FRAMEWORKS.find(f => f.id === selectedFramework);
+                  return (
+                    <div style={{ background: fw.colour + '18', border: `1px solid ${fw.colour}`, borderRadius: 8, padding: '12px 16px' }}>
+                      <div style={{ fontSize: 15, color: fw.colour, fontWeight: 500, marginBottom: 4 }}>Why this framework: {fw.why}</div>
+                      <div style={{ fontSize: 15, color: C.white }}>Opening question: {fw.ask}</div>
+                    </div>
+                  );
+                })()}
+                <div style={{ marginTop: 10, fontSize: 14, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>
+                  The framework is not the skill. Knowing when not to use it is. Skip if the conversation is already clear.
+                </div>
               </div>
 
               {/* ── STEP 1: RELATIONSHIP TO HELP ── */}
