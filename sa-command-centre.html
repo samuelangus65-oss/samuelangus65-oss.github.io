@@ -754,6 +754,9 @@ function CommandCentre() {
   const [loopCopied, setLoopCopied] = useState({});
   const [sentIds, setSentIds] = useState([]);
   const [sabbathInput, setSabbathInput] = useState('');
+  const [progressPanelOpen, setProgressPanelOpen] = useState(false);
+  const [progressScore, setProgressScore] = useState(5);
+  const [progressNote, setProgressNote] = useState('');
 
   useEffect(() => {
     Promise.all([
@@ -799,8 +802,13 @@ function CommandCentre() {
     setView('add');
   };
 
-  const advanceWeek = async (id) => {
-    const updated = coachees.map(c => c.id === id ? { ...c, weekNumber: c.weekNumber + 1, lastSession: new Date().toISOString() } : c);
+  const advanceWeek = async (id, progress) => {
+    const now = new Date().toISOString();
+    const updated = coachees.map(c => {
+      if (c.id !== id) return c;
+      const sessionEntry = { date: now, weekNumber: c.weekNumber, score: progress?.score ?? null, note: progress?.note || '' };
+      return { ...c, weekNumber: c.weekNumber + 1, lastSession: now, sessions: [...(c.sessions || []), sessionEntry] };
+    });
     await persist(updated);
     if (selected?.id === id) setSelected(updated.find(c => c.id === id));
   };
@@ -1234,7 +1242,7 @@ function CommandCentre() {
                 style={{ background:'rgba(255,255,255,0.1)', color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16 }}>
                 Edit
               </button>
-              <button className="cc-btn" onClick={() => advanceWeek(c.id)}
+              <button className="cc-btn" onClick={() => setProgressPanelOpen(true)}
                 style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16, fontWeight:500 }}>
                 + Advance Week
               </button>
@@ -1252,6 +1260,72 @@ function CommandCentre() {
             </div>
           )}
         </div>
+
+        {/* Progress capture panel — shown when advancing a week */}
+        {progressPanelOpen && (
+          <div style={{ background:C.white, border:`1.5px solid ${C.teal}`, borderRadius:12, padding:20, marginBottom:24 }}>
+            <div style={{ fontSize:17, fontWeight:500, color:C.navy, marginBottom:14 }}>
+              Log this session before advancing to Week {c.weekNumber + 1}
+            </div>
+            <label className="cc-label">Goal Progress (1–10)</label>
+            <div style={{ display:'flex', gap:6, marginBottom:14, flexWrap:'wrap' }}>
+              {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                <button key={n} onClick={() => setProgressScore(n)}
+                  style={{ width:32, height:32, borderRadius:'50%', cursor:'pointer',
+                    border:`1.5px solid ${progressScore===n?C.teal:'#DDE3EA'}`,
+                    background: progressScore===n?C.teal:C.white,
+                    color: progressScore===n?C.white:C.slate,
+                    fontSize:15, fontWeight:500 }}>
+                  {n}
+                </button>
+              ))}
+            </div>
+            <label className="cc-label">Quick Note (optional)</label>
+            <textarea className="cc-textarea" value={progressNote} onChange={e => setProgressNote(e.target.value)}
+              placeholder="One line on how this session went..." style={{ minHeight:60, marginBottom:14 }} />
+            <div style={{ display:'flex', gap:10 }}>
+              <button className="cc-btn" onClick={async () => {
+                  await advanceWeek(c.id, { score: progressScore, note: progressNote });
+                  setProgressPanelOpen(false); setProgressScore(5); setProgressNote('');
+                }}
+                style={{ background:C.teal, color:C.white, padding:'9px 20px', borderRadius:8, fontSize:16, fontWeight:500 }}>
+                Confirm &amp; Advance
+              </button>
+              <button className="cc-btn" onClick={() => { setProgressPanelOpen(false); setProgressScore(5); setProgressNote(''); }}
+                style={{ background:C.light, color:C.slate, padding:'9px 20px', borderRadius:8, fontSize:16 }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Progress History */}
+        {c.sessions && c.sessions.length > 0 && (
+          <div style={{ marginBottom:24 }}>
+            <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
+              Progress History
+            </div>
+            <div style={{ background:C.white, borderRadius:12, padding:'6px 20px', border:'1px solid #EEF3F7' }}>
+              {[...c.sessions].reverse().map((s, i) => (
+                <div key={i} style={{ display:'flex', alignItems:'flex-start', gap:14, padding:'12px 0',
+                  borderBottom: i < c.sessions.length - 1 ? '1px solid #F0F3F6' : 'none' }}>
+                  <div style={{ width:36, height:36, borderRadius:'50%', flexShrink:0,
+                    background: s.score ? (s.score>=7?C.tealLight:s.score>=4?C.goldLight:'rgba(192,57,43,0.12)') : C.light,
+                    color: s.score ? (s.score>=7?C.teal:s.score>=4?C.gold:C.red) : C.slate,
+                    display:'flex', alignItems:'center', justifyContent:'center', fontSize:15, fontWeight:600 }}>
+                    {s.score ?? '–'}
+                  </div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:15, color:C.slate, marginBottom:2 }}>
+                      Week {s.weekNumber} · {new Date(s.date).toLocaleDateString('en-GB')}
+                    </div>
+                    {s.note && <div style={{ fontSize:16, color:C.navy, lineHeight:1.5 }}>{s.note}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Message generators */}
         <div style={{ marginBottom:16 }}>
