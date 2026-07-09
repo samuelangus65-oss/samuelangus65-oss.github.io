@@ -201,7 +201,7 @@ function buildPrompt(type, coachee, extra = '') {
     ? 'middle stage — deepen the work, surface what is really getting in the way, begin to stretch and challenge'
     : 'later stage — consolidate growth, embed new patterns, look forward with clarity';
 
-  const base = `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's coaching approach draws out what is already within each person. His voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always feels personal. He signs off with 'Many thanks, Samuel'.
+  const base = `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's coaching approach draws out what is already within each person. His voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always feels personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -211,7 +211,7 @@ ${coachee.intake ? `Intake notes: ${coachee.intake}` : ''}`;
   const types = {
     midweek: `${base}
 
-Write a midweek WhatsApp-style check-in message. Maximum 4 sentences. Reference their goal naturally — do not make it feel like a coaching intervention. Include exactly ONE question drawn from The Coaching Habit methodology or reflexive/systemic practice. Choose the question that fits most naturally for week ${coachee.weekNumber}. Question bank to draw from (pick one only): "What's on your mind this week?", "And what else is coming up for you?", "What's the real challenge here for you right now?", "What do you want from this week?", "What story are you telling yourself about why this hasn't happened yet?", "If the version of you from five years ago could see you now, what would they notice?", "What would the people who believe in you most say about where you are right now?", "On a scale of 1-10, how committed are you to your goal this week — and what would move it one point higher?". Keep it conversational. No bullet points. No coaching language. Sound like a person who genuinely cares.`,
+Write a midweek WhatsApp-style check-in message. Maximum 4 sentences. Reference their goal naturally — do not make it feel like a coaching intervention. Include exactly ONE question drawn from The Coaching Habit methodology or reflexive/systemic practice. Choose the question that fits most naturally for week ${coachee.weekNumber}. Question bank to draw from (pick one only, write out in full words, no contractions): "What is on your mind this week?", "And what else is coming up for you?", "What is the real challenge here for you right now?", "What do you want from this week?", "What story are you telling yourself about why this has not happened yet?", "If the version of you from five years ago could see you now, what would they notice?", "What would the people who believe in you most say about where you are right now?", "On a scale of 1 to 10, how committed are you to your goal this week, and what would move it one point higher?". Keep it conversational. No bullet points. No coaching language. Sound like a person who genuinely cares.`,
 
     pre: `${base}
 
@@ -246,7 +246,7 @@ function buildSupportPrompt(coachee, pattern, presentation) {
     ? 'middle stage — the work has deepened but the coachee is struggling'
     : 'later stage — the coachee has been working for some time but progress has stalled';
 
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always personal. He signs off with 'Many thanks, Samuel'.
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -362,7 +362,7 @@ const STRESS_CONFIG = {
 // ── GROUNDING PROMPT BUILDER ──────────────────────────────────
 function buildGroundingPrompt(coachee, stressLevel, signals, presentation) {
   const signalLabels = signals.map(id => STRESS_SIGNALS.find(s => s.id === id)?.label).filter(Boolean).join('; ');
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy. He signs off with 'Many thanks, Samuel'.
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -491,7 +491,7 @@ function buildEnhancedSupportPrompt(coachee, pattern, presentation, helpPosition
     ? `\nROOT CAUSE ANALYSIS (Five Whys — do not reference directly, use to inform depth and question choice):\nPresenting problem: "${whyPresenting}"\n${whyChain.map((c,i)=>`Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`).join('\n')}\n${rootCauseSummary ? `Root cause summary: ${rootCauseSummary}` : ''}`
     : '';
 
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy, always personal. He signs off with 'Many thanks, Samuel'.
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy, always personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -533,6 +533,34 @@ The coachee must feel seen, not managed. Heard, not processed.`;
 }
 
 // ── API CALL ──────────────────────────────────────────────────
+// Safety-net cleanup: guarantees full words, no contractions, no em dashes,
+// no stray markdown bold — regardless of whether the model followed the prompt.
+function cleanMessage(text) {
+  if (!text) return text;
+  let out = text;
+  // Strip markdown bold/italic markers, keep the text inside
+  out = out.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
+  // Replace em/en dashes with a comma (safe, readable fallback)
+  out = out.replace(/—|–/g, ',');
+  // Common contractions -> full words (case-insensitive, preserves capitalisation of first letter)
+  const contractions = [
+    [/\bcan't\b/gi, 'cannot'], [/\bwon't\b/gi, 'will not'], [/\bdon't\b/gi, 'do not'],
+    [/\bdoesn't\b/gi, 'does not'], [/\bdidn't\b/gi, 'did not'], [/\bisn't\b/gi, 'is not'],
+    [/\baren't\b/gi, 'are not'], [/\bwasn't\b/gi, 'was not'], [/\bweren't\b/gi, 'were not'],
+    [/\bhasn't\b/gi, 'has not'], [/\bhaven't\b/gi, 'have not'], [/\bhadn't\b/gi, 'had not'],
+    [/\bwouldn't\b/gi, 'would not'], [/\bshouldn't\b/gi, 'should not'], [/\bcouldn't\b/gi, 'could not'],
+    [/\bI'm\b/g, 'I am'], [/\bI've\b/g, 'I have'], [/\bI'll\b/g, 'I will'], [/\bI'd\b/g, 'I would'],
+    [/\byou're\b/gi, 'you are'], [/\byou've\b/gi, 'you have'], [/\byou'll\b/gi, 'you will'], [/\byou'd\b/gi, 'you would'],
+    [/\bhe's\b/gi, 'he is'], [/\bshe's\b/gi, 'she is'], [/\bit's\b/gi, 'it is'],
+    [/\bthat's\b/gi, 'that is'], [/\bthere's\b/gi, 'there is'], [/\bwhat's\b/gi, 'what is'],
+    [/\bwe're\b/gi, 'we are'], [/\bwe've\b/gi, 'we have'], [/\bwe'll\b/gi, 'we will'],
+    [/\bthey're\b/gi, 'they are'], [/\bthey've\b/gi, 'they have'], [/\bthey'll\b/gi, 'they will'],
+    [/\blet's\b/gi, 'let us'],
+  ];
+  contractions.forEach(([pattern, replacement]) => { out = out.replace(pattern, replacement); });
+  return out;
+}
+
 async function callAI(prompt) {
   const apiKey = localStorage.getItem('sa-api-key');
   if (!apiKey) throw new Error('No API key set. Please add your Anthropic API key in Settings.');
@@ -858,7 +886,7 @@ function CommandCentre() {
         prompt = buildPrompt(activeMsgType, selected, sessionNotes);
       }
       const msg = await callAI(prompt);
-      setGeneratedMsg(msg);
+      setGeneratedMsg(cleanMessage(msg));
     } catch(e) {
       setError('Could not generate message. Check your connection and try again.');
     }
@@ -879,7 +907,7 @@ function CommandCentre() {
     try {
       const prompt = buildPrompt(item.msgType, item.coachee, '');
       const msg = await callAI(prompt);
-      setLoopGenerated(prev => ({ ...prev, [item.uid]: msg }));
+      setLoopGenerated(prev => ({ ...prev, [item.uid]: cleanMessage(msg) }));
     } catch(e) {
       setLoopGenerated(prev => ({ ...prev, [item.uid]: 'Could not generate. Check connection and try again.' }));
     }
@@ -1829,9 +1857,11 @@ function CommandCentre() {
                   padding:'10px 20px', borderRadius:8, fontSize:16, fontWeight:500 }}>
                 {copied ? '✓ Copied' : '📋 Copy for WhatsApp / Email'}
               </button>
-              <button className="cc-btn" onClick={generate}
-                style={{ background:C.light, color:C.slate, padding:'10px 16px', borderRadius:8, fontSize:16 }}>
-                ↻ Regenerate
+              <button className="cc-btn" onClick={generate} disabled={generating}
+                style={{ background: generating ? '#DDE3EA' : C.light, color: generating ? C.slate : C.slate,
+                  padding:'10px 16px', borderRadius:8, fontSize:16, opacity: generating ? 0.6 : 1,
+                  cursor: generating ? 'not-allowed' : 'pointer' }}>
+                {generating ? 'Regenerating...' : '↻ Regenerate'}
               </button>
             </div>
             <div style={{ marginTop:16, padding:'12px 16px', background:C.goldLight,
@@ -2060,8 +2090,12 @@ function CommandCentre() {
                         {loopCopied[item.uid] ? '✓ Copied' : '📋 Copy for WhatsApp'}
                       </button>
                       <button className="cc-btn" onClick={() => generateLoopMsg(item)}
-                        style={{ background:C.light, color:C.slate, padding:'9px 14px', borderRadius:7, fontSize:18 }}>
-                        ↻ Regenerate
+                        disabled={loopGenerating[item.uid]}
+                        style={{ background: loopGenerating[item.uid] ? '#DDE3EA' : C.light, color:C.slate,
+                          padding:'9px 14px', borderRadius:7, fontSize:18,
+                          opacity: loopGenerating[item.uid] ? 0.6 : 1,
+                          cursor: loopGenerating[item.uid] ? 'not-allowed' : 'pointer' }}>
+                        {loopGenerating[item.uid] ? '...' : '↻ Regenerate'}
                       </button>
                     </>
                   )}
