@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Samuel Angus — Coaching Command Centre</title>
+<title>Samuel Angus: Coaching Command Centre</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -50,7 +50,7 @@ body { font-family: "DM Sans", system-ui, sans-serif; }
   <div class="setup-card">
     <h1>Samuel Angus<br>Command Centre</h1>
     <p style="font-family:Georgia,serif;font-style:italic;color:#2E8B72;margin-bottom:20px;">
-      "Counsel in the heart of man is like deep water; but a man of understanding will draw it out." — Proverbs 20:5 KJV
+      "Counsel in the heart of man is like deep water; but a man of understanding will draw it out." (Proverbs 20:5 KJV)
     </p>
     <p>To generate AI-powered coaching messages you need an Anthropic API key. Your key is stored only on this device and is never shared with anyone.</p>
     <label>Anthropic API Key</label>
@@ -58,7 +58,7 @@ body { font-family: "DM Sans", system-ui, sans-serif; }
     <button class="setup-btn" onclick="saveApiKey()">Save and Open Command Centre</button>
     <div class="setup-note">
       Get your API key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>.
-      Your key is stored in your browser only — it never leaves this device except to make direct calls to Anthropic.
+      Your key is stored in your browser only, it never leaves this device except to make direct calls to Anthropic.
       <br><br>
       <strong>Cost:</strong> Each message generation uses approximately 500-1000 tokens. At standard Anthropic rates this is fractions of a penny per message.
     </div>
@@ -127,12 +127,12 @@ const STRUGGLE_PATTERNS = [
     icon: '🚧',
     subtitle: 'Not doing the thing',
     colour: '#E67E22',
-    research: 'Low self-efficacy (Bandura) — belief in ability to execute is low. Task feels too big.',
+    research: 'Low self-efficacy (Bandura), belief in ability to execute is low. Task feels too big.',
     approach: 'Shrink the task. Remove the barrier. One tiny action only.',
     questions: [
       'What is the smallest possible version of this you could do today?',
       'What would make this feel less daunting right now?',
-      'What has got in the way — and is that something you can move?',
+      'What has got in the way, and is that something you can move?',
     ]
   },
   {
@@ -141,7 +141,7 @@ const STRUGGLE_PATTERNS = [
     icon: '🔁',
     subtitle: 'I am not good enough',
     colour: '#8E44AD',
-    research: 'Fixed mindset (Dweck) — interpreting setbacks as evidence of inadequacy rather than as part of learning.',
+    research: 'Fixed mindset (Dweck), interpreting setbacks as evidence of inadequacy rather than as part of learning.',
     approach: 'Reframe effort as the variable, not ability. Surface what was learned, not what failed.',
     questions: [
       'What did you learn from this week, even if it did not go to plan?',
@@ -155,7 +155,7 @@ const STRUGGLE_PATTERNS = [
     icon: '🌊',
     subtitle: 'Too much at once',
     colour: '#2980B9',
-    research: 'Emotional regulation under pressure — cognitive load is too high to take purposeful action.',
+    research: 'Emotional regulation under pressure, cognitive load is too high to take purposeful action.',
     approach: 'Narrow the focus radically. One thing. Not ten. The most important thing only.',
     questions: [
       'Of everything on your mind right now, what is the one thing that matters most?',
@@ -169,10 +169,10 @@ const STRUGGLE_PATTERNS = [
     icon: '🌫️',
     subtitle: 'Going quiet or pulling back',
     colour: '#7F8C8D',
-    research: 'Shame, discouragement, or external life circumstances — the coachee has withdrawn rather than risk further failure or exposure.',
+    research: 'Shame, discouragement, or external life circumstances, the coachee has withdrawn rather than risk further failure or exposure.',
     approach: 'Open without pressure. No agenda. No expectations. Just warmth and an open door.',
     questions: [
-      'No agenda from me — just checking in. How are you doing?',
+      'No agenda from me, just checking in. How are you doing?',
       'Nothing to report is fine. I just wanted you to know I am here.',
       'What would feel supportive right now?',
     ]
@@ -183,12 +183,12 @@ const STRUGGLE_PATTERNS = [
     icon: '📉',
     subtitle: 'Working but not seeing progress',
     colour: '#27AE60',
-    research: 'Delayed gratification struggle (Mischel) and milestone blindness — effort is present but reward is not yet visible, causing motivation to drop.',
+    research: 'Delayed gratification struggle (Mischel) and milestone blindness, effort is present but reward is not yet visible, causing motivation to drop.',
     approach: 'Surface evidence of progress the coachee cannot see themselves. Look backwards, not forward.',
     questions: [
       'Look back at week one. What is different now, even if it feels small?',
       'What are you doing now that you were not doing when we started?',
-      'On a scale of 1-10, how much do you trust that the work is adding up — even when you cannot see it yet?',
+      'On a scale of 1-10, how much do you trust that the work is adding up, even when you cannot see it yet?',
     ]
   },
 ];
@@ -275,10 +275,10 @@ The coachee must never feel diagnosed, analysed, or managed. They must feel seen
 
 // ── FIVE WHYS — Root Cause Analysis (Wiegers/Ishikawa) ───────
 const FIVE_WHYS_CONFIG = {
-  title: 'Five Whys — Root Cause Analysis',
+  title: 'Five Whys: Root Cause Analysis',
   subtitle: 'Wiegers · Ishikawa · The problem first presented is rarely the real problem.',
   colour: '#1A6B8A',
-  description: 'Ask "why" up to five times to move from the presenting symptom to the root cause. Each answer becomes the input for the next question. By Why 5 you are typically at the real issue — which then informs the pattern selection and message.',
+  description: 'Ask "why" up to five times to move from the presenting symptom to the root cause. Each answer becomes the input for the next question. By Why 5 you are typically at the real issue, which then informs the pattern selection and message.',
 };
 
 function buildWhyPrompt(coachee, presentingProblem, chain, step) {
@@ -335,12 +335,12 @@ Return only the summary — no preamble or heading.`;
 const STRESS_SIGNALS = [
   { id:'sleep',      label:'Reporting poor sleep or physical exhaustion',         weight:1, clinical:false },
   { id:'clipped',    label:'Short, clipped or withdrawn communication',           weight:1, clinical:false },
-  { id:'physical',   label:'Describing physical symptoms — tension, headaches, fatigue', weight:1, clinical:false },
+  { id:'physical',   label:'Describing physical symptoms, tension, headaches, fatigue', weight:1, clinical:false },
   { id:'withdrawal', label:'Sudden withdrawal after a period of engagement',      weight:1, clinical:false },
   { id:'body',       label:'Overwhelmed in the body, not just the mind',          weight:1, clinical:false },
   { id:'illness',    label:'Reporting illness alongside emotional difficulty',    weight:1, clinical:false },
   { id:'hopeless',   label:'Expressing hopelessness or inability to see forward', weight:2, clinical:true  },
-  { id:'event',      label:'Significant life event — bereavement, job loss, relationship breakdown', weight:2, clinical:true },
+  { id:'event',      label:'Significant life event, bereavement, job loss, relationship breakdown', weight:2, clinical:true },
 ];
 
 const getStressLevel = (checked) => {
@@ -432,7 +432,7 @@ const COACHING_FRAMEWORKS = [
     id: 'immunity',
     label: 'Immunity to Change',
     subtitle: 'Big Goal · Doing/Not Doing · Hidden Commitment · Assumptions · Immunity',
-    client: 'Deeply insightful — but never follows through.',
+    client: 'Deeply insightful, but never follows through.',
     why: 'Surface hidden commitments.',
     ask: '"What might this behaviour be protecting?"',
     colour: '#E67E22',
@@ -453,31 +453,31 @@ const HELP_POSITIONS = [
     id: 'customer',
     label: 'Customer',
     icon: '🟢',
-    subtitle: 'Internally motivated — came willingly, sees themselves as part of the solution',
+    subtitle: 'Internally motivated, came willingly, sees themselves as part of the solution',
     colour: '#27AE60',
-    tomm: 'Karl Tomm: Customer position — full coaching engagement is appropriate. The coachee is ready to work.',
+    tomm: 'Karl Tomm: Customer position, full coaching engagement is appropriate. The coachee is ready to work.',
     approach: 'Full coaching engagement. Pattern-based support and challenge are appropriate. This person is ready.',
-    burnham: 'Consider which GRRRAAACCEEESSS dimensions may still affect how openly they receive challenge — even motivated coachees carry identity-based barriers to help.',
+    burnham: 'Consider which GRRRAAACCEEESSS dimensions may still affect how openly they receive challenge, even motivated coachees carry identity-based barriers to help.',
   },
   {
     id: 'complainant',
     label: 'Complainant',
     icon: '🟡',
-    subtitle: 'Emotionally engaged but locates the problem externally — in others or circumstances',
+    subtitle: 'Emotionally engaged but locates the problem externally, in others or circumstances',
     colour: '#E67E22',
-    tomm: 'Karl Tomm: Complainant position — validate their experience first. Do not immediately redirect. They need to feel heard before they can look inward.',
+    tomm: 'Karl Tomm: Complainant position, validate their experience first. Do not immediately redirect. They need to feel heard before they can look inward.',
     approach: 'Validate the experience. Gently introduce circular questions that shift perspective without dismissing their reality. Ask about what they can influence, not what others should do.',
-    burnham: 'Consider whether cultural or structural factors are genuinely at play — sometimes the external attribution is accurate. Social GRRRAAACCEEESSS: race, class, gender dynamics in workplace may be real barriers, not just perception.',
+    burnham: 'Consider whether cultural or structural factors are genuinely at play, sometimes the external attribution is accurate. Social GRRRAAACCEEESSS: race, class, gender dynamics in workplace may be real barriers, not just perception.',
   },
   {
     id: 'visitor',
     label: 'Visitor',
     icon: '🔴',
-    subtitle: 'Came because someone else suggested or expected it — not internally motivated',
+    subtitle: 'Came because someone else suggested or expected it, not internally motivated',
     colour: '#C0392B',
-    tomm: 'Karl Tomm: Visitor position — do not attempt pattern-based coaching. Build motivation and safety first. Pushing for action will increase resistance.',
+    tomm: 'Karl Tomm: Visitor position, do not attempt pattern-based coaching. Build motivation and safety first. Pushing for action will increase resistance.',
     approach: 'Explore what brought them here. Find one small thing that is genuinely theirs. Build internal motivation before any forward work. Cecchin: stay curious, not corrective.',
-    burnham: 'Burnham: Visitor position is often shaped by power dynamics — who sent them and what relationship that person has with them. Explore this gently. Their reluctance may be relational, not attitudinal.',
+    burnham: 'Burnham: Visitor position is often shaped by power dynamics, who sent them and what relationship that person has with them. Explore this gently. Their reluctance may be relational, not attitudinal.',
   },
 ];
 
@@ -620,42 +620,42 @@ function getLoopItems(coachees, sabbaths, sentIds) {
     const days = daysSince(coachee.lastSession);
     const baseId = (type) => `${coachee.id}-${type}-${todayStr()}`;
 
-    // Priority 1 — Re-engagement (5+ days silence)
+    // Priority 1: Re-engagement (5+ days silence)
     if (days >= 14 && !sentIds.includes(baseId('reengage'))) {
       items.push({ uid: baseId('reengage'), coachee, priority: 1, msgType: 'reengage',
         icon: '🤝', label: 'Re-engagement needed',
-        reason: `${days} days since last contact — ${coachee.name} may need a gentle nudge`,
+        reason: `${days} days since last contact, ${coachee.name} may need a gentle nudge`,
         colour: '#C0392B', sent: false });
       return;
     }
 
-    // Priority 2 — Milestone
+    // Priority 2: Milestone
     if ([4,8,12,16,20,24].includes(coachee.weekNumber) && !sentIds.includes(baseId('milestone'))) {
       items.push({ uid: baseId('milestone'), coachee, priority: 2, msgType: 'milestone',
         icon: '🏆', label: `Week ${coachee.weekNumber} milestone`,
-        reason: `${coachee.name} has reached week ${coachee.weekNumber} — celebrate the commitment`,
+        reason: `${coachee.name} has reached week ${coachee.weekNumber}, celebrate the commitment`,
         colour: C.gold, sent: false });
     }
 
-    // Priority 3 — Pre-Sabbath reflection (day before Sabbath)
+    // Priority 3: Pre-Sabbath reflection (day before Sabbath)
     if (tomorrowSab && days >= 2 && !sentIds.includes(baseId('reflection'))) {
       items.push({ uid: baseId('reflection'), coachee, priority: 3, msgType: 'reflection',
         icon: '🌱', label: 'Pre-Sabbath reflection',
-        reason: 'Sabbath is tomorrow — send the weekly reflection prompt today',
+        reason: 'Sabbath is tomorrow: send the weekly reflection prompt today',
         colour: '#7B5EA7', sent: false });
     }
     // Midweek Wednesday check-in
     else if (dayOfWeek === 3 && days >= 2 && days <= 6 && !sentIds.includes(baseId('midweek'))) {
       items.push({ uid: baseId('midweek'), coachee, priority: 3, msgType: 'midweek',
         icon: '💬', label: 'Midweek check-in',
-        reason: `Wednesday rhythm — ${coachee.name} is in week ${coachee.weekNumber}`,
+        reason: `Wednesday rhythm: ${coachee.name} is in week ${coachee.weekNumber}`,
         colour: C.teal, sent: false });
     }
     // Monday momentum (start of week)
     else if (dayOfWeek === 1 && days >= 5 && !sentIds.includes(baseId('pre'))) {
       items.push({ uid: baseId('pre'), coachee, priority: 4, msgType: 'pre',
         icon: '🔔', label: 'Monday session reminder',
-        reason: 'Start of week — upcoming session reminder',
+        reason: 'Start of week: upcoming session reminder',
         colour: '#1A6B8A', sent: false });
     }
   });
@@ -1193,7 +1193,7 @@ function CommandCentre() {
           </div>
           <div>
             <label className="cc-label">Coaching Goal *</label>
-            <textarea ref={goalRef} className="cc-textarea" placeholder="What is this person working toward? Be specific — this informs every message generated."
+            <textarea ref={goalRef} className="cc-textarea" placeholder="What is this person working toward? Be specific, this informs every message generated."
               defaultValue={form.goal||''} style={{ minHeight:80 }} />
           </div>
           <div>
@@ -1384,7 +1384,7 @@ function CommandCentre() {
                 Struggling Coachee Support
               </div>
               <div style={{ fontSize:18, color:'rgba(255,255,255,0.55)', lineHeight:1.5 }}>
-                Identify the struggle pattern — avoidance, self-criticism, overwhelm, disengagement, or plateau — and generate a diagnostically-informed message that addresses the root without naming it.
+                Identify the struggle pattern, avoidance, self-criticism, overwhelm, disengagement, or plateau, and generate a diagnostically-informed message that addresses the root without naming it.
               </div>
             </div>
           </button>
@@ -1438,7 +1438,7 @@ function CommandCentre() {
           <div style={{ marginBottom:20 }}>
             <label className="cc-label">Your Session Notes</label>
             <textarea className="cc-textarea"
-              placeholder="Add 2–4 bullet points from the session — key themes, insights, what was said, the next step agreed..."
+              placeholder="Add 2–4 bullet points from the session, key themes, insights, what was said, the next step agreed..."
               defaultValue={sessionNotes}
               onBlur={e => setSessionNotes(e.target.value)}
               style={{ minHeight:100 }} />
@@ -1465,7 +1465,7 @@ function CommandCentre() {
               <div style={{ background: '#0D4A63', borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                   <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: '#5DADE2', fontWeight: 500 }}>
-                    Step 0 — Root Cause Analysis
+                    Step 0: Root Cause Analysis
                   </div>
                   {whyChain.length > 0 && (
                     <button onClick={resetWhys}
@@ -1475,7 +1475,7 @@ function CommandCentre() {
                   )}
                 </div>
                 <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
-                  Five Whys · Wiegers — The problem first presented is rarely the real problem. Ask why up to five times to reach the root.
+                  Five Whys · Wiegers: The problem first presented is rarely the real problem. Ask why up to five times to reach the root.
                 </div>
 
                 {/* Presenting problem input */}
@@ -1485,7 +1485,7 @@ function CommandCentre() {
                       What did {selected?.name} present or say?
                     </label>
                     <textarea id="why-presenting-input" className="cc-textarea"
-                      placeholder="Describe the presenting problem or what the coachee said — this becomes Why 1..."
+                      placeholder="Describe the presenting problem or what the coachee said, this becomes Why 1..."
                       defaultValue={whyPresenting}
                       onBlur={e => setWhyPresenting(e.target.value)}
                       style={{ minHeight: 70, marginBottom: 10 }} />
@@ -1521,7 +1521,7 @@ function CommandCentre() {
                     <div style={{ padding: '12px 14px', background: 'rgba(93,173,226,0.12)',
                       borderRadius: 8, borderLeft: `3px solid #5DADE2`, marginBottom: 10 }}>
                       <div style={{ fontSize: 16, color: '#5DADE2', fontWeight: 500, marginBottom: 4 }}>
-                        WHY {whyStep + 1} — Question to ask {selected?.name}:
+                        WHY {whyStep + 1}: Question to ask {selected?.name}:
                       </div>
                       <div style={{ fontSize: 16, color: C.white, fontWeight: 500 }}>{currentWhyQ}</div>
                     </div>
@@ -1555,7 +1555,7 @@ function CommandCentre() {
                       style={{ background: generatingRoot ? C.slate : C.teal, color: C.white,
                         padding: '9px 16px', borderRadius: 7, fontSize: 15, fontWeight: 500,
                         display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {generatingRoot ? <><div className="cc-spinner" /> Summarising...</> : '✓ Root Cause Found — Summarise'}
+                      {generatingRoot ? <><div className="cc-spinner" /> Summarising...</> : '✓ Root Cause Found: Summarise'}
                     </button>
                   </div>
                 )}
@@ -1575,7 +1575,7 @@ function CommandCentre() {
                   <div className="cc-fade-in" style={{ marginTop: 10, padding: '14px 16px',
                     background: 'rgba(46,139,114,0.2)', borderRadius: 8, border: `1px solid ${C.teal}` }}>
                     <div style={{ fontSize: 16, color: C.teal, fontWeight: 500, letterSpacing: 2,
-                      textTransform: 'uppercase', marginBottom: 8 }}>Root Cause — Carry into Steps 1–3</div>
+                      textTransform: 'uppercase', marginBottom: 8 }}>Root Cause: Carry into Steps 1–3</div>
                     <div style={{ fontSize: 16, color: C.white, lineHeight: 1.7 }}>{rootCauseSummary}</div>
                   </div>
                 )}
@@ -1583,7 +1583,7 @@ function CommandCentre() {
                 {/* Skip option */}
                 {whyChain.length === 0 && !currentWhyQ && (
                   <div style={{ marginTop: 10, fontSize: 15, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>
-                    Skip this step if the root cause is already clear — scroll to Step 1.
+                    Skip this step if the root cause is already clear, scroll to Step 1.
                   </div>
                 )}
               </div>
@@ -1592,10 +1592,10 @@ function CommandCentre() {
               {/* ── STEP 0.5: FRAMEWORK DECISION MAP ── */}
               <div style={{ background: C.navy, borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
                 <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.gold, fontWeight: 500, marginBottom: 4 }}>
-                  Step 0.5 — Coaching Framework
+                  Step 0.5: Coaching Framework
                 </div>
                 <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
-                  Decision Map — What does {selected?.name} need right now? Choose the framework that fits the conversation you are actually having.
+                  Decision Map: What does {selected?.name} need right now? Choose the framework that fits the conversation you are actually having.
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8, marginBottom: 14 }}>
                   {COACHING_FRAMEWORKS.map(fw => (
@@ -1630,10 +1630,10 @@ function CommandCentre() {
               {/* ── STEP 1: RELATIONSHIP TO HELP ── */}
               <div style={{ background: C.navy, borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
                 <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.gold, fontWeight: 500, marginBottom: 4 }}>
-                  Step 1 — Relationship to Help
+                  Step 1: Relationship to Help
                 </div>
                 <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.5 }}>
-                  Tomm · Burnham · Cecchin — How does {selected?.name} position themselves in relation to receiving help?
+                  Tomm · Burnham · Cecchin: How does {selected?.name} position themselves in relation to receiving help?
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
                   {HELP_POSITIONS.map(h => (
@@ -1666,10 +1666,10 @@ function CommandCentre() {
               <div style={{ background: C.white, borderRadius: 12, padding: '18px 20px', marginBottom: 14,
                 border: '1.5px solid #DDE3EA' }}>
                 <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
-                  Step 2 — Stress Assessment
+                  Step 2: Stress Assessment
                 </div>
                 <div style={{ fontSize: 15, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
-                  Selye · Amygdala-HPA Axis — Which stress signals is {selected?.name} presenting?
+                  Selye · Amygdala-HPA Axis: Which stress signals is {selected?.name} presenting?
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
                   {STRESS_SIGNALS.map(sig => (
@@ -1704,7 +1704,7 @@ function CommandCentre() {
                   <div className="cc-fade-in" style={{ marginTop: 12, padding: '14px 16px',
                     background: '#FFEBEE', borderRadius: 8, border: `1.5px solid ${C.red}40` }}>
                     <div style={{ fontSize: 15, fontWeight: 500, color: C.red, marginBottom: 8 }}>
-                      ⚠ Psychological Safety Flag — Consider Referral
+                      ⚠ Psychological Safety Flag: Consider Referral
                     </div>
                     <div style={{ fontSize: 15, color: '#7B0000', lineHeight: 1.7, marginBottom: 10 }}>
                       Psychological safety may not be sufficiently established for coaching
@@ -1752,10 +1752,10 @@ function CommandCentre() {
                 <div className="cc-fade-in" style={{ background: C.white, borderRadius: 12, padding: '18px 20px',
                   marginBottom: 14, border: '1.5px solid #DDE3EA' }}>
                   <div style={{ fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', color: C.teal, fontWeight: 500, marginBottom: 4 }}>
-                    Step 3 — Struggle Pattern
+                    Step 3: Struggle Pattern
                   </div>
                   <div style={{ fontSize: 15, color: C.slate, marginBottom: 14, lineHeight: 1.5 }}>
-                    Bandura · Dweck · Mischel — What is the root dynamic for {selected?.name}?
+                    Bandura · Dweck · Mischel: What is the root dynamic for {selected?.name}?
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 14 }}>
                     {STRUGGLE_PATTERNS.map(pat => (
@@ -1782,7 +1782,7 @@ function CommandCentre() {
                       background: selectedPattern.colour + '08',
                       border: `1px solid ${selectedPattern.colour}25`, borderRadius: 8 }}>
                       <div style={{ fontSize: 15, color: selectedPattern.colour, fontWeight: 500, marginBottom: 4 }}>
-                        {selectedPattern.icon} {selectedPattern.label} — {selectedPattern.approach}
+                        {selectedPattern.icon} {selectedPattern.label}, {selectedPattern.approach}
                       </div>
                       <div style={{ fontSize: 15, color: C.slate, lineHeight: 1.6 }}>{selectedPattern.research}</div>
                     </div>
@@ -1795,7 +1795,7 @@ function CommandCentre() {
                     onBlur={e => setCoacheePresentation(e.target.value)}
                     style={{ minHeight: 80 }} />
                   <div style={{ fontSize: 15, color: C.slate, marginTop: 5 }}>
-                    Used by the AI to calibrate the message — never sent to {selected?.name}.
+                    Used by the AI to calibrate the message, never sent to {selected?.name}.
                   </div>
                 </div>
               )}
@@ -1806,7 +1806,7 @@ function CommandCentre() {
                   marginBottom: 14, border: '1.5px solid #DDE3EA' }}>
                   <label className="cc-label">What did {selected?.name} say or present?</label>
                   <textarea className="cc-textarea"
-                    placeholder="Their words, tone, what you noticed — this helps calibrate the grounding message."
+                    placeholder="Their words, tone, what you noticed, this helps calibrate the grounding message."
                     defaultValue={coacheePresentation}
                     onBlur={e => setCoacheePresentation(e.target.value)}
                     style={{ minHeight: 80 }} />
@@ -1866,7 +1866,7 @@ function CommandCentre() {
             </div>
             <div style={{ marginTop:16, padding:'12px 16px', background:C.goldLight,
               borderRadius:8, fontSize:18, color:'#8A6A20', lineHeight:1.6 }}>
-              <strong>Tip:</strong> Read this before sending. Add any personal detail you know about {selected.name}'s week before you hit send — one specific detail makes it feel unmistakably yours.
+              <strong>Tip:</strong> Read this before sending. Add any personal detail you know about {selected.name}'s week before you hit send, one specific detail makes it feel unmistakably yours.
             </div>
           </div>
         )}
@@ -1934,12 +1934,12 @@ function CommandCentre() {
                   <div>
                     <div style={{ fontSize:16, fontWeight:500,
                       color: isToday ? C.gold : isPast ? 'rgba(255,255,255,0.35)' : C.white }}>
-                      Sabbath {i+1} — {fmtDate(d)}
+                      Sabbath {i+1}: {fmtDate(d)}
                     </div>
-                    {isToday && <div style={{ fontSize:17, color:C.gold }}>Today — Rest day</div>}
+                    {isToday && <div style={{ fontSize:17, color:C.gold }}>Today: Rest day</div>}
                     {!isPast && !isToday && daysUntil(d) <= 3 && (
                       <div style={{ fontSize:17, color:C.teal }}>
-                        In {daysUntil(d)} day{daysUntil(d)!==1?'s':''} — reflection prompt due {daysUntil(d)===1?'today':'soon'}
+                        In {daysUntil(d)} day{daysUntil(d)!==1?'s':''}, reflection prompt due {daysUntil(d)===1?'today':'soon'}
                       </div>
                     )}
                   </div>
@@ -1949,7 +1949,7 @@ function CommandCentre() {
             {nextSab && !todaySab && (
               <div style={{ marginTop:12, padding:'10px 14px', background:C.tealLight,
                 borderRadius:8, fontSize:18, color:C.teal, fontWeight:500 }}>
-                Next Sabbath in {daysToNext} day{daysToNext!==1?'s':''} — {daysToNext<=2?'reflection prompts generating today in the Loop':'reminder set'}
+                Next Sabbath in {daysToNext} day{daysToNext!==1?'s':''}, {daysToNext<=2?'reflection prompts generating today in the Loop':'reminder set'}
               </div>
             )}
           </div>
@@ -1999,7 +1999,7 @@ function CommandCentre() {
             </div>
             <div style={{ marginTop:16, fontFamily:"'Cormorant Garamond',serif", fontStyle:'italic',
               fontSize:17, color:C.gold }}>
-              "Counsel in the heart of man is like deep water..." — Proverbs 20:5 KJV
+              "Counsel in the heart of man is like deep water..." (Proverbs 20:5 KJV)
             </div>
           </div>
         ) : loopItems.length === 0 ? (
@@ -2022,7 +2022,7 @@ function CommandCentre() {
         ) : (
           <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
             <div style={{ fontSize:18, color:C.slate }}>
-              {loopItems.length} action{loopItems.length!==1?'s':''} due today — highest priority first
+              {loopItems.length} action{loopItems.length!==1?'s':''} due today, highest priority first
             </div>
             {loopItems.map(item => (
               <div key={item.uid} className="cc-fade-in"
