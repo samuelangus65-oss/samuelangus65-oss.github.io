@@ -785,6 +785,9 @@ function CommandCentre() {
   const [progressPanelOpen, setProgressPanelOpen] = useState(false);
   const [progressScore, setProgressScore] = useState(5);
   const [progressNote, setProgressNote] = useState('');
+  const [anchorText, setAnchorText] = useState('');
+  const [obstacleText, setObstacleText] = useState('');
+  const [loopText, setLoopText] = useState('');
 
   useEffect(() => {
     Promise.all([
@@ -834,7 +837,10 @@ function CommandCentre() {
     const now = new Date().toISOString();
     const updated = coachees.map(c => {
       if (c.id !== id) return c;
-      const sessionEntry = { date: now, weekNumber: c.weekNumber, score: progress?.score ?? null, note: progress?.note || '' };
+      const sessionEntry = {
+        date: now, weekNumber: c.weekNumber, score: progress?.score ?? null, note: progress?.note || '',
+        anchor: progress?.anchor || '', obstacle: progress?.obstacle || '', loop: progress?.loop || ''
+      };
       return { ...c, weekNumber: c.weekNumber + 1, lastSession: now, sessions: [...(c.sessions || []), sessionEntry] };
     });
     await persist(updated);
@@ -1067,7 +1073,7 @@ function CommandCentre() {
   // ── DASHBOARD VIEW ──
   const DashboardView = () => (
     <div style={{ padding:'28px 24px' }}>
-      <MobileHeader title="Dashboard" />
+      {MobileHeader({title:"Dashboard"})}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
         <div>
           <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy }}>
@@ -1169,7 +1175,7 @@ function CommandCentre() {
 
     return (
       <div style={{ padding:'28px 24px', maxWidth:560 }}>
-        <MobileHeader title={editId ? 'Edit Coachee' : 'Add Coachee'} />
+        {MobileHeader({title: editId ? 'Edit Coachee' : 'Add Coachee'})}
         <button onClick={() => { nav('dashboard'); setEditId(null); setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 }); }}
           style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:16,
             marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
@@ -1234,7 +1240,7 @@ function CommandCentre() {
     const c = coachees.find(x => x.id === selected.id) || selected;
     return (
       <div style={{ padding:'28px 24px' }}>
-        <MobileHeader title="Coachee Profile" />
+        {MobileHeader({title:"Coachee Profile"})}
         <button onClick={() => nav('dashboard')}
           style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:16,
             marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
@@ -1311,15 +1317,33 @@ function CommandCentre() {
             <label className="cc-label">Quick Note (optional)</label>
             <textarea className="cc-textarea" value={progressNote} onChange={e => setProgressNote(e.target.value)}
               placeholder="One line on how this session went..." style={{ minHeight:60, marginBottom:14 }} />
+
+            <div style={{ fontSize:16, color:C.teal, letterSpacing:2, textTransform:'uppercase', marginBottom:10, marginTop:6 }}>
+              Accountability Loop
+            </div>
+            <label className="cc-label">Anchor: what did they commit to, in their own words?</label>
+            <textarea className="cc-textarea" value={anchorText} onChange={e => setAnchorText(e.target.value)}
+              placeholder="Their commitment, in their own words..." style={{ minHeight:50, marginBottom:12 }} />
+            <label className="cc-label">Obstacle-check: what is most likely to get in the way?</label>
+            <textarea className="cc-textarea" value={obstacleText} onChange={e => setObstacleText(e.target.value)}
+              placeholder="What might stop them, and what they will do if it happens..." style={{ minHeight:50, marginBottom:12 }} />
+            <label className="cc-label">Loop: how and when will progress be tracked?</label>
+            <textarea className="cc-textarea" value={loopText} onChange={e => setLoopText(e.target.value)}
+              placeholder="How and when you will check in before the next session..." style={{ minHeight:50, marginBottom:14 }} />
+
             <div style={{ display:'flex', gap:10 }}>
               <button className="cc-btn" onClick={async () => {
-                  await advanceWeek(c.id, { score: progressScore, note: progressNote });
+                  await advanceWeek(c.id, { score: progressScore, note: progressNote, anchor: anchorText, obstacle: obstacleText, loop: loopText });
                   setProgressPanelOpen(false); setProgressScore(5); setProgressNote('');
+                  setAnchorText(''); setObstacleText(''); setLoopText('');
                 }}
                 style={{ background:C.teal, color:C.white, padding:'9px 20px', borderRadius:8, fontSize:16, fontWeight:500 }}>
                 Confirm &amp; Advance
               </button>
-              <button className="cc-btn" onClick={() => { setProgressPanelOpen(false); setProgressScore(5); setProgressNote(''); }}
+              <button className="cc-btn" onClick={() => {
+                  setProgressPanelOpen(false); setProgressScore(5); setProgressNote('');
+                  setAnchorText(''); setObstacleText(''); setLoopText('');
+                }}
                 style={{ background:C.light, color:C.slate, padding:'9px 20px', borderRadius:8, fontSize:16 }}>
                 Cancel
               </button>
@@ -1348,6 +1372,13 @@ function CommandCentre() {
                       Week {s.weekNumber} · {new Date(s.date).toLocaleDateString('en-GB')}
                     </div>
                     {s.note && <div style={{ fontSize:16, color:C.navy, lineHeight:1.5 }}>{s.note}</div>}
+                    {(s.anchor || s.obstacle || s.loop) && (
+                      <div style={{ marginTop:8, paddingTop:8, borderTop:'1px solid #F0F3F6' }}>
+                        {s.anchor && <div style={{ fontSize:14, color:C.slate, marginBottom:4 }}><strong style={{ color:C.teal }}>Anchor:</strong> {s.anchor}</div>}
+                        {s.obstacle && <div style={{ fontSize:14, color:C.slate, marginBottom:4 }}><strong style={{ color:C.teal }}>Obstacle-check:</strong> {s.obstacle}</div>}
+                        {s.loop && <div style={{ fontSize:14, color:C.slate }}><strong style={{ color:C.teal }}>Loop:</strong> {s.loop}</div>}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1400,7 +1431,7 @@ function CommandCentre() {
     const needsNotes = activeMsgType === 'post';
     return (
       <div style={{ padding:'28px 24px', maxWidth:640 }}>
-        <MobileHeader title="Generate Message" />
+        {MobileHeader({title:"Generate Message"})}
         <button onClick={() => { setView('detail'); setGeneratedMsg(''); }}
           style={{ background:'none', border:'none', cursor:'pointer', color:C.teal, fontSize:16,
             marginBottom:20, display:'flex', alignItems:'center', gap:6, padding:0, fontFamily:"'DM Sans',sans-serif" }}>
@@ -1881,7 +1912,7 @@ function CommandCentre() {
     const daysToNext = nextSab ? daysUntil(nextSab) : null;
     return (
       <div style={{ padding:'28px 24px', maxWidth:560 }}>
-        <MobileHeader title="Sabbath Tracker" />
+        {MobileHeader({title:"Sabbath Tracker"})}
         <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:8 }}>
           Lunar Sabbath Tracker
         </div>
@@ -1973,7 +2004,7 @@ function CommandCentre() {
     const today = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     return (
       <div style={{ padding:'28px 24px' }}>
-        <MobileHeader title="Today's Loop" />
+        {MobileHeader({title:"Today's Loop"})}
         <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between',
           marginBottom:20, flexWrap:'wrap', gap:12 }}>
           <div>
@@ -2127,16 +2158,16 @@ function CommandCentre() {
 
   return (
     <div className="cc-layout" style={{ fontFamily:"'DM Sans', system-ui, sans-serif", background:C.light }}>
-      <Sidebar />
+      {Sidebar()}
       <main className="cc-main" style={{ padding:0 }}>
-        {view === 'dashboard' && <DashboardView />}
-        {view === 'add'       && <AddView />}
-        {view === 'detail'    && <DetailView />}
-        {view === 'generate'  && <GenerateView />}
-        {view === 'loop'      && <LoopView />}
-        {view === 'sabbath'   && <SabbathView />}
+        {view === 'dashboard' && DashboardView()}
+        {view === 'add'       && AddView()}
+        {view === 'detail'    && DetailView()}
+        {view === 'generate'  && GenerateView()}
+        {view === 'loop'      && LoopView()}
+        {view === 'sabbath'   && SabbathView()}
       </main>
-      <BottomNav />
+      {BottomNav()}
     </div>
   );
 }
