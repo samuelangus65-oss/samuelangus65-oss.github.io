@@ -1157,19 +1157,18 @@ function CommandCentre() {
 
   // ── ADD / EDIT COACHEE VIEW ──
   const AddView = () => {
-    const nameRef = React.useRef(null);
-    const goalRef = React.useRef(null);
-    const intakeRef = React.useRef(null);
-    const weekRef = React.useRef(null);
-    const concessionRef = React.useRef(null);
-
     const handleSubmit = () => {
+      const nameEl = document.getElementById('add-name-input');
+      const goalEl = document.getElementById('add-goal-input');
+      const intakeEl = document.getElementById('add-intake-input');
+      const weekEl = document.getElementById('add-week-input');
+      const concessionEl = document.getElementById('add-concession-input');
       submitForm({
-        name: nameRef.current.value.trim(),
-        goal: goalRef.current.value.trim(),
-        intake: intakeRef.current.value.trim(),
-        weekNumber: parseInt(weekRef.current.value) || 1,
-        concession: concessionRef.current.checked,
+        name: nameEl.value.trim(),
+        goal: goalEl.value.trim(),
+        intake: intakeEl.value.trim(),
+        weekNumber: parseInt(weekEl.value) || 1,
+        concession: concessionEl.checked,
       });
     };
 
@@ -1195,27 +1194,27 @@ function CommandCentre() {
         <div style={{ display:'flex', flexDirection:'column', gap:18 }}>
           <div>
             <label className="cc-label">Full Name *</label>
-            <input ref={nameRef} className="cc-input" placeholder="e.g. Jordan Smith" defaultValue={form.name||''} />
+            <input id="add-name-input" className="cc-input" placeholder="e.g. Jordan Smith" defaultValue={form.name||''} />
           </div>
           <div>
             <label className="cc-label">Coaching Goal *</label>
-            <textarea ref={goalRef} className="cc-textarea" placeholder="What is this person working toward? Be specific, this informs every message generated."
+            <textarea id="add-goal-input" className="cc-textarea" placeholder="What is this person working toward? Be specific, this informs every message generated."
               defaultValue={form.goal||''} style={{ minHeight:80 }} />
           </div>
           <div>
             <label className="cc-label">Intake Notes (optional)</label>
-            <textarea ref={intakeRef} className="cc-textarea" placeholder="Current situation, what has held them back, anything from your first conversation..."
+            <textarea id="add-intake-input" className="cc-textarea" placeholder="Current situation, what has held them back, anything from your first conversation..."
               defaultValue={form.intake||''} style={{ minHeight:70 }} />
           </div>
           <div>
             <label className="cc-label">Current Week Number</label>
-            <input ref={weekRef} className="cc-input" type="number" min="1" max="52"
+            <input id="add-week-input" className="cc-input" type="number" min="1" max="52"
               defaultValue={form.weekNumber||1} style={{ width:100 }} />
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <input ref={concessionRef} type="checkbox" id="concession" defaultChecked={form.concession||false}
+            <input type="checkbox" id="add-concession-input" defaultChecked={form.concession||false}
               style={{ width:16, height:16, cursor:'pointer', accentColor:C.teal }} />
-            <label htmlFor="concession" style={{ fontSize:17, color:C.slate, cursor:'pointer' }}>
+            <label htmlFor="add-concession-input" style={{ fontSize:17, color:C.slate, cursor:'pointer' }}>
               Concession rate (student / NHS / faith community referral)
             </label>
           </div>
