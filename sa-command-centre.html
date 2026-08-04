@@ -788,6 +788,8 @@ function CommandCentre() {
   const [anchorText, setAnchorText] = useState('');
   const [obstacleText, setObstacleText] = useState('');
   const [loopText, setLoopText] = useState('');
+  const [safetyFlag, setSafetyFlag] = useState(false);
+  const [showFullToolkit, setShowFullToolkit] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -839,7 +841,8 @@ function CommandCentre() {
       if (c.id !== id) return c;
       const sessionEntry = {
         date: now, weekNumber: c.weekNumber, score: progress?.score ?? null, note: progress?.note || '',
-        anchor: progress?.anchor || '', obstacle: progress?.obstacle || '', loop: progress?.loop || ''
+        anchor: progress?.anchor || '', obstacle: progress?.obstacle || '', loop: progress?.loop || '',
+        safety: progress?.safety || false
       };
       return { ...c, weekNumber: c.weekNumber + 1, lastSession: now, sessions: [...(c.sessions || []), sessionEntry] };
     });
@@ -870,6 +873,8 @@ function CommandCentre() {
     setCurrentWhyQ('');
     setCurrentWhyA('');
     setRootCauseSummary('');
+    setSelectedFramework(null);
+    setShowFullToolkit(false);
     setError('');
     setView('generate');
   };
@@ -1071,9 +1076,65 @@ function CommandCentre() {
   );
 
   // ── DASHBOARD VIEW ──
-  const DashboardView = () => (
+  const DashboardView = () => {
+    const today = todayStr();
+    const sessionsToday = coachees.reduce((n, c) => n + (c.sessions||[]).filter(s => s.date && s.date.startsWith(today)).length, 0);
+    const weekAgo = new Date(Date.now() - 7*86400000).toISOString();
+    const sessionsThisWeek = coachees.reduce((n, c) => n + (c.sessions||[]).filter(s => s.date >= weekAgo).length, 0);
+    const totalSessions = coachees.reduce((n, c) => n + (c.sessions||[]).length, 0);
+    const concessionCount = coachees.filter(c => c.concession).length;
+    const overdueCount = coachees.filter(c => daysSince(c.lastSession) >= 5).length;
+
+    return (
     <div style={{ padding:'28px 24px' }}>
       {MobileHeader({title:"Dashboard"})}
+
+      {/* TODAY PANEL */}
+      <div style={{ background:C.navy, borderRadius:16, padding:'22px 24px', marginBottom:20, cursor:'pointer' }}
+        onClick={() => nav('loop')}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: loopItems.length ? 14 : 0 }}>
+          <div className="cc-serif" style={{ fontSize:22, color:C.white, fontWeight:300 }}>Today</div>
+          <div style={{ fontSize:15, color:C.teal }}>Open Today's Loop →</div>
+        </div>
+        {loopItems.length === 0 ? (
+          <div style={{ fontSize:16, color:'rgba(255,255,255,0.6)' }}>
+            {isTodaySabbath(sabbath.dates||[]) ? 'Sabbath rest day, the Loop is paused.' : 'Nothing needs action right now. All coachees are on track.'}
+          </div>
+        ) : (
+          <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+            {loopItems.slice(0,4).map(item => (
+              <div key={item.uid} style={{ background:'rgba(255,255,255,0.08)', borderRadius:8, padding:'8px 14px',
+                fontSize:15, color:C.white, display:'flex', alignItems:'center', gap:8 }}>
+                <span>{item.icon}</span>
+                <span>{item.coachee.name}, {item.label}</span>
+              </div>
+            ))}
+            {loopItems.length > 4 && (
+              <div style={{ background:'rgba(255,255,255,0.08)', borderRadius:8, padding:'8px 14px', fontSize:15, color:'rgba(255,255,255,0.6)' }}>
+                +{loopItems.length - 4} more
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* PRACTICE OVERVIEW */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:12, marginBottom:24 }}>
+        {[
+          { label:'Actions due today', value: loopItems.length, colour:C.teal },
+          { label:'Sessions logged today', value: sessionsToday, colour:C.gold },
+          { label:'Sessions this week', value: sessionsThisWeek, colour:'#7B5EA7' },
+          { label:'Overdue contact (5+ days)', value: overdueCount, colour: overdueCount ? C.red : C.slate },
+          { label:'Active coachees', value: coachees.length, colour:C.navy },
+          { label:'Concession coachees', value: concessionCount, colour:C.slate },
+        ].map((stat,i) => (
+          <div key={i} style={{ background:C.white, borderRadius:10, padding:'14px 16px', border:'1px solid #EEF3F7' }}>
+            <div style={{ fontSize:24, fontWeight:600, color:stat.colour }}>{stat.value}</div>
+            <div style={{ fontSize:14, color:C.slate, marginTop:2, lineHeight:1.3 }}>{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
         <div>
           <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy }}>
@@ -1153,7 +1214,8 @@ function CommandCentre() {
         </div>
       )}
     </div>
-  );
+    );
+  };
 
   // ── ADD / EDIT COACHEE VIEW ──
   const AddView = () => {
@@ -1277,7 +1339,7 @@ function CommandCentre() {
               </button>
               <button className="cc-btn" onClick={() => setProgressPanelOpen(true)}
                 style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16, fontWeight:500 }}>
-                + Advance Week
+                ✓ Complete Session
               </button>
               <button onClick={() => removeCoachee(c.id)} title="Remove coachee" className="cc-delete-btn">✕</button>
             </div>
@@ -1294,11 +1356,11 @@ function CommandCentre() {
           )}
         </div>
 
-        {/* Progress capture panel — shown when advancing a week */}
+        {/* Complete Session panel */}
         {progressPanelOpen && (
           <div style={{ background:C.white, border:`1.5px solid ${C.teal}`, borderRadius:12, padding:20, marginBottom:24 }}>
             <div style={{ fontSize:17, fontWeight:500, color:C.navy, marginBottom:14 }}>
-              Log this session before advancing to Week {c.weekNumber + 1}
+              Complete Session, Week {c.weekNumber}
             </div>
             <label className="cc-label">Goal Progress (1–10)</label>
             <div style={{ display:'flex', gap:6, marginBottom:14, flexWrap:'wrap' }}>
@@ -1313,9 +1375,9 @@ function CommandCentre() {
                 </button>
               ))}
             </div>
-            <label className="cc-label">Quick Note (optional)</label>
+            <label className="cc-label">What emerged? (optional)</label>
             <textarea className="cc-textarea" value={progressNote} onChange={e => setProgressNote(e.target.value)}
-              placeholder="One line on how this session went..." style={{ minHeight:60, marginBottom:14 }} />
+              placeholder="What came up in the session, key themes, what was said..." style={{ minHeight:60, marginBottom:14 }} />
 
             <div style={{ fontSize:16, color:C.teal, letterSpacing:2, textTransform:'uppercase', marginBottom:10, marginTop:6 }}>
               Accountability Loop
@@ -1330,20 +1392,40 @@ function CommandCentre() {
             <textarea className="cc-textarea" value={loopText} onChange={e => setLoopText(e.target.value)}
               placeholder="How and when you will check in before the next session..." style={{ minHeight:50, marginBottom:14 }} />
 
-            <div style={{ display:'flex', gap:10 }}>
+            <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer', marginBottom:16,
+              padding:'10px 14px', background: safetyFlag ? '#FFEBEE' : C.light, borderRadius:8 }}>
+              <input type="checkbox" checked={safetyFlag} onChange={e => setSafetyFlag(e.target.checked)}
+                style={{ marginTop:2, accentColor:C.red, flexShrink:0 }} />
+              <span style={{ fontSize:16, color: safetyFlag ? C.red : C.slate, fontWeight: safetyFlag ? 500 : 400 }}>
+                Any safety concern from this session? (flags this session for your own follow-up, does not alert anyone automatically)
+              </span>
+            </label>
+
+            <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
               <button className="cc-btn" onClick={async () => {
-                  await advanceWeek(c.id, { score: progressScore, note: progressNote, anchor: anchorText, obstacle: obstacleText, loop: loopText });
+                  const notesForMessage = progressNote;
+                  await advanceWeek(c.id, { score: progressScore, note: progressNote, anchor: anchorText, obstacle: obstacleText, loop: loopText, safety: safetyFlag });
                   setProgressPanelOpen(false); setProgressScore(5); setProgressNote('');
-                  setAnchorText(''); setObstacleText(''); setLoopText('');
+                  setAnchorText(''); setObstacleText(''); setLoopText(''); setSafetyFlag(false);
+                  openGenerate(c, 'post');
+                  setSessionNotes(notesForMessage);
                 }}
                 style={{ background:C.teal, color:C.white, padding:'9px 20px', borderRadius:8, fontSize:16, fontWeight:500 }}>
-                Confirm &amp; Advance
+                Complete &amp; Draft Follow-up Message
+              </button>
+              <button className="cc-btn" onClick={async () => {
+                  await advanceWeek(c.id, { score: progressScore, note: progressNote, anchor: anchorText, obstacle: obstacleText, loop: loopText, safety: safetyFlag });
+                  setProgressPanelOpen(false); setProgressScore(5); setProgressNote('');
+                  setAnchorText(''); setObstacleText(''); setLoopText(''); setSafetyFlag(false);
+                }}
+                style={{ background:C.light, color:C.slate, padding:'9px 20px', borderRadius:8, fontSize:16 }}>
+                Save Only
               </button>
               <button className="cc-btn" onClick={() => {
                   setProgressPanelOpen(false); setProgressScore(5); setProgressNote('');
-                  setAnchorText(''); setObstacleText(''); setLoopText('');
+                  setAnchorText(''); setObstacleText(''); setLoopText(''); setSafetyFlag(false);
                 }}
-                style={{ background:C.light, color:C.slate, padding:'9px 20px', borderRadius:8, fontSize:16 }}>
+                style={{ background:'transparent', color:C.slate, padding:'9px 20px', borderRadius:8, fontSize:16 }}>
                 Cancel
               </button>
             </div>
@@ -1371,11 +1453,12 @@ function CommandCentre() {
                       Week {s.weekNumber} · {new Date(s.date).toLocaleDateString('en-GB')}
                     </div>
                     {s.note && <div style={{ fontSize:16, color:C.navy, lineHeight:1.5 }}>{s.note}</div>}
-                    {(s.anchor || s.obstacle || s.loop) && (
+                    {(s.anchor || s.obstacle || s.loop || s.safety) && (
                       <div style={{ marginTop:8, paddingTop:8, borderTop:'1px solid #F0F3F6' }}>
                         {s.anchor && <div style={{ fontSize:14, color:C.slate, marginBottom:4 }}><strong style={{ color:C.teal }}>Anchor:</strong> {s.anchor}</div>}
                         {s.obstacle && <div style={{ fontSize:14, color:C.slate, marginBottom:4 }}><strong style={{ color:C.teal }}>Obstacle-check:</strong> {s.obstacle}</div>}
                         {s.loop && <div style={{ fontSize:14, color:C.slate }}><strong style={{ color:C.teal }}>Loop:</strong> {s.loop}</div>}
+                        {s.safety && <div style={{ fontSize:14, color:C.red, fontWeight:500, marginTop:6 }}>⚠ Safety concern flagged this session</div>}
                       </div>
                     )}
                   </div>
@@ -1491,6 +1574,23 @@ function CommandCentre() {
           return (
             <div style={{ marginBottom: 20 }}>
 
+              {/* EVERYDAY / FULL TOOLKIT TOGGLE */}
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+                background: C.light, borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}>
+                <div style={{ fontSize:15, color:C.slate, lineHeight:1.5 }}>
+                  {showFullToolkit
+                    ? 'Full toolkit: Five Whys, framework, relationship-to-help, and stress assessment all available below.'
+                    : 'Everyday mode: pick a struggle pattern and describe what happened, that is enough for most sessions.'}
+                </div>
+                <button className="cc-btn" onClick={() => setShowFullToolkit(v => !v)}
+                  style={{ background: showFullToolkit ? C.navy : C.white, color: showFullToolkit ? C.white : C.navy,
+                    border:`1.5px solid ${C.navy}`, padding:'8px 16px', borderRadius:8, fontSize:15, fontWeight:500, whiteSpace:'nowrap', marginLeft:16 }}>
+                  {showFullToolkit ? 'Hide Toolkit' : 'Coach Toolkit →'}
+                </button>
+              </div>
+
+              {showFullToolkit && (
+              <>
               {/* ── STEP 0: FIVE WHYS ROOT CAUSE ANALYSIS ── */}
               <div style={{ background: '#0D4A63', borderRadius: 12, padding: '18px 20px', marginBottom: 14 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -1776,6 +1876,8 @@ function CommandCentre() {
                   </div>
                 )}
               </div>
+              </>
+              )}
 
               {/* STEP 3 — STRUGGLE PATTERN (only when stress is none/low/moderate and mode is pattern) */}
               {(stressLevel === 'none' || (stressLevel !== 'high' && generateMode === 'pattern')) && (
