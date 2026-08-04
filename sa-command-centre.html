@@ -812,6 +812,56 @@ function CommandCentre() {
     setLoopItems(getLoopItems(updated, sabbath.dates || [], sentIds));
   };
 
+  const exportBackup = () => {
+    const backup = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      coachees, sabbath, sentIds,
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const dateStamp = new Date().toISOString().split('T')[0];
+    a.href = url;
+    a.download = `sa-command-centre-backup-${dateStamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const importBackup = async (file) => {
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      if (!parsed || !Array.isArray(parsed.coachees)) {
+        alert('This does not look like a valid Command Centre backup file. No changes made.');
+        return;
+      }
+      const confirmMsg = `This will REPLACE all current data with the backup from ${parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString('en-GB') : 'an unknown date'}.\n\nCurrent coachees: ${coachees.length}\nBackup coachees: ${parsed.coachees.length}\n\nThis cannot be undone. Continue?`;
+      if (!window.confirm(confirmMsg)) return;
+
+      const restoredSabbath = parsed.sabbath && typeof parsed.sabbath === 'object' ? parsed.sabbath : { firstDate:'', dates:[] };
+      const restoredSentIds = Array.isArray(parsed.sentIds) ? parsed.sentIds : [];
+
+      await save(parsed.coachees);
+      await saveSabbath(restoredSabbath);
+      await saveSentIds(restoredSentIds);
+
+      setCoachees(parsed.coachees);
+      setSabbath(restoredSabbath);
+      setSabbathInput(restoredSabbath.firstDate || '');
+      setSentIds(restoredSentIds);
+      setLoopItems(getLoopItems(parsed.coachees, restoredSabbath.dates || [], restoredSentIds));
+      setSelected(null);
+      nav('dashboard');
+      alert('Backup restored successfully.');
+    } catch (e) {
+      alert('Could not read this backup file. It may be corrupted or not a valid Command Centre backup.');
+    }
+  };
+
   const submitForm = async (formData) => {
     if (!formData.name || !formData.goal) { setError('Please enter a name and goal.'); return; }
     setError('');
@@ -1026,6 +1076,22 @@ function CommandCentre() {
         </button>
       ))}
       <div style={{ flex:1 }} />
+      <div style={{ padding:'0 20px 16px', display:'flex', flexDirection:'column', gap:8 }}>
+        <button className="cc-btn" onClick={exportBackup}
+          style={{ background:'rgba(255,255,255,0.06)', color:'rgba(255,255,255,0.7)',
+            border:'1px solid rgba(255,255,255,0.12)', padding:'9px 14px', borderRadius:8,
+            fontSize:15, textAlign:'left' }}>
+          ⬇ Export Backup
+        </button>
+        <button className="cc-btn" onClick={() => document.getElementById('import-backup-input').click()}
+          style={{ background:'rgba(255,255,255,0.06)', color:'rgba(255,255,255,0.7)',
+            border:'1px solid rgba(255,255,255,0.12)', padding:'9px 14px', borderRadius:8,
+            fontSize:15, textAlign:'left' }}>
+          ⬆ Import Backup
+        </button>
+        <input type="file" id="import-backup-input" accept="application/json" style={{ display:'none' }}
+          onChange={e => { importBackup(e.target.files[0]); e.target.value = ''; }} />
+      </div>
       <div style={{ padding:'16px 20px 24px', fontSize:17, color:'rgba(255,255,255,0.25)', lineHeight:1.6 }}>
         <div style={{ fontStyle:'italic', marginBottom:4 }}>
           "Counsel in the heart of man is like deep water..."
@@ -1133,6 +1199,21 @@ function CommandCentre() {
             <div style={{ fontSize:14, color:C.slate, marginTop:2, lineHeight:1.3 }}>{stat.label}</div>
           </div>
         ))}
+      </div>
+
+      <div style={{ display:'flex', gap:10, marginBottom:24, flexWrap:'wrap' }}>
+        <button className="cc-btn" onClick={exportBackup}
+          style={{ background:C.white, color:C.slate, border:'1px solid #DDE3EA',
+            padding:'8px 14px', borderRadius:8, fontSize:15 }}>
+          ⬇ Export Backup
+        </button>
+        <button className="cc-btn" onClick={() => document.getElementById('import-backup-input-mobile').click()}
+          style={{ background:C.white, color:C.slate, border:'1px solid #DDE3EA',
+            padding:'8px 14px', borderRadius:8, fontSize:15 }}>
+          ⬆ Import Backup
+        </button>
+        <input type="file" id="import-backup-input-mobile" accept="application/json" style={{ display:'none' }}
+          onChange={e => { importBackup(e.target.files[0]); e.target.value = ''; }} />
       </div>
 
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
