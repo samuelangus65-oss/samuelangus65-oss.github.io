@@ -616,6 +616,14 @@ function getLoopItems(coachees, sabbaths, sentIds) {
   const dayOfWeek = new Date().getDay(); // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
   const items = [];
 
+  // Coaching rhythm days. Change these to match your current schedule.
+  // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat.
+  // Keep them OFF your session day so touchpoints never clash with a live session.
+  // The date-based Sabbath guard above always protects the actual Sabbath,
+  // whatever day it currently falls on, so these are safe to set to any weekday.
+  const CHECKIN_DAY = 1;   // midweek / between-session check-in (Monday)
+  const REMINDER_DAY = 2;  // session reminder, day before a Wednesday session (Tuesday)
+
   coachees.forEach(coachee => {
     const days = daysSince(coachee.lastSession);
     const baseId = (type) => `${coachee.id}-${type}-${todayStr()}`;
@@ -644,18 +652,18 @@ function getLoopItems(coachees, sabbaths, sentIds) {
         reason: 'Sabbath is tomorrow: send the weekly reflection prompt today',
         colour: '#7B5EA7', sent: false });
     }
-    // Midweek Wednesday check-in
-    else if (dayOfWeek === 3 && days >= 2 && days <= 6 && !sentIds.includes(baseId('midweek'))) {
+    // Midweek / between-session check-in (day set by CHECKIN_DAY above)
+    else if (dayOfWeek === CHECKIN_DAY && days >= 2 && days <= 6 && !sentIds.includes(baseId('midweek'))) {
       items.push({ uid: baseId('midweek'), coachee, priority: 3, msgType: 'midweek',
         icon: '💬', label: 'Midweek check-in',
-        reason: `Wednesday rhythm: ${coachee.name} is in week ${coachee.weekNumber}`,
+        reason: `Between-session rhythm: ${coachee.name} is in week ${coachee.weekNumber}`,
         colour: C.teal, sent: false });
     }
-    // Monday momentum (start of week)
-    else if (dayOfWeek === 1 && days >= 5 && !sentIds.includes(baseId('pre'))) {
+    // Session reminder (day set by REMINDER_DAY above)
+    else if (dayOfWeek === REMINDER_DAY && days >= 5 && !sentIds.includes(baseId('pre'))) {
       items.push({ uid: baseId('pre'), coachee, priority: 4, msgType: 'pre',
-        icon: '🔔', label: 'Monday session reminder',
-        reason: 'Start of week: upcoming session reminder',
+        icon: '🔔', label: 'Session reminder',
+        reason: 'Upcoming session reminder',
         colour: '#1A6B8A', sent: false });
     }
   });
@@ -746,6 +754,64 @@ const injectStyles = () => {
 // ══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ══════════════════════════════════════════════════════════════
+function SessionTimer() {
+  const [seconds, setSeconds] = useState(0);
+  const [running, setRunning] = useState(false);
+  useEffect(() => {
+    if (!running) return;
+    const t = setInterval(() => setSeconds(s => s + 1), 1000);
+    return () => clearInterval(t);
+  }, [running]);
+
+  const idle = seconds === 0 && !running;
+  if (idle) {
+    return (
+      <button onClick={() => setRunning(true)}
+        style={{ position:'fixed', right:16, bottom:96, zIndex:9999,
+          background:'#1C2B3A', color:'#fff', border:'none', borderRadius:20,
+          padding:'10px 16px', fontSize:14, cursor:'pointer',
+          boxShadow:'0 4px 14px rgba(0,0,0,0.22)',
+          fontFamily:"'DM Sans', system-ui, sans-serif" }}>
+        ⏱ Start session timer
+      </button>
+    );
+  }
+
+  const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const ss = String(seconds % 60).padStart(2, '0');
+  // 45 min = 2700s (begin wrap-up), 50 min = 3000s (time)
+  const phase = seconds >= 3000 ? 2 : seconds >= 2700 ? 1 : 0;
+  const bg   = phase === 2 ? '#C0392B' : phase === 1 ? '#B8912F' : '#1C2B3A';
+  const hint = phase === 2 ? 'Time — bring it to a close'
+             : phase === 1 ? '5 minutes left — begin wrapping up'
+             : 'Session in progress';
+
+  return (
+    <div style={{ position:'fixed', right:16, bottom:96, zIndex:9999,
+      background:bg, color:'#fff', borderRadius:14, padding:'12px 14px',
+      boxShadow:'0 6px 20px rgba(0,0,0,0.28)', minWidth:162,
+      fontFamily:"'DM Sans', system-ui, sans-serif" }}>
+      <div style={{ fontSize:12, opacity:0.9, marginBottom:4 }}>{hint}</div>
+      <div style={{ fontSize:30, fontWeight:600, lineHeight:1, marginBottom:10,
+        fontVariantNumeric:'tabular-nums' }}>{mm}:{ss}</div>
+      <div style={{ display:'flex', gap:6 }}>
+        <button onClick={() => setRunning(r => !r)}
+          style={{ flex:1, background:'rgba(255,255,255,0.16)', color:'#fff',
+            border:'1px solid rgba(255,255,255,0.32)', borderRadius:8,
+            padding:'6px 8px', fontSize:13, cursor:'pointer' }}>
+          {running ? 'Pause' : 'Resume'}
+        </button>
+        <button onClick={() => { setRunning(false); setSeconds(0); }}
+          style={{ flex:1, background:'rgba(255,255,255,0.16)', color:'#fff',
+            border:'1px solid rgba(255,255,255,0.32)', borderRadius:8,
+            padding:'6px 8px', fontSize:13, cursor:'pointer' }}>
+          Reset
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function CommandCentre() {
   useEffect(() => { injectStyles(); }, []);
 
@@ -2350,6 +2416,7 @@ function CommandCentre() {
         {view === 'sabbath'   && SabbathView()}
       </main>
       {BottomNav()}
+      <SessionTimer />
     </div>
   );
 }
