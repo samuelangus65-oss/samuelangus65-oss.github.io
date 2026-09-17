@@ -3385,6 +3385,18 @@ window.__mountApp = function() {
   }
 })();
 
+// Sync the browser tab title and the one-time setup screen heading to
+// IDENTITY, so they never drift from the name used everywhere else in
+// the app. Deliberately defensive: if either element is not found for
+// any reason, this simply does nothing rather than throwing an error,
+// so it can never interfere with the API key screen or app mounting
+// above, which have already finished running by this point.
+try {
+  document.title = `${IDENTITY.name}: Coaching Command Centre`;
+  const setupHeading = document.querySelector('#setup-screen h1');
+  if (setupHeading) setupHeading.innerHTML = `${IDENTITY.name}<br>Command Centre`;
+} catch (e) { /* cosmetic only — never let this block the app */ }
+
 </script>
 
 </body>
