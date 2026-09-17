@@ -119,6 +119,16 @@ const MSG_TYPES = [
   { id:'support',    label:'Struggling Coachee',     icon:'🆘', desc:'Diagnostically-informed support for coachees who are not progressing' },
 ];
 
+// ── COMMUNICATION TYPES (manual Communications Log entries) ────
+const COMM_TYPES = [
+  { id:'email',    label:'Email' },
+  { id:'phone',    label:'Phone Call' },
+  { id:'video',    label:'Video Call' },
+  { id:'inperson', label:'In-Person' },
+  { id:'text',     label:'Text / WhatsApp' },
+  { id:'other',    label:'Other' },
+];
+
 // ── STRUGGLE PATTERNS ─────────────────────────────────────────
 const STRUGGLE_PATTERNS = [
   {
@@ -899,6 +909,7 @@ function CommandCentre() {
   const [selectedOpp, setSelectedOpp] = useState(null);
   const [oppNoteDraft, setOppNoteDraft] = useState('');
   const [coacheeNoteDraft, setCoacheeNoteDraft] = useState('');
+  const [coacheeNoteType, setCoacheeNoteType] = useState('email');
   const [convertingCaptureId, setConvertingCaptureId] = useState(null);
 
   useEffect(() => {
@@ -1031,11 +1042,12 @@ function CommandCentre() {
   // Manual communications log entry: a call, email, or any other contact
   // Samuel wants recorded against this coachee. Append-only, same pattern
   // as the Pipeline opportunity notes history below (fmtNoteStamp).
-  const appendCoacheeNote = async (id, note) => {
+  const appendCoacheeNote = async (id, note, typeId) => {
     const trimmed = (note || '').trim();
     if (!trimmed) return;
+    const typeLabel = COMM_TYPES.find(t => t.id === typeId)?.label || 'Other';
     const updated = coachees.map(c => c.id === id
-      ? { ...c, notes: (c.notes ? c.notes + '\n\n' : '') + `[${fmtNoteStamp()}] ${trimmed}` }
+      ? { ...c, notes: (c.notes ? c.notes + '\n\n' : '') + `[${fmtNoteStamp()} · ${typeLabel}] ${trimmed}` }
       : c);
     await persist(updated);
     if (selected?.id === id) setSelected(updated.find(c => c.id === id));
@@ -1881,11 +1893,15 @@ function CommandCentre() {
             {c.notes || 'No communications logged yet. Entries from Today\u2019s Loop are added automatically when you Mark Sent, or add one manually below.'}
           </div>
           <div style={{ display:'flex', gap:8 }}>
-            <input className="cc-input" placeholder="Log a call, email, or other contact..." value={coacheeNoteDraft}
+            <select className="cc-input" value={coacheeNoteType} onChange={e => setCoacheeNoteType(e.target.value)}
+              style={{ maxWidth:170, flexShrink:0 }}>
+              {COMM_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+            </select>
+            <input className="cc-input" placeholder="What was said..." value={coacheeNoteDraft}
               onChange={e => setCoacheeNoteDraft(e.target.value)}
-              onKeyDown={e => { if (e.key==='Enter') appendCoacheeNote(c.id, coacheeNoteDraft); }} />
-            <button className="cc-btn" onClick={() => appendCoacheeNote(c.id, coacheeNoteDraft)}
-              style={{ background:C.teal, color:C.white, padding:'0 18px', borderRadius:8, fontSize:16, fontWeight:500 }}>
+              onKeyDown={e => { if (e.key==='Enter') appendCoacheeNote(c.id, coacheeNoteDraft, coacheeNoteType); }} />
+            <button className="cc-btn" onClick={() => appendCoacheeNote(c.id, coacheeNoteDraft, coacheeNoteType)}
+              style={{ background:C.teal, color:C.white, padding:'0 18px', borderRadius:8, fontSize:16, fontWeight:500, flexShrink:0 }}>
               Add
             </button>
           </div>
