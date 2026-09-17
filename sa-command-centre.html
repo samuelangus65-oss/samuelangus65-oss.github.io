@@ -108,6 +108,37 @@ const C = {
   goldLight:  'rgba(201,168,76,0.12)',
 };
 
+// ── COACH IDENTITY ─────────────────────────────────────────────
+// Single source of truth for the coach's name, qualifications,
+// voice, and session lengths. Every AI prompt, the sidebar, the
+// mobile header, and the session timer's wrap-up thresholds all
+// read from here instead of repeating this text separately.
+// Change any field once and it updates everywhere at once. This
+// is also the one place a future version of the Command Centre
+// would let a different coach fill in their own details, rather
+// than the app being wired to one specific person throughout.
+const IDENTITY = {
+  name: 'Samuel Angus',
+  firstName: 'Samuel',
+  title: 'ILM Level 5 qualified coach',
+  bio: 'over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy',
+  voiceDescription: 'warm, direct, and grounded — never uses coaching jargon, never clinical, never preachy, always personal',
+  signoff: 'Many thanks, Samuel',
+  discoveryMinutes: 45,
+  sessionMinutes: 50,
+  wrapUpWarningMinutes: 45, // when the live-session timer turns amber
+};
+
+// Full preamble for any prompt writing a client-facing message on
+// the coach's behalf. Includes voice, sign-off, and the house
+// writing rules (no contractions, no em dashes).
+const identityPreamble = () =>
+  `You are writing a message on behalf of ${IDENTITY.name} — an ${IDENTITY.title} who brings ${IDENTITY.bio} — to his practice. ${IDENTITY.firstName}'s coaching approach draws out what is already within each person. His voice is ${IDENTITY.voiceDescription}. He signs off with '${IDENTITY.signoff}'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.`;
+
+// Shorter preamble for internal analysis prompts (Five Whys) that
+// return a single question or summary, not a client-facing message.
+const identityShort = () => `${IDENTITY.name} — an ${IDENTITY.title}`;
+
 // ── MESSAGE TYPES ─────────────────────────────────────────────
 const MSG_TYPES = [
   { id:'midweek',    label:'Early Check-in',       icon:'💬', desc:'Personalised encouragement in the first days after a session' },
@@ -211,7 +242,7 @@ function buildPrompt(type, coachee, extra = '') {
     ? 'middle stage — deepen the work, surface what is really getting in the way, begin to stretch and challenge'
     : 'later stage — consolidate growth, embed new patterns, look forward with clarity';
 
-  const base = `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's coaching approach draws out what is already within each person. His voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always feels personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
+  const base = `${identityPreamble()}
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -256,7 +287,7 @@ function buildSupportPrompt(coachee, pattern, presentation) {
     ? 'middle stage — the work has deepened but the coachee is struggling'
     : 'later stage — the coachee has been working for some time but progress has stalled';
 
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
+  return `${identityPreamble()}
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -296,7 +327,7 @@ function buildWhyPrompt(coachee, presentingProblem, chain, step) {
     `Why ${i+1}: "${c.question}"\nAnswer: "${c.answer}"`
   ).join('\n\n');
 
-  return `You are assisting Samuel Angus — an ILM Level 5 qualified coach — in a root cause analysis using the Five Whys technique (Wiegers/Ishikawa). The goal is to move from the presenting problem to the underlying root cause by asking successively deeper "why" questions.
+  return `You are assisting ${identityShort()} — in a root cause analysis using the Five Whys technique (Wiegers/Ishikawa). The goal is to move from the presenting problem to the underlying root cause by asking successively deeper "why" questions.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -322,7 +353,7 @@ function buildRootCauseSummaryPrompt(coachee, presentingProblem, chain) {
     `Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`
   ).join('\n\n');
 
-  return `You are assisting Samuel Angus — an ILM Level 5 qualified coach — in synthesising a Five Whys root cause analysis into a brief coaching insight.
+  return `You are assisting ${identityShort()} — in synthesising a Five Whys root cause analysis into a brief coaching insight.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -372,7 +403,7 @@ const STRESS_CONFIG = {
 // ── GROUNDING PROMPT BUILDER ──────────────────────────────────
 function buildGroundingPrompt(coachee, stressLevel, signals, presentation) {
   const signalLabels = signals.map(id => STRESS_SIGNALS.find(s => s.id === id)?.label).filter(Boolean).join('; ');
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
+  return `${identityPreamble()}
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -501,7 +532,7 @@ function buildEnhancedSupportPrompt(coachee, pattern, presentation, helpPosition
     ? `\nROOT CAUSE ANALYSIS (Five Whys — do not reference directly, use to inform depth and question choice):\nPresenting problem: "${whyPresenting}"\n${whyChain.map((c,i)=>`Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`).join('\n')}\n${rootCauseSummary ? `Root cause summary: ${rootCauseSummary}` : ''}`
     : '';
 
-  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy, always personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
+  return `${identityPreamble()}
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -846,8 +877,13 @@ function SessionTimer() {
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
   const ss = String(seconds % 60).padStart(2, '0');
-  // 45 min = 2700s (begin wrap-up), 50 min = 3000s (time)
-  const phase = seconds >= 3000 ? 2 : seconds >= 2700 ? 1 : 0;
+  // Wrap-up and end thresholds now come from IDENTITY, not fixed
+  // seconds, so changing the coach's session length in one place
+  // (IDENTITY.sessionMinutes / wrapUpWarningMinutes) updates the
+  // timer's behaviour automatically.
+  const wrapUpAt = IDENTITY.wrapUpWarningMinutes * 60;
+  const endAt = IDENTITY.sessionMinutes * 60;
+  const phase = seconds >= endAt ? 2 : seconds >= wrapUpAt ? 1 : 0;
   const bg   = phase === 2 ? '#C0392B' : phase === 1 ? '#B8912F' : '#1C2B3A';
   const hint = phase === 2 ? 'Time — bring it to a close'
              : phase === 1 ? '5 minutes left — begin wrapping up'
@@ -1438,7 +1474,7 @@ function CommandCentre() {
     <div className="cc-sidebar">
       <div style={{ padding:'28px 20px 16px' }}>
         <div className="cc-serif" style={{ fontSize:20, color:C.white, fontWeight:300, lineHeight:1.2 }}>
-          Samuel Angus
+          {IDENTITY.name}
         </div>
         <div style={{ fontSize:17, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginTop:4 }}>
           Command Centre
@@ -1546,7 +1582,7 @@ function CommandCentre() {
     <div className="cc-mobile-header" style={{ display:'none', background:C.navy, padding:'16px 20px',
       alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:50 }}>
       <div>
-        <div className="cc-serif" style={{ fontSize:16, color:C.white, fontWeight:300 }}>Samuel Angus</div>
+        <div className="cc-serif" style={{ fontSize:16, color:C.white, fontWeight:300 }}>{IDENTITY.name}</div>
         <div style={{ fontSize:16, color:C.teal, letterSpacing:2, textTransform:'uppercase' }}>{title}</div>
       </div>
     </div>
