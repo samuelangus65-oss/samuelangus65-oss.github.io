@@ -631,6 +631,7 @@ const LOOP_SENT_KEY = 'samuel-loop-sent-v1';
 const CAPTURE_KEY = 'samuel-capture-v1';
 const OPP_KEY = 'samuel-opportunities-v1';
 const AUTOMATION_KEY = 'samuel-automations-v1';
+const IDENTITY_KEY = 'samuel-coach-identity-v1';
 
 // ── SABBATH CALCULATIONS ──────────────────────────────────────
 function calcSabbaths(firstDateStr) {
@@ -772,6 +773,25 @@ async function loadAutomations() {
 }
 async function saveAutomations(data) {
   try { localStorage.setItem(AUTOMATION_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+}
+
+// ── COACH IDENTITY PERSISTENCE ───────────────────────────────
+// IDENTITY stays a plain shared object (not React state) so every
+// module-level function that already reads IDENTITY.xxx keeps
+// working unchanged. Saved overrides are merged into it in place
+// at startup and whenever the coach saves the Identity screen, so
+// the change is visible everywhere immediately.
+async function loadIdentityOverrides() {
+  try {
+    const r = localStorage.getItem(IDENTITY_KEY);
+    return r ? JSON.parse(r) : null;
+  } catch { return null; }
+}
+async function saveIdentityOverrides(data) {
+  try { localStorage.setItem(IDENTITY_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+}
+function applyIdentityOverrides(overrides) {
+  if (overrides && typeof overrides === 'object') Object.assign(IDENTITY, overrides);
 }
 
 const OPP_STAGES = [
@@ -975,6 +995,8 @@ function CommandCentre() {
   const [automationsDraft, setAutomationsDraft] = useState(DEFAULT_AUTOMATIONS);
   const [milestoneWeeksText, setMilestoneWeeksText] = useState(DEFAULT_AUTOMATIONS.milestoneWeeks.join(', '));
   const [automationsSaved, setAutomationsSaved] = useState(false);
+  const [identityDraft, setIdentityDraft] = useState({ ...IDENTITY });
+  const [identitySaved, setIdentitySaved] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -984,7 +1006,13 @@ function CommandCentre() {
       loadCapture(),
       loadOpportunities(),
       loadAutomations(),
-    ]).then(([coacheesData, sabbathData, sentData, captureData, oppData, automationsData]) => {
+      loadIdentityOverrides(),
+    ]).then(([coacheesData, sabbathData, sentData, captureData, oppData, automationsData, identityOverrides]) => {
+      // Applied before anything below renders — the loading gate
+      // means Sidebar and every other IDENTITY.name read only ever
+      // sees the correct saved name, never a flash of the default.
+      applyIdentityOverrides(identityOverrides);
+      setIdentityDraft({ ...IDENTITY });
       setCoachees(coacheesData);
       setSabbath(sabbathData);
       setSabbathInput(sabbathData.firstDate || '');
@@ -1010,6 +1038,7 @@ function CommandCentre() {
       version: 2,
       exportedAt: new Date().toISOString(),
       coachees, sabbath, sentIds, capture: captureItems, opportunities, automations,
+      identity: { ...IDENTITY },
     };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -1043,6 +1072,10 @@ function CommandCentre() {
       // defaults rather than leaving this undefined.
       const restoredAutomations = parsed.automations && typeof parsed.automations === 'object'
         ? { ...DEFAULT_AUTOMATIONS, ...parsed.automations } : { ...DEFAULT_AUTOMATIONS };
+      // Older backups predate Identity too — keep whatever is currently
+      // set rather than silently reverting to the Samuel Angus defaults.
+      const restoredIdentity = parsed.identity && typeof parsed.identity === 'object'
+        ? { ...IDENTITY, ...parsed.identity } : { ...IDENTITY };
 
       await save(parsed.coachees);
       await saveSabbath(restoredSabbath);
@@ -1050,6 +1083,8 @@ function CommandCentre() {
       await saveCapture(restoredCapture);
       await saveOpportunities(restoredOpportunities);
       await saveAutomations(restoredAutomations);
+      applyIdentityOverrides(restoredIdentity);
+      await saveIdentityOverrides(restoredIdentity);
 
       setCoachees(parsed.coachees);
       setSabbath(restoredSabbath);
@@ -1058,6 +1093,7 @@ function CommandCentre() {
       setAutomations(restoredAutomations);
       setAutomationsDraft(restoredAutomations);
       setMilestoneWeeksText((restoredAutomations.milestoneWeeks||[]).join(', '));
+      setIdentityDraft({ ...IDENTITY });
       setLoopItems(getLoopItems(parsed.coachees, restoredSabbath.dates || [], restoredSentIds, restoredAutomations));
       setCaptureItems(restoredCapture);
       setOpportunities(restoredOpportunities);
@@ -1333,7 +1369,48 @@ function CommandCentre() {
     setMilestoneWeeksText((newSettings.milestoneWeeks||[]).join(', '));
     setLoopItems(getLoopItems(coachees, sabbath.dates || [], sentIds, newSettings));
     setAutomationsSaved(true);
-    setTimeout(() => setAutomationsSaved(false), 2000);
+  };
+
+  // Reads the current Identity form, coerces the three minute fields
+  // to numbers (falling back to the existing value if the field was
+  // left blank or invalid, never to zero or NaN), mutates the shared
+  // IDENTITY object in place, and saves it. Every function that reads
+  // IDENTITY.xxx — the six AI prompts, the session timer, the sidebar
+  // — sees the change on the very next render, with no other wiring.
+  const saveIdentityDraft = () => {
+    const toMinutes = (val, fallback) => {
+      const n = Number(val);
+      return Number.isFinite(n) && n > 0 ? n : fallback;
+    };
+    const cleaned = {
+      name: (identityDraft.name || IDENTITY.name).trim(),
+      firstName: (identityDraft.firstName || IDENTITY.firstName).trim(),
+      title: (identityDraft.title || IDENTITY.title).trim(),
+      bio: (identityDraft.bio || IDENTITY.bio).trim(),
+      voiceDescription: (identityDraft.voiceDescription || IDENTITY.voiceDescription).trim(),
+      signoff: (identityDraft.signoff || IDENTITY.signoff).trim(),
+      discoveryMinutes: toMinutes(identityDraft.discoveryMinutes, IDENTITY.discoveryMinutes),
+      sessionMinutes: toMinutes(identityDraft.sessionMinutes, IDENTITY.sessionMinutes),
+      wrapUpWarningMinutes: toMinutes(identityDraft.wrapUpWarningMinutes, IDENTITY.wrapUpWarningMinutes),
+    };
+    applyIdentityOverrides(cleaned);
+    saveIdentityOverrides(cleaned);
+    setIdentityDraft({ ...IDENTITY });
+    setIdentitySaved(true);
+  };
+
+  const resetIdentityToDefault = () => {
+    if (!window.confirm('Reset name, voice, and session lengths back to the original Samuel Angus defaults? This replaces whatever is set now.')) return;
+    const defaults = {
+      name: 'Samuel Angus', firstName: 'Samuel', title: 'ILM Level 5 qualified coach',
+      bio: 'over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy',
+      voiceDescription: 'warm, direct, and grounded — never uses coaching jargon, never clinical, never preachy, always personal',
+      signoff: 'Many thanks, Samuel', discoveryMinutes: 45, sessionMinutes: 50, wrapUpWarningMinutes: 45,
+    };
+    applyIdentityOverrides(defaults);
+    saveIdentityOverrides(defaults);
+    setIdentityDraft({ ...IDENTITY });
+    setIdentitySaved(true);
   };
 
   // Reads the current Automations form, sanitises it (numbers coerced,
@@ -1463,6 +1540,7 @@ function CommandCentre() {
     { id:'pipeline',     label:'Pipeline',        icon:'🎯' },
     { id:'reports',      label:'Reports',         icon:'📊' },
     { id:'automations',  label:'Automations',     icon:'⚙' },
+    { id:'identity',     label:'Coach Identity',  icon:'👤' },
     { id:'sabbath',      label:'Sabbath Tracker', icon:'🌙' },
     { id:'add',          label:'Add Coachee',     icon:'+' },
   ];
@@ -3034,7 +3112,7 @@ function CommandCentre() {
       { value:3, label:'Wednesday' }, { value:4, label:'Thursday' }, { value:5, label:'Friday' },
       { value:6, label:'Saturday' },
     ];
-    const setDraft = (key, value) => setAutomationsDraft(prev => ({ ...prev, [key]: value }));
+    const setDraft = (key, value) => { setAutomationsDraft(prev => ({ ...prev, [key]: value })); setAutomationsSaved(false); };
 
     const resetToDefaults = () => {
       if (!window.confirm('Reset all automation settings back to the original defaults? This replaces whatever you have set now.')) return;
@@ -3105,7 +3183,7 @@ function CommandCentre() {
           <div style={{ marginBottom:16 }}>
             <label className="cc-label">Milestone weeks (comma-separated)</label>
             <input type="text" className="cc-input" value={milestoneWeeksText}
-              onChange={e => setMilestoneWeeksText(e.target.value)}
+              onChange={e => { setMilestoneWeeksText(e.target.value); setAutomationsSaved(false); }}
               placeholder="4, 8, 12, 16, 20, 24" />
           </div>
           <div style={{ display:'flex', gap:14, marginBottom:16, flexWrap:'wrap' }}>
@@ -3140,11 +3218,127 @@ function CommandCentre() {
 
         <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
           <button className="cc-btn" onClick={saveAutomationsDraft}
-            style={{ background:C.teal, color:C.white, padding:'11px 22px',
+            style={{ background: automationsSaved ? C.teal : C.navy, color:C.white, padding:'11px 22px',
               borderRadius:8, fontSize:17, fontWeight:500 }}>
-            Save Automations
+            {automationsSaved ? '✓ Saved' : 'Save Automations'}
           </button>
           <button className="cc-btn" onClick={resetToDefaults}
+            style={{ background:C.white, color:C.slate, border:'1px solid #DDE3EA',
+              padding:'11px 20px', borderRadius:8, fontSize:17 }}>
+            Reset to Defaults
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // ── COACH IDENTITY VIEW ──
+  const IdentityView = () => {
+    const setDraft = (key, value) => { setIdentityDraft(prev => ({ ...prev, [key]: value })); setIdentitySaved(false); };
+
+    return (
+      <div style={{ padding:'28px 24px', maxWidth:640 }}>
+        {MobileHeader({title:"Coach Identity"})}
+        <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:8 }}>
+          Coach Identity
+        </div>
+        <div style={{ fontSize:16, color:C.slate, marginBottom:24, lineHeight:1.6 }}>
+          This is the one place the Command Centre gets your name, qualifications, voice, and
+          session lengths from. Every AI-generated message, the sidebar, the tab title, and the
+          session timer all read from what is saved here. Change something once and it applies
+          everywhere immediately, with no need to edit the file itself.
+        </div>
+
+        {identitySaved && (
+          <div style={{ background:C.tealLight, border:`1.5px solid ${C.teal}`, borderRadius:10,
+            padding:'10px 16px', marginBottom:20, fontSize:16, color:C.teal, fontWeight:500 }}>
+            ✓ Identity saved and applied throughout the Command Centre
+          </div>
+        )}
+
+        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
+          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
+            Who You Are
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:14, marginBottom:16 }}>
+            <div>
+              <label className="cc-label">Full name</label>
+              <input type="text" className="cc-input" value={identityDraft.name}
+                onChange={e => setDraft('name', e.target.value)} />
+            </div>
+            <div>
+              <label className="cc-label">First name (used mid-sentence)</label>
+              <input type="text" className="cc-input" value={identityDraft.firstName}
+                onChange={e => setDraft('firstName', e.target.value)} />
+            </div>
+          </div>
+          <div style={{ marginBottom:16 }}>
+            <label className="cc-label">Title / qualification</label>
+            <input type="text" className="cc-input" value={identityDraft.title}
+              onChange={e => setDraft('title', e.target.value)} />
+          </div>
+          <div>
+            <label className="cc-label">Background (one or two sentences, used in AI prompts)</label>
+            <textarea className="cc-textarea" style={{ minHeight:70 }} value={identityDraft.bio}
+              onChange={e => setDraft('bio', e.target.value)} />
+          </div>
+        </div>
+
+        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
+          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
+            Voice
+          </div>
+          <div style={{ marginBottom:16 }}>
+            <label className="cc-label">Voice description (feeds directly into every AI prompt)</label>
+            <textarea className="cc-textarea" style={{ minHeight:70 }} value={identityDraft.voiceDescription}
+              onChange={e => setDraft('voiceDescription', e.target.value)} />
+          </div>
+          <div>
+            <label className="cc-label">Sign-off</label>
+            <input type="text" className="cc-input" style={{ maxWidth:300 }} value={identityDraft.signoff}
+              onChange={e => setDraft('signoff', e.target.value)} />
+          </div>
+          <div style={{ fontSize:15, color:C.slate, marginTop:12, lineHeight:1.5 }}>
+            This is a starting voice, not the full depth of a proper voice profile. If your voice
+            needs sentence-level rules, named thinkers to draw on, or separate treatment for
+            different audiences, that still belongs in a dedicated reference document alongside
+            this, not squeezed into one text box.
+          </div>
+        </div>
+
+        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
+          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
+            Session Lengths
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(160px, 1fr))', gap:14 }}>
+            <div>
+              <label className="cc-label">Discovery session (minutes)</label>
+              <input type="number" min="1" className="cc-input" style={{ width:100 }}
+                value={identityDraft.discoveryMinutes}
+                onChange={e => setDraft('discoveryMinutes', e.target.value)} />
+            </div>
+            <div>
+              <label className="cc-label">Live session length (minutes)</label>
+              <input type="number" min="1" className="cc-input" style={{ width:100 }}
+                value={identityDraft.sessionMinutes}
+                onChange={e => setDraft('sessionMinutes', e.target.value)} />
+            </div>
+            <div>
+              <label className="cc-label">Session timer wrap-up warning (minutes)</label>
+              <input type="number" min="1" className="cc-input" style={{ width:100 }}
+                value={identityDraft.wrapUpWarningMinutes}
+                onChange={e => setDraft('wrapUpWarningMinutes', e.target.value)} />
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+          <button className="cc-btn" onClick={saveIdentityDraft}
+            style={{ background: identitySaved ? C.teal : C.navy, color:C.white, padding:'11px 22px',
+              borderRadius:8, fontSize:17, fontWeight:500 }}>
+            {identitySaved ? '✓ Saved' : 'Save Identity'}
+          </button>
+          <button className="cc-btn" onClick={resetIdentityToDefault}
             style={{ background:C.white, color:C.slate, border:'1px solid #DDE3EA',
               padding:'11px 20px', borderRadius:8, fontSize:17 }}>
             Reset to Defaults
@@ -3361,6 +3555,7 @@ function CommandCentre() {
         {view === 'loop'      && LoopView()}
         {view === 'reports'   && ReportsView()}
         {view === 'automations' && AutomationsView()}
+        {view === 'identity'   && IdentityView()}
         {view === 'sabbath'   && SabbathView()}
         {view === 'inbox'          && InboxView()}
         {view === 'pipeline'       && PipelineView()}
