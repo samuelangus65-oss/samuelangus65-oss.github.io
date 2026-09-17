@@ -110,7 +110,7 @@ const C = {
 
 // ── MESSAGE TYPES ─────────────────────────────────────────────
 const MSG_TYPES = [
-  { id:'midweek',    label:'Midweek Check-in',       icon:'💬', desc:'Personalised encouragement between sessions' },
+  { id:'midweek',    label:'Early Check-in',       icon:'💬', desc:'Personalised encouragement in the first days after a session' },
   { id:'pre',        label:'Pre-Session Reminder',   icon:'🔔', desc:'Thoughtful prompt before the next session' },
   { id:'post',       label:'Post-Session Summary',   icon:'📝', desc:'Turn your bullet notes into a warm summary' },
   { id:'reflection', label:'Weekly Reflection',      icon:'🌱', desc:'Sunday evening deep reflection prompt' },
@@ -587,6 +587,8 @@ async function callAI(prompt) {
 const KEY = 'samuel-command-centre-v1';
 const SABBATH_KEY = 'samuel-sabbath-v1';
 const LOOP_SENT_KEY = 'samuel-loop-sent-v1';
+const CAPTURE_KEY = 'samuel-capture-v1';
+const OPP_KEY = 'samuel-opportunities-v1';
 
 // ── SABBATH CALCULATIONS ──────────────────────────────────────
 function calcSabbaths(firstDateStr) {
@@ -621,8 +623,9 @@ function getLoopItems(coachees, sabbaths, sentIds) {
   // Keep them OFF your session day so touchpoints never clash with a live session.
   // The date-based Sabbath guard above always protects the actual Sabbath,
   // whatever day it currently falls on, so these are safe to set to any weekday.
-  const CHECKIN_DAY = 1;   // midweek / between-session check-in (Monday)
-  const REMINDER_DAY = 2;  // session reminder, day before a Wednesday session (Tuesday)
+  const SESSION_DAY = 3;   // ES's fortnightly session day (Wednesday)
+  const CHECKIN_DAY = 2;   // early check-in, first days after a session (Tuesday)
+  const REMINDER_DAY = 1;  // session reminder, two days before a Wednesday session (Monday)
 
   coachees.forEach(coachee => {
     const days = daysSince(coachee.lastSession);
@@ -645,22 +648,23 @@ function getLoopItems(coachees, sabbaths, sentIds) {
         colour: C.gold, sent: false });
     }
 
-    // Priority 3: Pre-Sabbath reflection (day before Sabbath)
-    if (tomorrowSab && days >= 2 && !sentIds.includes(baseId('reflection'))) {
+    // Priority 3: Pre-Sabbath reflection (day before Sabbath, but not on a live session day)
+    if (tomorrowSab && dayOfWeek !== SESSION_DAY && days >= 2 && !sentIds.includes(baseId('reflection'))) {
       items.push({ uid: baseId('reflection'), coachee, priority: 3, msgType: 'reflection',
         icon: '🌱', label: 'Pre-Sabbath reflection',
         reason: 'Sabbath is tomorrow: send the weekly reflection prompt today',
         colour: '#7B5EA7', sent: false });
     }
-    // Midweek / between-session check-in (day set by CHECKIN_DAY above)
+    // Early check-in, first days after a session (day set by CHECKIN_DAY above)
     else if (dayOfWeek === CHECKIN_DAY && days >= 2 && days <= 6 && !sentIds.includes(baseId('midweek'))) {
       items.push({ uid: baseId('midweek'), coachee, priority: 3, msgType: 'midweek',
-        icon: '💬', label: 'Midweek check-in',
+        icon: '💬', label: 'Early check-in',
         reason: `Between-session rhythm: ${coachee.name} is in week ${coachee.weekNumber}`,
         colour: C.teal, sent: false });
     }
-    // Session reminder (day set by REMINDER_DAY above)
-    else if (dayOfWeek === REMINDER_DAY && days >= 5 && !sentIds.includes(baseId('pre'))) {
+    // Session reminder (day set by REMINDER_DAY above), bounded so it only fires close
+    // to the actual next session, not from day 5 onward for the whole fortnight
+    else if (dayOfWeek === REMINDER_DAY && days >= 11 && days <= 13 && !sentIds.includes(baseId('pre'))) {
       items.push({ uid: baseId('pre'), coachee, priority: 4, msgType: 'pre',
         icon: '🔔', label: 'Session reminder',
         reason: 'Upcoming session reminder',
@@ -691,11 +695,40 @@ async function loadSentIds() {
 async function saveSentIds(ids) {
   try { localStorage.setItem(LOOP_SENT_KEY, JSON.stringify(ids)); } catch(e) { console.error(e); }
 }
+async function loadCapture() {
+  try { const r = localStorage.getItem(CAPTURE_KEY); return r ? JSON.parse(r) : []; }
+  catch { return []; }
+}
+async function saveCapture(data) {
+  try { localStorage.setItem(CAPTURE_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+}
+async function loadOpportunities() {
+  try { const r = localStorage.getItem(OPP_KEY); return r ? JSON.parse(r) : []; }
+  catch { return []; }
+}
+async function saveOpportunities(data) {
+  try { localStorage.setItem(OPP_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+}
+const OPP_STAGES = [
+  { id:'lead',         label:'Lead' },
+  { id:'contacted',    label:'Contacted' },
+  { id:'conversation', label:'Conversation' },
+  { id:'proposal',     label:'Proposal' },
+  { id:'won',          label:'Won' },
+  { id:'lost',         label:'Lost' },
+];
 
 // ── HELPERS ───────────────────────────────────────────────────
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
 const daysSince = iso => Math.floor((Date.now() - new Date(iso)) / 86400000);
 const weekBadgeColor = w => w <= 2 ? C.teal : w <= 5 ? C.gold : '#7B5EA7';
+const fmtContactDate = (val) => {
+  if (!val) return null;
+  // Handles both a plain YYYY-MM-DD from the date input and an older
+  // full ISO timestamp from before this field's meaning was corrected.
+  const d = val.length === 10 ? new Date(val + 'T00:00:00') : new Date(val);
+  return isNaN(d) ? null : d.toLocaleDateString('en-GB');
+};
 
 // ── STYLES ────────────────────────────────────────────────────
 const injectStyles = () => {
@@ -733,8 +766,8 @@ const injectStyles = () => {
     @keyframes cc-spin { to { transform: rotate(360deg); } }
     @keyframes cc-fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
     .cc-fade-in { animation: cc-fade 0.25s ease forwards; }
-    .cc-delete-btn { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.4); font-size: 18px; padding: 4px 8px; border-radius: 4px; transition: color 0.15s; }
-    .cc-delete-btn:hover { color: #E57373; }
+    .cc-delete-btn { background: rgba(229,115,115,0.08); border: 1px solid rgba(229,115,115,0.4); cursor: pointer; color: #E57373; font-size: 15px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: background 0.15s; }
+    .cc-delete-btn:hover { background: rgba(229,115,115,0.18); }
     @media (max-width: 768px) {
       .cc-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
       .cc-sidebar { display: none; }
@@ -856,18 +889,33 @@ function CommandCentre() {
   const [loopText, setLoopText] = useState('');
   const [safetyFlag, setSafetyFlag] = useState(false);
   const [showFullToolkit, setShowFullToolkit] = useState(false);
+  const [captureItems, setCaptureItems] = useState([]);
+  const [captureText, setCaptureText] = useState('');
+  const [showCaptureArchive, setShowCaptureArchive] = useState(false);
+  const [opportunities, setOpportunities] = useState([]);
+  const [oppForm, setOppForm] = useState({ personOrOrg:'', type:'', source:'', stage:'lead', nextAction:'', nextActionDate:'', notes:'', value:'', lastContact:'' });
+  const [oppEditId, setOppEditId] = useState(null);
+  const [oppError, setOppError] = useState('');
+  const [selectedOpp, setSelectedOpp] = useState(null);
+  const [oppNoteDraft, setOppNoteDraft] = useState('');
+  const [coacheeNoteDraft, setCoacheeNoteDraft] = useState('');
+  const [convertingCaptureId, setConvertingCaptureId] = useState(null);
 
   useEffect(() => {
     Promise.all([
       load(),
       loadSabbath(),
       loadSentIds(),
-    ]).then(([coacheesData, sabbathData, sentData]) => {
+      loadCapture(),
+      loadOpportunities(),
+    ]).then(([coacheesData, sabbathData, sentData, captureData, oppData]) => {
       setCoachees(coacheesData);
       setSabbath(sabbathData);
       setSabbathInput(sabbathData.firstDate || '');
       setSentIds(sentData);
       setLoopItems(getLoopItems(coacheesData, sabbathData.dates || [], sentData));
+      setCaptureItems(captureData);
+      setOpportunities(oppData);
       setLoading(false);
     });
   }, []);
@@ -880,9 +928,9 @@ function CommandCentre() {
 
   const exportBackup = () => {
     const backup = {
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
-      coachees, sabbath, sentIds,
+      coachees, sabbath, sentIds, capture: captureItems, opportunities,
     };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -910,16 +958,22 @@ function CommandCentre() {
 
       const restoredSabbath = parsed.sabbath && typeof parsed.sabbath === 'object' ? parsed.sabbath : { firstDate:'', dates:[] };
       const restoredSentIds = Array.isArray(parsed.sentIds) ? parsed.sentIds : [];
+      const restoredCapture = Array.isArray(parsed.capture) ? parsed.capture : [];
+      const restoredOpportunities = Array.isArray(parsed.opportunities) ? parsed.opportunities : [];
 
       await save(parsed.coachees);
       await saveSabbath(restoredSabbath);
       await saveSentIds(restoredSentIds);
+      await saveCapture(restoredCapture);
+      await saveOpportunities(restoredOpportunities);
 
       setCoachees(parsed.coachees);
       setSabbath(restoredSabbath);
       setSabbathInput(restoredSabbath.firstDate || '');
       setSentIds(restoredSentIds);
       setLoopItems(getLoopItems(parsed.coachees, restoredSabbath.dates || [], restoredSentIds));
+      setCaptureItems(restoredCapture);
+      setOpportunities(restoredOpportunities);
       setSelected(null);
       nav('dashboard');
       alert('Backup restored successfully.');
@@ -936,7 +990,7 @@ function CommandCentre() {
       updated = coachees.map(c => c.id === editId ? { ...c, ...formData } : c);
     } else {
       const now = new Date().toISOString();
-      updated = [...coachees, { ...formData, id: uid(), createdAt: now, lastSession: now }];
+      updated = [...coachees, { ...formData, id: uid(), createdAt: now, lastSession: now, notes: '' }];
     }
     await persist(updated);
     setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 });
@@ -966,11 +1020,162 @@ function CommandCentre() {
     if (selected?.id === id) setSelected(updated.find(c => c.id === id));
   };
 
-  const removeCoachee = async (id) => {
-    if (!window.confirm('Remove this coachee? This cannot be undone.')) return;
+  const removeCoachee = async (id, name) => {
+    const label = name ? `Remove ${name}? This cannot be undone.` : 'Remove this coachee? This cannot be undone.';
+    if (!window.confirm(label)) return;
     const updated = coachees.filter(c => c.id !== id);
     await persist(updated);
     setView('dashboard'); setSelected(null);
+  };
+
+  // Manual communications log entry: a call, email, or any other contact
+  // Samuel wants recorded against this coachee. Append-only, same pattern
+  // as the Pipeline opportunity notes history below (fmtNoteStamp).
+  const appendCoacheeNote = async (id, note) => {
+    const trimmed = (note || '').trim();
+    if (!trimmed) return;
+    const updated = coachees.map(c => c.id === id
+      ? { ...c, notes: (c.notes ? c.notes + '\n\n' : '') + `[${fmtNoteStamp()}] ${trimmed}` }
+      : c);
+    await persist(updated);
+    if (selected?.id === id) setSelected(updated.find(c => c.id === id));
+    setCoacheeNoteDraft('');
+  };
+
+  // ── CAPTURE INBOX ──
+  const addCapture = async (text) => {
+    const trimmed = (text || '').trim();
+    if (!trimmed) return;
+    const now = new Date().toISOString();
+    const updated = [...captureItems, { id: uid(), createdAt: now, text: trimmed, type: null, linkedCoacheeId: null, linkedOpportunityId: null, status: 'inbox' }];
+    setCaptureItems(updated);
+    await saveCapture(updated);
+    setCaptureText('');
+  };
+
+  const classifyCapture = async (id, type) => {
+    const updated = captureItems.map(item => item.id === id ? { ...item, type, status: (type === 'action' || type === 'client' || type === 'opportunity' || type === 'project') ? 'classified' : 'archived' } : item);
+    setCaptureItems(updated);
+    await saveCapture(updated);
+  };
+
+  const archiveCapture = async (id) => {
+    const updated = captureItems.map(item => item.id === id ? { ...item, status: 'archived' } : item);
+    setCaptureItems(updated);
+    await saveCapture(updated);
+  };
+
+  const removeCapture = async (id) => {
+    if (!window.confirm('Delete this captured item? This cannot be undone.')) return;
+    const updated = captureItems.filter(item => item.id !== id);
+    setCaptureItems(updated);
+    await saveCapture(updated);
+  };
+
+  const convertCaptureToOpportunity = async (item) => {
+    setOppForm({ personOrOrg:'', type:'', source:'Captured note', stage:'lead', nextAction:'', nextActionDate:'', notes: item.text, value:'', lastContact:'' });
+    setOppEditId(null);
+    setOppError('');
+    setConvertingCaptureId(item.id);
+    // Do NOT archive the Capture here. It only becomes archived once the
+    // Opportunity is actually saved (see submitOppForm). If the user cancels,
+    // the Capture must remain exactly as it was, so nothing is written yet.
+    nav('pipeline-add');
+  };
+
+  // ── OPPORTUNITY / PIPELINE ──
+  const fmtNoteStamp = () => new Date().toLocaleDateString('en-GB');
+
+  const submitOppForm = async (formData) => {
+    if (!formData.personOrOrg) {
+      setOppError('Please enter who this opportunity is with.');
+      return;
+    }
+    setOppError('');
+    let updated;
+    const now = new Date().toISOString();
+    let newOppId = null;
+    if (oppEditId) {
+      // Notes are append-only and never edited through this form — strip
+      // notes out of the saved fields entirely so the existing history
+      // (and lastContact, which has its own field below) cannot be
+      // silently overwritten by a stale value sitting in the form state.
+      const { notes, ...editableFields } = formData;
+      updated = opportunities.map(o => o.id === oppEditId ? { ...o, ...editableFields } : o);
+    } else {
+      newOppId = uid();
+      const initialNote = (formData.notes || '').trim();
+      updated = [...opportunities, {
+        ...formData,
+        id: newOppId,
+        createdAt: now,
+        // A record being created is not the same as contact having happened.
+        // Only set if the coach deliberately supplied a contact date.
+        lastContact: formData.lastContact || null,
+        notes: initialNote ? `[${fmtNoteStamp()}] ${initialNote}` : '',
+      }];
+    }
+    setOpportunities(updated);
+    await saveOpportunities(updated);
+
+    if (newOppId && convertingCaptureId) {
+      const updatedCapture = captureItems.map(item => item.id === convertingCaptureId
+        ? { ...item, status:'archived', type:'opportunity', linkedOpportunityId: newOppId }
+        : item);
+      setCaptureItems(updatedCapture);
+      await saveCapture(updatedCapture);
+    }
+    setConvertingCaptureId(null);
+
+    setOppForm({ personOrOrg:'', type:'', source:'', stage:'lead', nextAction:'', nextActionDate:'', notes:'', value:'', lastContact:'' });
+    setOppEditId(null);
+    nav('pipeline');
+  };
+
+  const openEditOpp = (o) => {
+    setOppForm({ personOrOrg:o.personOrOrg, type:o.type||'', source:o.source||'', stage:o.stage,
+      nextAction:o.nextAction||'', nextActionDate:o.nextActionDate||'', notes:'', value:o.value||'',
+      // Normalise to a plain YYYY-MM-DD for the date input, whether the
+      // stored value is already plain or an older full ISO timestamp.
+      lastContact: o.lastContact ? o.lastContact.slice(0,10) : '' });
+    setOppEditId(o.id);
+    setOppError('');
+    setConvertingCaptureId(null);
+    nav('pipeline-add');
+  };
+
+  const removeOpportunity = async (id, label) => {
+    const msg = label ? `Remove ${label}? This cannot be undone.` : 'Remove this opportunity? This cannot be undone.';
+    if (!window.confirm(msg)) return;
+    const updated = opportunities.filter(o => o.id !== id);
+    setOpportunities(updated);
+    await saveOpportunities(updated);
+    setSelectedOpp(null);
+    nav('pipeline');
+  };
+
+  const cancelOppForm = () => {
+    const wasEditing = oppEditId; // read before resetting, decides where "back" goes
+    setOppForm({ personOrOrg:'', type:'', source:'', stage:'lead', nextAction:'', nextActionDate:'', notes:'', value:'', lastContact:'' });
+    setOppEditId(null);
+    setConvertingCaptureId(null);
+    setOppError('');
+    nav(wasEditing ? 'pipeline-detail' : 'pipeline');
+  };
+
+  const appendOppNote = async (id, note) => {
+    const trimmed = (note || '').trim();
+    if (!trimmed) return;
+    // Adding a note is an internal record, not evidence of genuine contact,
+    // so lastContact is deliberately left untouched here. It only changes
+    // via the explicit Last Contact Date field on the Edit form.
+    const updated = opportunities.map(o => o.id === id
+      ? { ...o, notes: (o.notes ? o.notes + '\n\n' : '') + `[${fmtNoteStamp()}] ${trimmed}` }
+      : o);
+    setOpportunities(updated);
+    await saveOpportunities(updated);
+    setSelectedOpp(updated.find(o => o.id === id));
+    setOppNoteDraft('');
   };
 
   const openGenerate = (coachee, type) => {
@@ -1042,10 +1247,30 @@ function CommandCentre() {
   };
 
   const markLoopSent = async (item) => {
-    const updated = [...sentIds, item.uid];
-    setSentIds(updated);
-    await saveSentIds(updated);
-    setLoopItems(prev => prev.filter(i => i.uid !== item.uid));
+    const updatedSentIds = [...sentIds, item.uid];
+    setSentIds(updatedSentIds);
+    await saveSentIds(updatedSentIds);
+
+    // Log this to the coachee's communications history automatically, so
+    // Mark Sent leaves a permanent record rather than just clearing today's
+    // prompt. Include the actual generated message when one exists.
+    const mtLabel = MSG_TYPES.find(m => m.id === item.msgType)?.label || item.msgType;
+    const generatedText = loopGenerated[item.uid];
+    const entry = generatedText
+      ? `${mtLabel} sent (via Today's Loop).\n\n${generatedText}`
+      : `${mtLabel} marked sent (via Today's Loop). No message was generated in-app for this one.`;
+    const updatedCoachees = coachees.map(c => c.id === item.coachee.id
+      ? { ...c, notes: (c.notes ? c.notes + '\n\n' : '') + `[${fmtNoteStamp()}] ${entry}` }
+      : c);
+    setCoachees(updatedCoachees);
+    await save(updatedCoachees);
+    if (selected?.id === item.coachee.id) setSelected(updatedCoachees.find(c => c.id === item.coachee.id));
+
+    // Recompute against updatedSentIds directly rather than the sentIds
+    // state variable, which will not reflect this update until the next
+    // render — using the stale value here would regenerate this exact
+    // item and undo the Mark Sent action.
+    setLoopItems(getLoopItems(updatedCoachees, sabbath.dates || [], updatedSentIds));
   };
 
   const copyLoopMsg = (item, text) => {
@@ -1111,9 +1336,13 @@ function CommandCentre() {
   const navItems = [
     { id:'dashboard', label:'Dashboard',       icon:'⊞' },
     { id:'loop',      label:"Today's Loop",    icon:'🔄' },
+    { id:'inbox',     label:'Inbox',           icon:'📥' },
+    { id:'pipeline',  label:'Pipeline',        icon:'🎯' },
     { id:'sabbath',   label:'Sabbath Tracker', icon:'🌙' },
     { id:'add',       label:'Add Coachee',     icon:'+' },
   ];
+
+  const inboxCount = captureItems.filter(i => i.status === 'inbox').length;
 
   // ── SIDEBAR ──
   const Sidebar = () => (
@@ -1126,6 +1355,19 @@ function CommandCentre() {
           Command Centre
         </div>
       </div>
+      <div style={{ padding:'0 20px 14px' }}>
+        <form onSubmit={e => { e.preventDefault(); addCapture(captureText); }}
+          style={{ display:'flex', gap:6 }}>
+          <input value={captureText} onChange={e => setCaptureText(e.target.value)}
+            placeholder="Quick capture..."
+            style={{ flex:1, minWidth:0, background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.14)',
+              borderRadius:7, padding:'8px 10px', color:C.white, fontSize:14, fontFamily:"'DM Sans',sans-serif", outline:'none' }} />
+          <button type="submit" className="cc-btn"
+            style={{ background:C.teal, color:C.white, border:'none', borderRadius:7, padding:'0 12px', fontSize:16 }}>
+            +
+          </button>
+        </form>
+      </div>
       <div style={{ height:1, background:'rgba(255,255,255,0.07)', margin:'0 20px 12px' }} />
       {navItems.map(item => (
         <button key={item.id} className={`cc-nav-item ${view === item.id ? 'active' : ''}`}
@@ -1137,6 +1379,13 @@ function CommandCentre() {
               borderRadius:'50%', width:18, height:18, fontSize:16, fontWeight:500,
               display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
               {loopItems.length}
+            </span>
+          )}
+          {item.id === 'inbox' && inboxCount > 0 && (
+            <span style={{ marginLeft:'auto', background:C.gold, color:C.navy,
+              borderRadius:'50%', width:18, height:18, fontSize:16, fontWeight:500,
+              display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              {inboxCount}
             </span>
           )}
         </button>
@@ -1181,6 +1430,13 @@ function CommandCentre() {
               borderRadius:'50%', width:14, height:14, fontSize:16, fontWeight:500,
               display:'flex', alignItems:'center', justifyContent:'center' }}>
               {loopItems.length}
+            </span>
+          )}
+          {item.id === 'inbox' && inboxCount > 0 && (
+            <span style={{ position:'absolute', top:0, right:6, background:C.gold, color:C.navy,
+              borderRadius:'50%', width:14, height:14, fontSize:16, fontWeight:500,
+              display:'flex', alignItems:'center', justifyContent:'center' }}>
+              {inboxCount}
             </span>
           )}
         </button>
@@ -1424,7 +1680,7 @@ function CommandCentre() {
             <input type="checkbox" id="add-concession-input" defaultChecked={form.concession||false}
               style={{ width:16, height:16, cursor:'pointer', accentColor:C.teal }} />
             <label htmlFor="add-concession-input" style={{ fontSize:17, color:C.slate, cursor:'pointer' }}>
-              Concession rate (student / NHS / faith community referral)
+              Concession rate (student / NHS / low income, agreed at discovery)
             </label>
           </div>
           <div style={{ display:'flex', gap:12, marginTop:4 }}>
@@ -1479,7 +1735,7 @@ function CommandCentre() {
                 </div>
               </div>
             </div>
-            <div style={{ display:'flex', gap:8 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
               <button className="cc-btn" onClick={() => openEdit(c)}
                 style={{ background:'rgba(255,255,255,0.1)', color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16 }}>
                 Edit
@@ -1488,8 +1744,9 @@ function CommandCentre() {
                 style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16, fontWeight:500 }}>
                 ✓ Complete Session
               </button>
-              <button onClick={() => removeCoachee(c.id)} title="Remove coachee" className="cc-delete-btn">✕</button>
             </div>
+            <button onClick={() => removeCoachee(c.id, c.name)} title="Remove coachee" className="cc-delete-btn"
+              style={{ alignSelf:'flex-start' }}>Delete Coachee</button>
           </div>
           <div style={{ marginTop:20, padding:'14px 18px', background:'rgba(255,255,255,0.06)', borderRadius:10 }}>
             <div style={{ fontSize:16, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Coaching Goal</div>
@@ -1614,6 +1871,25 @@ function CommandCentre() {
             </div>
           </div>
         )}
+
+        {/* Communications Log */}
+        <div style={{ marginBottom:24 }}>
+          <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
+            Communications Log
+          </div>
+          <div className="cc-result-box" style={{ marginBottom:16, whiteSpace:'pre-wrap' }}>
+            {c.notes || 'No communications logged yet. Entries from Today\u2019s Loop are added automatically when you Mark Sent, or add one manually below.'}
+          </div>
+          <div style={{ display:'flex', gap:8 }}>
+            <input className="cc-input" placeholder="Log a call, email, or other contact..." value={coacheeNoteDraft}
+              onChange={e => setCoacheeNoteDraft(e.target.value)}
+              onKeyDown={e => { if (e.key==='Enter') appendCoacheeNote(c.id, coacheeNoteDraft); }} />
+            <button className="cc-btn" onClick={() => appendCoacheeNote(c.id, coacheeNoteDraft)}
+              style={{ background:C.teal, color:C.white, padding:'0 18px', borderRadius:8, fontSize:16, fontWeight:500 }}>
+              Add
+            </button>
+          </div>
+        </div>
 
         {/* Message generators */}
         <div style={{ marginBottom:16 }}>
@@ -2393,6 +2669,291 @@ function CommandCentre() {
     );
   };
 
+  // ── INBOX VIEW ──
+  const InboxView = () => {
+    const inboxItems = captureItems.filter(i => i.status === 'inbox');
+    const classifiedItems = captureItems.filter(i => i.status === 'classified');
+    const archivedItems = captureItems.filter(i => i.status === 'archived');
+    const CAPTURE_TYPES = [
+      { id:'action',      label:'Action',      icon:'✓' },
+      { id:'reference',   label:'Reference',   icon:'📎' },
+      { id:'client',      label:'Client',      icon:'👤' },
+      { id:'opportunity', label:'Opportunity', icon:'🎯' },
+      { id:'project',     label:'Project',     icon:'📁' },
+      { id:'idea',        label:'Idea',        icon:'💡' },
+    ];
+    const Row = (item) => (
+      <div key={item.id} className="cc-fade-in" style={{ background:C.white, borderRadius:12,
+        padding:'16px 18px', border:'1.5px solid #DDE3EA', marginBottom:12 }}>
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:12 }}>
+          <div style={{ fontSize:17, color:C.navy, lineHeight:1.6, flex:1 }}>{item.text}</div>
+          <button className="cc-btn" onClick={() => removeCapture(item.id)}
+            style={{ background:'none', border:'none', color:'#C9C9C9', fontSize:16, flexShrink:0 }}>✕</button>
+        </div>
+        <div style={{ fontSize:15, color:C.slate, marginTop:6, marginBottom: item.status==='inbox' ? 10 : 0 }}>
+          {new Date(item.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+          {item.type && ` · ${CAPTURE_TYPES.find(t=>t.id===item.type)?.label || item.type}`}
+        </div>
+        {item.status === 'archived' && item.linkedOpportunityId && (
+          <button className="cc-btn"
+            onClick={() => { const o = opportunities.find(op => op.id === item.linkedOpportunityId); if (o) openOppDetail(o); }}
+            style={{ background:'none', border:'none', color:C.teal, fontSize:15, padding:0, marginTop:4 }}>
+            → View linked opportunity
+          </button>
+        )}
+        {item.status === 'inbox' && (
+          <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+            {CAPTURE_TYPES.map(t => (
+              <button key={t.id} className="cc-btn"
+                onClick={() => t.id === 'opportunity' ? convertCaptureToOpportunity(item) : classifyCapture(item.id, t.id)}
+                style={{ background:C.tealLight, color:C.teal, border:'none', borderRadius:7,
+                  padding:'6px 12px', fontSize:15, fontWeight:500 }}>
+                {t.icon} {t.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+    return (
+      <div style={{ padding:'28px 24px' }}>
+        {MobileHeader({title:"Inbox"})}
+        <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:4 }}>
+          Inbox
+        </div>
+        <div style={{ fontSize:16, color:C.slate, marginBottom:20 }}>
+          Drop anything here first. Decide what it is afterwards.
+        </div>
+        <form onSubmit={e => { e.preventDefault(); addCapture(captureText); }}
+          style={{ display:'flex', gap:8, marginBottom:24 }}>
+          <input value={captureText} onChange={e => setCaptureText(e.target.value)}
+            placeholder="Type a thought, task, contact, or opportunity..."
+            className="cc-input" style={{ flex:1 }} />
+          <button type="submit" className="cc-btn"
+            style={{ background:C.teal, color:C.white, border:'none', borderRadius:8, padding:'0 20px', fontSize:16, fontWeight:500 }}>
+            Capture
+          </button>
+        </form>
+
+        <div style={{ fontSize:18, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:12 }}>
+          Needs sorting {inboxItems.length > 0 && `(${inboxItems.length})`}
+        </div>
+        {inboxItems.length === 0 ? (
+          <div style={{ fontSize:16, color:C.slate, marginBottom:24 }}>Nothing waiting to be sorted.</div>
+        ) : (
+          <div style={{ marginBottom:24 }}>{inboxItems.map(Row)}</div>
+        )}
+
+        {classifiedItems.length > 0 && (
+          <>
+            <div style={{ fontSize:18, letterSpacing:2, textTransform:'uppercase', color:C.slate, fontWeight:500, marginBottom:12 }}>
+              Classified, not yet actioned
+            </div>
+            <div>{classifiedItems.map(Row)}</div>
+          </>
+        )}
+
+        {archivedItems.length > 0 && (
+          <div style={{ marginTop:24 }}>
+            <button className="cc-btn" onClick={() => setShowCaptureArchive(!showCaptureArchive)}
+              style={{ background:'none', border:'none', color:C.slate, fontSize:16, padding:0,
+                display:'flex', alignItems:'center', gap:6 }}>
+              {showCaptureArchive ? '▾' : '▸'} Archive ({archivedItems.length})
+            </button>
+            {showCaptureArchive && (
+              <div style={{ marginTop:12 }}>{[...archivedItems].reverse().map(Row)}</div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // ── PIPELINE VIEW ──
+  const openOppDetail = (o) => { setSelectedOpp(o); setOppNoteDraft(''); nav('pipeline-detail'); };
+
+  const PipelineView = () => {
+    const grouped = OPP_STAGES.map(stage => ({
+      stage,
+      items: opportunities.filter(o => o.stage === stage.id),
+    }));
+    return (
+      <div style={{ padding:'28px 24px' }}>
+        {MobileHeader({title:"Pipeline"})}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20, flexWrap:'wrap', gap:12 }}>
+          <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy }}>Pipeline</div>
+          <button className="cc-btn" onClick={() => { setOppForm({ personOrOrg:'', type:'', source:'', stage:'lead', nextAction:'', nextActionDate:'', notes:'', value:'', lastContact:'' }); setOppEditId(null); setOppError(''); setConvertingCaptureId(null); nav('pipeline-add'); }}
+            style={{ background:C.navy, color:C.white, padding:'10px 18px', borderRadius:8, fontSize:16, fontWeight:500 }}>
+            + Add Opportunity
+          </button>
+        </div>
+        {opportunities.length === 0 ? (
+          <div style={{ background:C.white, borderRadius:16, padding:'40px 28px', textAlign:'center', border:'1.5px dashed #DDE3EA' }}>
+            <div style={{ fontSize:17, color:C.slate, lineHeight:1.7 }}>
+              Nothing in the pipeline yet. Add a lead, referral, or opportunity when one comes in.
+            </div>
+          </div>
+        ) : (
+          grouped.map(g => g.items.length === 0 ? null : (
+            <div key={g.stage.id} style={{ marginBottom:24 }}>
+              <div style={{ fontSize:18, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:12 }}>
+                {g.stage.label} ({g.items.length})
+              </div>
+              <div className="cc-card-grid">
+                {g.items.map(o => {
+                  const noNextAction = !o.nextAction && o.stage !== 'won' && o.stage !== 'lost';
+                  const overdue = o.nextActionDate && o.stage !== 'won' && o.stage !== 'lost' && o.nextActionDate < todayStr();
+                  return (
+                    <div key={o.id} className="cc-coachee-card" onClick={() => openOppDetail(o)}>
+                      <div style={{ fontSize:19, fontWeight:500, color:C.navy, marginBottom:4 }}>{o.personOrOrg}</div>
+                      {o.type && <div style={{ fontSize:15, color:C.slate, marginBottom:8 }}>{o.type}</div>}
+                      <div style={{ fontSize:16, color:C.navy, lineHeight:1.5, marginBottom:8 }}>
+                        {o.nextAction || '—'}
+                      </div>
+                      {(noNextAction || overdue) && (
+                        <div style={{ display:'inline-block', background:'rgba(192,57,43,0.1)', color:C.red,
+                          fontSize:14, fontWeight:500, padding:'3px 10px', borderRadius:6 }}>
+                          {noNextAction ? 'No next action set' : 'Next action overdue'}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    );
+  };
+
+  const PipelineAddView = () => (
+    <div style={{ padding:'28px 24px', maxWidth:640 }}>
+      {MobileHeader({title: oppEditId ? "Edit Opportunity" : "Add Opportunity"})}
+      <button className="cc-btn" onClick={cancelOppForm}
+        style={{ background:'none', border:'none', color:C.slate, fontSize:16, padding:0,
+          marginBottom:16, display:'flex', alignItems:'center', gap:6 }}>
+        ← Back{oppEditId ? '' : ' to Pipeline'}
+      </button>
+      <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:20 }}>
+        {oppEditId ? 'Edit Opportunity' : 'Add Opportunity'}
+      </div>
+      {oppError && <div style={{ background:'rgba(192,57,43,0.1)', color:C.red, padding:'10px 14px', borderRadius:8, fontSize:16, marginBottom:16 }}>{oppError}</div>}
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Who / which organisation *</label>
+        <input className="cc-input" value={oppForm.personOrOrg} onChange={e => setOppForm({...oppForm, personOrOrg:e.target.value})} />
+      </div>
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Type</label>
+        <input className="cc-input" placeholder="e.g. apprenticeship provider, referral, employer"
+          value={oppForm.type} onChange={e => setOppForm({...oppForm, type:e.target.value})} />
+      </div>
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Source</label>
+        <input className="cc-input" placeholder="How did this come in?"
+          value={oppForm.source} onChange={e => setOppForm({...oppForm, source:e.target.value})} />
+      </div>
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Stage</label>
+        <select className="cc-input" value={oppForm.stage} onChange={e => setOppForm({...oppForm, stage:e.target.value})}>
+          {OPP_STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+        </select>
+      </div>
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Next action</label>
+        <input className="cc-input" value={oppForm.nextAction} onChange={e => setOppForm({...oppForm, nextAction:e.target.value})} />
+      </div>
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Next action date</label>
+        <input type="date" className="cc-input" value={oppForm.nextActionDate} onChange={e => setOppForm({...oppForm, nextActionDate:e.target.value})} />
+      </div>
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Value</label>
+        <input className="cc-input" placeholder="Optional — a figure, or 'not yet known'"
+          value={oppForm.value} onChange={e => setOppForm({...oppForm, value:e.target.value})} />
+      </div>
+      <div style={{ marginBottom:16 }}>
+        <label className="cc-label">Last contact date</label>
+        <input type="date" className="cc-input" value={oppForm.lastContact} onChange={e => setOppForm({...oppForm, lastContact:e.target.value})} />
+        <div style={{ fontSize:14, color:C.slate, marginTop:4 }}>
+          Only set this when genuine contact has actually happened, not when the record was created or a note was added.
+        </div>
+      </div>
+      {!oppEditId ? (
+        <div style={{ marginBottom:24 }}>
+          <label className="cc-label">Initial note</label>
+          <textarea className="cc-textarea" value={oppForm.notes} onChange={e => setOppForm({...oppForm, notes:e.target.value})} />
+          <div style={{ fontSize:14, color:C.slate, marginTop:4 }}>
+            Optional. Becomes the first dated entry in the Notes History. Further notes are added from the opportunity's own page, and never overwrite earlier ones.
+          </div>
+        </div>
+      ) : (
+        <div style={{ marginBottom:24 }}>
+          <label className="cc-label">Notes History (read-only here)</label>
+          <div className="cc-result-box" style={{ whiteSpace:'pre-wrap' }}>
+            {(() => { const current = opportunities.find(op => op.id === oppEditId); return current && current.notes ? current.notes : 'No notes yet.'; })()}
+          </div>
+          <div style={{ fontSize:14, color:C.slate, marginTop:4 }}>
+            To add a new note, save these changes and use "Add" on the opportunity's own page.
+          </div>
+        </div>
+      )}
+      <div style={{ display:'flex', gap:10 }}>
+        <button className="cc-btn" onClick={() => submitOppForm(oppForm)}
+          style={{ background:C.teal, color:C.white, padding:'11px 22px', borderRadius:8, fontSize:16, fontWeight:500 }}>
+          {oppEditId ? 'Save Changes' : 'Add Opportunity'}
+        </button>
+        <button className="cc-btn" onClick={cancelOppForm}
+          style={{ background:C.light, color:C.slate, padding:'11px 22px', borderRadius:8, fontSize:16 }}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+
+  const PipelineDetailView = () => {
+    const o = selectedOpp;
+    if (!o) return null;
+    return (
+      <div style={{ padding:'28px 24px', maxWidth:640 }}>
+        {MobileHeader({title: o.personOrOrg})}
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:8, flexWrap:'wrap', gap:12 }}>
+          <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy }}>{o.personOrOrg}</div>
+          <div style={{ display:'flex', gap:8 }}>
+            <button className="cc-btn" onClick={() => openEditOpp(o)}
+              style={{ background:C.light, color:C.slate, padding:'8px 14px', borderRadius:7, fontSize:15 }}>Edit</button>
+            <button className="cc-delete-btn" onClick={() => removeOpportunity(o.id, o.personOrOrg)}>Delete</button>
+          </div>
+        </div>
+        <div style={{ fontSize:16, color:C.slate, marginBottom:20 }}>
+          {OPP_STAGES.find(s=>s.id===o.stage)?.label}{o.type && ` · ${o.type}`}{o.source && ` · via ${o.source}`}
+        </div>
+        <div style={{ background:C.white, borderRadius:12, padding:'16px 18px', border:'1.5px solid #DDE3EA', marginBottom:16 }}>
+          <div style={{ fontSize:15, color:C.teal, fontWeight:500, letterSpacing:1, textTransform:'uppercase', marginBottom:6 }}>Next Action</div>
+          <div style={{ fontSize:17, color:C.navy }}>{o.nextAction || 'None set'}</div>
+          {o.nextActionDate && <div style={{ fontSize:15, color:C.slate, marginTop:4 }}>By {new Date(o.nextActionDate+'T00:00:00').toLocaleDateString('en-GB')}</div>}
+        </div>
+        {o.value && (
+          <div style={{ fontSize:16, color:C.slate, marginBottom:16 }}><strong style={{ color:C.navy }}>Value:</strong> {o.value}</div>
+        )}
+        <div style={{ fontSize:16, color:C.slate, marginBottom:16 }}>
+          <strong style={{ color:C.navy }}>Last contact:</strong> {fmtContactDate(o.lastContact) || 'Not recorded yet'}
+        </div>
+        <div style={{ fontSize:18, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:10 }}>Notes</div>
+        <div className="cc-result-box" style={{ marginBottom:16 }}>{o.notes || 'No notes yet.'}</div>
+        <div style={{ display:'flex', gap:8 }}>
+          <input className="cc-input" placeholder="Add a note..." value={oppNoteDraft}
+            onChange={e => setOppNoteDraft(e.target.value)}
+            onKeyDown={e => { if (e.key==='Enter') appendOppNote(o.id, oppNoteDraft); }} />
+          <button className="cc-btn" onClick={() => appendOppNote(o.id, oppNoteDraft)}
+            style={{ background:C.teal, color:C.white, padding:'0 18px', borderRadius:8, fontSize:16, fontWeight:500 }}>
+            Add
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   // ── ROOT RENDER ──
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center',
@@ -2414,6 +2975,10 @@ function CommandCentre() {
         {view === 'generate'  && GenerateView()}
         {view === 'loop'      && LoopView()}
         {view === 'sabbath'   && SabbathView()}
+        {view === 'inbox'          && InboxView()}
+        {view === 'pipeline'       && PipelineView()}
+        {view === 'pipeline-add'   && PipelineAddView()}
+        {view === 'pipeline-detail' && PipelineDetailView()}
       </main>
       {BottomNav()}
       <SessionTimer />
