@@ -108,37 +108,6 @@ const C = {
   goldLight:  'rgba(201,168,76,0.12)',
 };
 
-// ── COACH IDENTITY ─────────────────────────────────────────────
-// Single source of truth for the coach's name, qualifications,
-// voice, and session lengths. Every AI prompt, the sidebar, the
-// mobile header, and the session timer's wrap-up thresholds all
-// read from here instead of repeating this text separately.
-// Change any field once and it updates everywhere at once. This
-// is also the one place a future version of the Command Centre
-// would let a different coach fill in their own details, rather
-// than the app being wired to one specific person throughout.
-const IDENTITY = {
-  name: 'Samuel Angus',
-  firstName: 'Samuel',
-  title: 'ILM Level 5 qualified coach',
-  bio: 'over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy',
-  voiceDescription: 'warm, direct, and grounded — never uses coaching jargon, never clinical, never preachy, always personal',
-  signoff: 'Many thanks, Samuel',
-  discoveryMinutes: 45,
-  sessionMinutes: 50,
-  wrapUpWarningMinutes: 45, // when the live-session timer turns amber
-};
-
-// Full preamble for any prompt writing a client-facing message on
-// the coach's behalf. Includes voice, sign-off, and the house
-// writing rules (no contractions, no em dashes).
-const identityPreamble = () =>
-  `You are writing a message on behalf of ${IDENTITY.name} — an ${IDENTITY.title} who brings ${IDENTITY.bio} — to his practice. ${IDENTITY.firstName}'s coaching approach draws out what is already within each person. His voice is ${IDENTITY.voiceDescription}. He signs off with '${IDENTITY.signoff}'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.`;
-
-// Shorter preamble for internal analysis prompts (Five Whys) that
-// return a single question or summary, not a client-facing message.
-const identityShort = () => `${IDENTITY.name} — an ${IDENTITY.title}`;
-
 // ── MESSAGE TYPES ─────────────────────────────────────────────
 const MSG_TYPES = [
   { id:'midweek',    label:'Early Check-in',       icon:'💬', desc:'Personalised encouragement in the first days after a session' },
@@ -148,16 +117,6 @@ const MSG_TYPES = [
   { id:'milestone',  label:'Milestone Message',      icon:'🏆', desc:'Celebrate progress at key moments' },
   { id:'reengage',   label:'Re-engagement',          icon:'🤝', desc:'Gentle check-in after a period of silence' },
   { id:'support',    label:'Struggling Coachee',     icon:'🆘', desc:'Diagnostically-informed support for coachees who are not progressing' },
-];
-
-// ── COMMUNICATION TYPES (manual Communications Log entries) ────
-const COMM_TYPES = [
-  { id:'email',    label:'Email' },
-  { id:'phone',    label:'Phone Call' },
-  { id:'video',    label:'Video Call' },
-  { id:'inperson', label:'In-Person' },
-  { id:'text',     label:'Text / WhatsApp' },
-  { id:'other',    label:'Other' },
 ];
 
 // ── STRUGGLE PATTERNS ─────────────────────────────────────────
@@ -242,7 +201,7 @@ function buildPrompt(type, coachee, extra = '') {
     ? 'middle stage — deepen the work, surface what is really getting in the way, begin to stretch and challenge'
     : 'later stage — consolidate growth, embed new patterns, look forward with clarity';
 
-  const base = `${identityPreamble()}
+  const base = `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's coaching approach draws out what is already within each person. His voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always feels personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -287,7 +246,7 @@ function buildSupportPrompt(coachee, pattern, presentation) {
     ? 'middle stage — the work has deepened but the coachee is struggling'
     : 'later stage — the coachee has been working for some time but progress has stalled';
 
-  return `${identityPreamble()}
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never uses coaching jargon, never preachy, always personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -327,7 +286,7 @@ function buildWhyPrompt(coachee, presentingProblem, chain, step) {
     `Why ${i+1}: "${c.question}"\nAnswer: "${c.answer}"`
   ).join('\n\n');
 
-  return `You are assisting ${identityShort()} — in a root cause analysis using the Five Whys technique (Wiegers/Ishikawa). The goal is to move from the presenting problem to the underlying root cause by asking successively deeper "why" questions.
+  return `You are assisting Samuel Angus — an ILM Level 5 qualified coach — in a root cause analysis using the Five Whys technique (Wiegers/Ishikawa). The goal is to move from the presenting problem to the underlying root cause by asking successively deeper "why" questions.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -353,7 +312,7 @@ function buildRootCauseSummaryPrompt(coachee, presentingProblem, chain) {
     `Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`
   ).join('\n\n');
 
-  return `You are assisting ${identityShort()} — in synthesising a Five Whys root cause analysis into a brief coaching insight.
+  return `You are assisting Samuel Angus — an ILM Level 5 qualified coach — in synthesising a Five Whys root cause analysis into a brief coaching insight.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -403,7 +362,7 @@ const STRESS_CONFIG = {
 // ── GROUNDING PROMPT BUILDER ──────────────────────────────────
 function buildGroundingPrompt(coachee, stressLevel, signals, presentation) {
   const signalLabels = signals.map(id => STRESS_SIGNALS.find(s => s.id === id)?.label).filter(Boolean).join('; ');
-  return `${identityPreamble()}
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -532,7 +491,7 @@ function buildEnhancedSupportPrompt(coachee, pattern, presentation, helpPosition
     ? `\nROOT CAUSE ANALYSIS (Five Whys — do not reference directly, use to inform depth and question choice):\nPresenting problem: "${whyPresenting}"\n${whyChain.map((c,i)=>`Why ${i+1}: ${c.question}\nAnswer: ${c.answer}`).join('\n')}\n${rootCauseSummary ? `Root cause summary: ${rootCauseSummary}` : ''}`
     : '';
 
-  return `${identityPreamble()}
+  return `You are writing a message on behalf of Samuel Angus — an ILM Level 5 qualified coach who brings over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy — to his practice. Samuel's voice is warm, direct, and grounded — never clinical, never preachy, always personal. He signs off with 'Many thanks, Samuel'. Write in full words only — never use contractions (write "do not" not "don't", "it is" not "it's", "you are" not "you're"). Do not use em dashes or long dashes anywhere in the message.
 
 Coachee name: ${coachee.name}
 Their coaching goal: ${coachee.goal}
@@ -630,8 +589,6 @@ const SABBATH_KEY = 'samuel-sabbath-v1';
 const LOOP_SENT_KEY = 'samuel-loop-sent-v1';
 const CAPTURE_KEY = 'samuel-capture-v1';
 const OPP_KEY = 'samuel-opportunities-v1';
-const AUTOMATION_KEY = 'samuel-automations-v1';
-const IDENTITY_KEY = 'samuel-coach-identity-v1';
 
 // ── SABBATH CALCULATIONS ──────────────────────────────────────
 function calcSabbaths(firstDateStr) {
@@ -655,19 +612,28 @@ const daysUntil = (dateStr) => Math.ceil((new Date(dateStr) - new Date(todayStr(
 const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
 
 // ── LOOP ENGINE ───────────────────────────────────────────────
-function getLoopItems(coachees, sabbaths, sentIds, automations) {
-  const auto = automations || DEFAULT_AUTOMATIONS;
+function getLoopItems(coachees, sabbaths, sentIds) {
   if (isTodaySabbath(sabbaths)) return [];
   const tomorrowSab = isTomorrowSabbath(sabbaths);
   const dayOfWeek = new Date().getDay(); // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
   const items = [];
 
+  // Coaching rhythm days. Change these to match your current schedule.
+  // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat.
+  // Keep them OFF your session day so touchpoints never clash with a live session.
+  // The date-based Sabbath guard above always protects the actual Sabbath,
+  // whatever day it currently falls on, so these are safe to set to any weekday.
+  const SESSION_DAY = 3;   // ES's fortnightly session day (Wednesday)
+  const CHECKIN_DAY = 2;   // early check-in, first days after a session (Tuesday)
+  const REMINDER_DAY = 1;  // session reminder, two days before a Wednesday session (Monday)
+
   coachees.forEach(coachee => {
+    if (coachee.archived) return;
     const days = daysSince(coachee.lastSession);
     const baseId = (type) => `${coachee.id}-${type}-${todayStr()}`;
 
-    // Priority 1: Re-engagement (auto.reengageDays+ silence)
-    if (days >= auto.reengageDays && !sentIds.includes(baseId('reengage'))) {
+    // Priority 1: Re-engagement (5+ days silence)
+    if (days >= 14 && !sentIds.includes(baseId('reengage'))) {
       items.push({ uid: baseId('reengage'), coachee, priority: 1, msgType: 'reengage',
         icon: '🤝', label: 'Re-engagement needed',
         reason: `${days} days since last contact, ${coachee.name} may need a gentle nudge`,
@@ -676,7 +642,7 @@ function getLoopItems(coachees, sabbaths, sentIds, automations) {
     }
 
     // Priority 2: Milestone
-    if ((auto.milestoneWeeks||[]).includes(coachee.weekNumber) && !sentIds.includes(baseId('milestone'))) {
+    if ([4,8,12,16,20,24].includes(coachee.weekNumber) && !sentIds.includes(baseId('milestone'))) {
       items.push({ uid: baseId('milestone'), coachee, priority: 2, msgType: 'milestone',
         icon: '🏆', label: `Week ${coachee.weekNumber} milestone`,
         reason: `${coachee.name} has reached week ${coachee.weekNumber}, celebrate the commitment`,
@@ -684,22 +650,22 @@ function getLoopItems(coachees, sabbaths, sentIds, automations) {
     }
 
     // Priority 3: Pre-Sabbath reflection (day before Sabbath, but not on a live session day)
-    if (tomorrowSab && dayOfWeek !== auto.sessionDay && days >= 2 && !sentIds.includes(baseId('reflection'))) {
+    if (tomorrowSab && dayOfWeek !== SESSION_DAY && days >= 2 && !sentIds.includes(baseId('reflection'))) {
       items.push({ uid: baseId('reflection'), coachee, priority: 3, msgType: 'reflection',
         icon: '🌱', label: 'Pre-Sabbath reflection',
         reason: 'Sabbath is tomorrow: send the weekly reflection prompt today',
         colour: '#7B5EA7', sent: false });
     }
-    // Early check-in, first days after a session (day set by checkinDay)
-    else if (dayOfWeek === auto.checkinDay && days >= auto.checkinMinDays && days <= auto.checkinMaxDays && !sentIds.includes(baseId('midweek'))) {
+    // Early check-in, first days after a session (day set by CHECKIN_DAY above)
+    else if (dayOfWeek === CHECKIN_DAY && days >= 2 && days <= 6 && !sentIds.includes(baseId('midweek'))) {
       items.push({ uid: baseId('midweek'), coachee, priority: 3, msgType: 'midweek',
         icon: '💬', label: 'Early check-in',
         reason: `Between-session rhythm: ${coachee.name} is in week ${coachee.weekNumber}`,
         colour: C.teal, sent: false });
     }
-    // Session reminder (day set by reminderDay), bounded so it only fires close
+    // Session reminder (day set by REMINDER_DAY above), bounded so it only fires close
     // to the actual next session, not from day 5 onward for the whole fortnight
-    else if (dayOfWeek === auto.reminderDay && days >= auto.reminderMinDays && days <= auto.reminderMaxDays && !sentIds.includes(baseId('pre'))) {
+    else if (dayOfWeek === REMINDER_DAY && days >= 11 && days <= 13 && !sentIds.includes(baseId('pre'))) {
       items.push({ uid: baseId('pre'), coachee, priority: 4, msgType: 'pre',
         icon: '🔔', label: 'Session reminder',
         reason: 'Upcoming session reminder',
@@ -744,56 +710,6 @@ async function loadOpportunities() {
 async function saveOpportunities(data) {
   try { localStorage.setItem(OPP_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
 }
-
-// ── AUTOMATION SETTINGS ──────────────────────────────────────
-// These used to be hardcoded constants inside getLoopItems (SESSION_DAY,
-// CHECKIN_DAY, REMINDER_DAY, the 14-day re-engagement threshold, the
-// milestone week list). They now live here as editable, saved settings,
-// so the rhythm can be changed from the Automations screen without
-// touching source. Days: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat.
-const DEFAULT_AUTOMATIONS = {
-  sessionDay: 3,        // Keep this off your other touchpoint days below.
-  checkinDay: 2,
-  reminderDay: 1,
-  reengageDays: 14,
-  milestoneWeeks: [4,8,12,16,20,24],
-  checkinMinDays: 2,
-  checkinMaxDays: 6,
-  reminderMinDays: 11,
-  reminderMaxDays: 13,
-};
-async function loadAutomations() {
-  try {
-    const r = localStorage.getItem(AUTOMATION_KEY);
-    if (!r) return { ...DEFAULT_AUTOMATIONS };
-    // Merge over the defaults so an older or partially-saved settings
-    // object never leaves a field undefined and silently breaks the Loop.
-    return { ...DEFAULT_AUTOMATIONS, ...JSON.parse(r) };
-  } catch { return { ...DEFAULT_AUTOMATIONS }; }
-}
-async function saveAutomations(data) {
-  try { localStorage.setItem(AUTOMATION_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
-}
-
-// ── COACH IDENTITY PERSISTENCE ───────────────────────────────
-// IDENTITY stays a plain shared object (not React state) so every
-// module-level function that already reads IDENTITY.xxx keeps
-// working unchanged. Saved overrides are merged into it in place
-// at startup and whenever the coach saves the Identity screen, so
-// the change is visible everywhere immediately.
-async function loadIdentityOverrides() {
-  try {
-    const r = localStorage.getItem(IDENTITY_KEY);
-    return r ? JSON.parse(r) : null;
-  } catch { return null; }
-}
-async function saveIdentityOverrides(data) {
-  try { localStorage.setItem(IDENTITY_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
-}
-function applyIdentityOverrides(overrides) {
-  if (overrides && typeof overrides === 'object') Object.assign(IDENTITY, overrides);
-}
-
 const OPP_STAGES = [
   { id:'lead',         label:'Lead' },
   { id:'contacted',    label:'Contacted' },
@@ -897,13 +813,8 @@ function SessionTimer() {
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
   const ss = String(seconds % 60).padStart(2, '0');
-  // Wrap-up and end thresholds now come from IDENTITY, not fixed
-  // seconds, so changing the coach's session length in one place
-  // (IDENTITY.sessionMinutes / wrapUpWarningMinutes) updates the
-  // timer's behaviour automatically.
-  const wrapUpAt = IDENTITY.wrapUpWarningMinutes * 60;
-  const endAt = IDENTITY.sessionMinutes * 60;
-  const phase = seconds >= endAt ? 2 : seconds >= wrapUpAt ? 1 : 0;
+  // 45 min = 2700s (begin wrap-up), 50 min = 3000s (time)
+  const phase = seconds >= 3000 ? 2 : seconds >= 2700 ? 1 : 0;
   const bg   = phase === 2 ? '#C0392B' : phase === 1 ? '#B8912F' : '#1C2B3A';
   const hint = phase === 2 ? 'Time — bring it to a close'
              : phase === 1 ? '5 minutes left — begin wrapping up'
@@ -988,15 +899,11 @@ function CommandCentre() {
   const [oppError, setOppError] = useState('');
   const [selectedOpp, setSelectedOpp] = useState(null);
   const [oppNoteDraft, setOppNoteDraft] = useState('');
-  const [coacheeNoteDraft, setCoacheeNoteDraft] = useState('');
-  const [coacheeNoteType, setCoacheeNoteType] = useState('email');
   const [convertingCaptureId, setConvertingCaptureId] = useState(null);
-  const [automations, setAutomations] = useState(DEFAULT_AUTOMATIONS);
-  const [automationsDraft, setAutomationsDraft] = useState(DEFAULT_AUTOMATIONS);
-  const [milestoneWeeksText, setMilestoneWeeksText] = useState(DEFAULT_AUTOMATIONS.milestoneWeeks.join(', '));
-  const [automationsSaved, setAutomationsSaved] = useState(false);
-  const [identityDraft, setIdentityDraft] = useState({ ...IDENTITY });
-  const [identitySaved, setIdentitySaved] = useState(false);
+  const [showArchivedCoachees, setShowArchivedCoachees] = useState(false);
+
+  const activeCoachees = coachees.filter(c => !c.archived);
+  const archivedCoachees = coachees.filter(c => c.archived);
 
   useEffect(() => {
     Promise.all([
@@ -1005,22 +912,12 @@ function CommandCentre() {
       loadSentIds(),
       loadCapture(),
       loadOpportunities(),
-      loadAutomations(),
-      loadIdentityOverrides(),
-    ]).then(([coacheesData, sabbathData, sentData, captureData, oppData, automationsData, identityOverrides]) => {
-      // Applied before anything below renders — the loading gate
-      // means Sidebar and every other IDENTITY.name read only ever
-      // sees the correct saved name, never a flash of the default.
-      applyIdentityOverrides(identityOverrides);
-      setIdentityDraft({ ...IDENTITY });
+    ]).then(([coacheesData, sabbathData, sentData, captureData, oppData]) => {
       setCoachees(coacheesData);
       setSabbath(sabbathData);
       setSabbathInput(sabbathData.firstDate || '');
       setSentIds(sentData);
-      setAutomations(automationsData);
-      setAutomationsDraft(automationsData);
-      setMilestoneWeeksText((automationsData.milestoneWeeks||[]).join(', '));
-      setLoopItems(getLoopItems(coacheesData, sabbathData.dates || [], sentData, automationsData));
+      setLoopItems(getLoopItems(coacheesData, sabbathData.dates || [], sentData));
       setCaptureItems(captureData);
       setOpportunities(oppData);
       setLoading(false);
@@ -1030,15 +927,14 @@ function CommandCentre() {
   const persist = async (updated) => {
     setCoachees(updated);
     await save(updated);
-    setLoopItems(getLoopItems(updated, sabbath.dates || [], sentIds, automations));
+    setLoopItems(getLoopItems(updated, sabbath.dates || [], sentIds));
   };
 
   const exportBackup = () => {
     const backup = {
       version: 2,
       exportedAt: new Date().toISOString(),
-      coachees, sabbath, sentIds, capture: captureItems, opportunities, automations,
-      identity: { ...IDENTITY },
+      coachees, sabbath, sentIds, capture: captureItems, opportunities,
     };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -1068,33 +964,18 @@ function CommandCentre() {
       const restoredSentIds = Array.isArray(parsed.sentIds) ? parsed.sentIds : [];
       const restoredCapture = Array.isArray(parsed.capture) ? parsed.capture : [];
       const restoredOpportunities = Array.isArray(parsed.opportunities) ? parsed.opportunities : [];
-      // Older backups predate the Automations settings, so fall back to
-      // defaults rather than leaving this undefined.
-      const restoredAutomations = parsed.automations && typeof parsed.automations === 'object'
-        ? { ...DEFAULT_AUTOMATIONS, ...parsed.automations } : { ...DEFAULT_AUTOMATIONS };
-      // Older backups predate Identity too — keep whatever is currently
-      // set rather than silently reverting to the Samuel Angus defaults.
-      const restoredIdentity = parsed.identity && typeof parsed.identity === 'object'
-        ? { ...IDENTITY, ...parsed.identity } : { ...IDENTITY };
 
       await save(parsed.coachees);
       await saveSabbath(restoredSabbath);
       await saveSentIds(restoredSentIds);
       await saveCapture(restoredCapture);
       await saveOpportunities(restoredOpportunities);
-      await saveAutomations(restoredAutomations);
-      applyIdentityOverrides(restoredIdentity);
-      await saveIdentityOverrides(restoredIdentity);
 
       setCoachees(parsed.coachees);
       setSabbath(restoredSabbath);
       setSabbathInput(restoredSabbath.firstDate || '');
       setSentIds(restoredSentIds);
-      setAutomations(restoredAutomations);
-      setAutomationsDraft(restoredAutomations);
-      setMilestoneWeeksText((restoredAutomations.milestoneWeeks||[]).join(', '));
-      setIdentityDraft({ ...IDENTITY });
-      setLoopItems(getLoopItems(parsed.coachees, restoredSabbath.dates || [], restoredSentIds, restoredAutomations));
+      setLoopItems(getLoopItems(parsed.coachees, restoredSabbath.dates || [], restoredSentIds));
       setCaptureItems(restoredCapture);
       setOpportunities(restoredOpportunities);
       setSelected(null);
@@ -1113,7 +994,7 @@ function CommandCentre() {
       updated = coachees.map(c => c.id === editId ? { ...c, ...formData } : c);
     } else {
       const now = new Date().toISOString();
-      updated = [...coachees, { ...formData, id: uid(), createdAt: now, lastSession: now, notes: '' }];
+      updated = [...coachees, { ...formData, id: uid(), createdAt: now, lastSession: now }];
     }
     await persist(updated);
     setForm({ name:'', goal:'', intake:'', concession:false, weekNumber:1 });
@@ -1143,27 +1024,33 @@ function CommandCentre() {
     if (selected?.id === id) setSelected(updated.find(c => c.id === id));
   };
 
+  const archiveCoachee = async (id, name) => {
+    const label = name
+      ? `Archive ${name}? They will be removed from active coaching and Today's Loop, but their coaching history will be retained.`
+      : `Archive this coachee? Their coaching history will be retained.`;
+    if (!window.confirm(label)) return;
+    const now = new Date().toISOString();
+    const updated = coachees.map(c => c.id === id ? { ...c, archived:true, archivedAt:now } : c);
+    await persist(updated);
+    setSelected(updated.find(c => c.id === id));
+    setView('dashboard');
+  };
+
+  const restoreCoachee = async (id, name) => {
+    const label = name ? `Restore ${name} to active coaching?` : 'Restore this coachee to active coaching?';
+    if (!window.confirm(label)) return;
+    const updated = coachees.map(c => c.id === id ? { ...c, archived:false, archivedAt:null } : c);
+    await persist(updated);
+    setSelected(updated.find(c => c.id === id));
+    setView('dashboard');
+  };
+
   const removeCoachee = async (id, name) => {
-    const label = name ? `Remove ${name}? This cannot be undone.` : 'Remove this coachee? This cannot be undone.';
+    const label = name ? `Permanently delete ${name}? This cannot be undone.` : 'Permanently delete this coachee? This cannot be undone.';
     if (!window.confirm(label)) return;
     const updated = coachees.filter(c => c.id !== id);
     await persist(updated);
     setView('dashboard'); setSelected(null);
-  };
-
-  // Manual communications log entry: a call, email, or any other contact
-  // Samuel wants recorded against this coachee. Append-only, same pattern
-  // as the Pipeline opportunity notes history below (fmtNoteStamp).
-  const appendCoacheeNote = async (id, note, typeId) => {
-    const trimmed = (note || '').trim();
-    if (!trimmed) return;
-    const typeLabel = COMM_TYPES.find(t => t.id === typeId)?.label || 'Other';
-    const updated = coachees.map(c => c.id === id
-      ? { ...c, notes: (c.notes ? c.notes + '\n\n' : '') + `[${fmtNoteStamp()} · ${typeLabel}] ${trimmed}` }
-      : c);
-    await persist(updated);
-    if (selected?.id === id) setSelected(updated.find(c => c.id === id));
-    setCoacheeNoteDraft('');
   };
 
   // ── CAPTURE INBOX ──
@@ -1355,83 +1242,7 @@ function CommandCentre() {
     const updated = { firstDate: sabbathInput, dates };
     setSabbath(updated);
     await saveSabbath(updated);
-    setLoopItems(getLoopItems(coachees, dates, sentIds, automations));
-  };
-
-  // Persists a full automations settings object, recomputes today's Loop
-  // against it directly (not the stale automations state variable, which
-  // will not reflect this change until the next render), and syncs the
-  // draft form + milestone text field to match what was just saved.
-  const updateAutomations = async (newSettings) => {
-    await saveAutomations(newSettings);
-    setAutomations(newSettings);
-    setAutomationsDraft(newSettings);
-    setMilestoneWeeksText((newSettings.milestoneWeeks||[]).join(', '));
-    setLoopItems(getLoopItems(coachees, sabbath.dates || [], sentIds, newSettings));
-    setAutomationsSaved(true);
-  };
-
-  // Reads the current Identity form, coerces the three minute fields
-  // to numbers (falling back to the existing value if the field was
-  // left blank or invalid, never to zero or NaN), mutates the shared
-  // IDENTITY object in place, and saves it. Every function that reads
-  // IDENTITY.xxx — the six AI prompts, the session timer, the sidebar
-  // — sees the change on the very next render, with no other wiring.
-  const saveIdentityDraft = () => {
-    const toMinutes = (val, fallback) => {
-      const n = Number(val);
-      return Number.isFinite(n) && n > 0 ? n : fallback;
-    };
-    const cleaned = {
-      name: (identityDraft.name || IDENTITY.name).trim(),
-      firstName: (identityDraft.firstName || IDENTITY.firstName).trim(),
-      title: (identityDraft.title || IDENTITY.title).trim(),
-      bio: (identityDraft.bio || IDENTITY.bio).trim(),
-      voiceDescription: (identityDraft.voiceDescription || IDENTITY.voiceDescription).trim(),
-      signoff: (identityDraft.signoff || IDENTITY.signoff).trim(),
-      discoveryMinutes: toMinutes(identityDraft.discoveryMinutes, IDENTITY.discoveryMinutes),
-      sessionMinutes: toMinutes(identityDraft.sessionMinutes, IDENTITY.sessionMinutes),
-      wrapUpWarningMinutes: toMinutes(identityDraft.wrapUpWarningMinutes, IDENTITY.wrapUpWarningMinutes),
-    };
-    applyIdentityOverrides(cleaned);
-    saveIdentityOverrides(cleaned);
-    setIdentityDraft({ ...IDENTITY });
-    setIdentitySaved(true);
-  };
-
-  const resetIdentityToDefault = () => {
-    if (!window.confirm('Reset name, voice, and session lengths back to the original Samuel Angus defaults? This replaces whatever is set now.')) return;
-    const defaults = {
-      name: 'Samuel Angus', firstName: 'Samuel', title: 'ILM Level 5 qualified coach',
-      bio: 'over two decades of people-centred NHS experience — including carer support, equality and diversity, and systemic family therapy',
-      voiceDescription: 'warm, direct, and grounded — never uses coaching jargon, never clinical, never preachy, always personal',
-      signoff: 'Many thanks, Samuel', discoveryMinutes: 45, sessionMinutes: 50, wrapUpWarningMinutes: 45,
-    };
-    applyIdentityOverrides(defaults);
-    saveIdentityOverrides(defaults);
-    setIdentityDraft({ ...IDENTITY });
-    setIdentitySaved(true);
-  };
-
-  // Reads the current Automations form, sanitises it (numbers coerced,
-  // invalid/empty values fall back to sensible defaults rather than
-  // silently breaking the Loop), and saves it.
-  const saveAutomationsDraft = () => {
-    const parsedWeeks = milestoneWeeksText.split(',')
-      .map(s => parseInt(s.trim(), 10))
-      .filter(n => !isNaN(n) && n > 0);
-    const cleaned = {
-      sessionDay: Number(automationsDraft.sessionDay),
-      checkinDay: Number(automationsDraft.checkinDay),
-      reminderDay: Number(automationsDraft.reminderDay),
-      reengageDays: Math.max(1, Number(automationsDraft.reengageDays) || DEFAULT_AUTOMATIONS.reengageDays),
-      milestoneWeeks: parsedWeeks.length ? parsedWeeks : DEFAULT_AUTOMATIONS.milestoneWeeks,
-      checkinMinDays: Math.max(0, Number(automationsDraft.checkinMinDays) || 0),
-      checkinMaxDays: Math.max(0, Number(automationsDraft.checkinMaxDays) || 0),
-      reminderMinDays: Math.max(0, Number(automationsDraft.reminderMinDays) || 0),
-      reminderMaxDays: Math.max(0, Number(automationsDraft.reminderMaxDays) || 0),
-    };
-    updateAutomations(cleaned);
+    setLoopItems(getLoopItems(coachees, dates, sentIds));
   };
 
   const generateLoopMsg = async (item) => {
@@ -1447,30 +1258,10 @@ function CommandCentre() {
   };
 
   const markLoopSent = async (item) => {
-    const updatedSentIds = [...sentIds, item.uid];
-    setSentIds(updatedSentIds);
-    await saveSentIds(updatedSentIds);
-
-    // Log this to the coachee's communications history automatically, so
-    // Mark Sent leaves a permanent record rather than just clearing today's
-    // prompt. Include the actual generated message when one exists.
-    const mtLabel = MSG_TYPES.find(m => m.id === item.msgType)?.label || item.msgType;
-    const generatedText = loopGenerated[item.uid];
-    const entry = generatedText
-      ? `${mtLabel} sent (via Today's Loop).\n\n${generatedText}`
-      : `${mtLabel} marked sent (via Today's Loop). No message was generated in-app for this one.`;
-    const updatedCoachees = coachees.map(c => c.id === item.coachee.id
-      ? { ...c, notes: (c.notes ? c.notes + '\n\n' : '') + `[${fmtNoteStamp()}] ${entry}` }
-      : c);
-    setCoachees(updatedCoachees);
-    await save(updatedCoachees);
-    if (selected?.id === item.coachee.id) setSelected(updatedCoachees.find(c => c.id === item.coachee.id));
-
-    // Recompute against updatedSentIds directly rather than the sentIds
-    // state variable, which will not reflect this update until the next
-    // render — using the stale value here would regenerate this exact
-    // item and undo the Mark Sent action.
-    setLoopItems(getLoopItems(updatedCoachees, sabbath.dates || [], updatedSentIds, automations));
+    const updated = [...sentIds, item.uid];
+    setSentIds(updated);
+    await saveSentIds(updated);
+    setLoopItems(prev => prev.filter(i => i.uid !== item.uid));
   };
 
   const copyLoopMsg = (item, text) => {
@@ -1534,15 +1325,12 @@ function CommandCentre() {
 
   // ── NAV ITEMS ──
   const navItems = [
-    { id:'dashboard',    label:'Dashboard',       icon:'⊞' },
-    { id:'loop',         label:"Today's Loop",    icon:'🔄' },
-    { id:'inbox',        label:'Inbox',           icon:'📥' },
-    { id:'pipeline',     label:'Pipeline',        icon:'🎯' },
-    { id:'reports',      label:'Reports',         icon:'📊' },
-    { id:'automations',  label:'Automations',     icon:'⚙' },
-    { id:'identity',     label:'Coach Identity',  icon:'👤' },
-    { id:'sabbath',      label:'Sabbath Tracker', icon:'🌙' },
-    { id:'add',          label:'Add Coachee',     icon:'+' },
+    { id:'dashboard', label:'Dashboard',       icon:'⊞' },
+    { id:'loop',      label:"Today's Loop",    icon:'🔄' },
+    { id:'inbox',     label:'Inbox',           icon:'📥' },
+    { id:'pipeline',  label:'Pipeline',        icon:'🎯' },
+    { id:'sabbath',   label:'Sabbath Tracker', icon:'🌙' },
+    { id:'add',       label:'Add Coachee',     icon:'+' },
   ];
 
   const inboxCount = captureItems.filter(i => i.status === 'inbox').length;
@@ -1552,7 +1340,7 @@ function CommandCentre() {
     <div className="cc-sidebar">
       <div style={{ padding:'28px 20px 16px' }}>
         <div className="cc-serif" style={{ fontSize:20, color:C.white, fontWeight:300, lineHeight:1.2 }}>
-          {IDENTITY.name}
+          Samuel Angus
         </div>
         <div style={{ fontSize:17, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginTop:4 }}>
           Command Centre
@@ -1660,7 +1448,7 @@ function CommandCentre() {
     <div className="cc-mobile-header" style={{ display:'none', background:C.navy, padding:'16px 20px',
       alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:50 }}>
       <div>
-        <div className="cc-serif" style={{ fontSize:16, color:C.white, fontWeight:300 }}>{IDENTITY.name}</div>
+        <div className="cc-serif" style={{ fontSize:16, color:C.white, fontWeight:300 }}>Samuel Angus</div>
         <div style={{ fontSize:16, color:C.teal, letterSpacing:2, textTransform:'uppercase' }}>{title}</div>
       </div>
     </div>
@@ -1669,12 +1457,12 @@ function CommandCentre() {
   // ── DASHBOARD VIEW ──
   const DashboardView = () => {
     const today = todayStr();
-    const sessionsToday = coachees.reduce((n, c) => n + (c.sessions||[]).filter(s => s.date && s.date.startsWith(today)).length, 0);
+    const sessionsToday = activeCoachees.reduce((n, c) => n + (c.sessions||[]).filter(s => s.date && s.date.startsWith(today)).length, 0);
     const weekAgo = new Date(Date.now() - 7*86400000).toISOString();
-    const sessionsThisWeek = coachees.reduce((n, c) => n + (c.sessions||[]).filter(s => s.date >= weekAgo).length, 0);
-    const totalSessions = coachees.reduce((n, c) => n + (c.sessions||[]).length, 0);
-    const concessionCount = coachees.filter(c => c.concession).length;
-    const overdueCount = coachees.filter(c => daysSince(c.lastSession) >= 5).length;
+    const sessionsThisWeek = activeCoachees.reduce((n, c) => n + (c.sessions||[]).filter(s => s.date >= weekAgo).length, 0);
+    const totalSessions = activeCoachees.reduce((n, c) => n + (c.sessions||[]).length, 0);
+    const concessionCount = activeCoachees.filter(c => c.concession).length;
+    const overdueCount = activeCoachees.filter(c => daysSince(c.lastSession) >= 5).length;
 
     return (
     <div style={{ padding:'28px 24px' }}>
@@ -1716,7 +1504,7 @@ function CommandCentre() {
           { label:'Sessions logged today', value: sessionsToday, colour:C.gold },
           { label:'Sessions this week', value: sessionsThisWeek, colour:'#7B5EA7' },
           { label:'Overdue contact (5+ days)', value: overdueCount, colour: overdueCount ? C.red : C.slate },
-          { label:'Active coachees', value: coachees.length, colour:C.navy },
+          { label:'Active coachees', value: activeCoachees.length, colour:C.navy },
           { label:'Concession coachees', value: concessionCount, colour:C.slate },
         ].map((stat,i) => (
           <div key={i} style={{ background:C.white, borderRadius:10, padding:'14px 16px', border:'1px solid #EEF3F7' }}>
@@ -1747,7 +1535,7 @@ function CommandCentre() {
             Your Coachees
           </div>
           <div style={{ fontSize:16, color:C.slate, marginTop:2 }}>
-            {coachees.length} active {coachees.length === 1 ? 'coachee' : 'coachees'}
+            {activeCoachees.length} active {activeCoachees.length === 1 ? 'coachee' : 'coachees'}
           </div>
         </div>
         <button className="cc-btn" onClick={() => nav('add')}
@@ -1756,7 +1544,7 @@ function CommandCentre() {
         </button>
       </div>
 
-      {coachees.length === 0 ? (
+      {activeCoachees.length === 0 ? (
         <div style={{ textAlign:'center', padding:'60px 20px', background:C.white, borderRadius:16,
           border:`1.5px dashed #DDE3EA` }}>
           <div style={{ fontSize:36, marginBottom:12 }}>👤</div>
@@ -1769,7 +1557,7 @@ function CommandCentre() {
         </div>
       ) : (
         <div className="cc-card-grid">
-          {coachees.map(c => {
+          {activeCoachees.map(c => {
             const days = daysSince(c.lastSession);
             return (
               <div key={c.id} className="cc-coachee-card cc-fade-in"
@@ -1819,136 +1607,40 @@ function CommandCentre() {
           })}
         </div>
       )}
-    </div>
-    );
-  };
 
-  // ── REPORTS VIEW ──
-  const ReportsView = () => {
-    const totalSessions = coachees.reduce((n, c) => n + (c.sessions||[]).length, 0);
-    const allScores = coachees.flatMap(c => (c.sessions||[]).map(s => s.score)).filter(s => typeof s === 'number');
-    const avgScore = allScores.length ? (allScores.reduce((a,b)=>a+b,0) / allScores.length) : null;
-    const concessionCount = coachees.filter(c => c.concession).length;
-    const avgWeek = coachees.length ? (coachees.reduce((n,c)=>n+(c.weekNumber||1),0) / coachees.length) : 0;
-
-    // Same early/middle/later split weekBadgeColor already uses, so the
-    // colours on this screen match the badges seen everywhere else.
-    const stageBuckets = [
-      { label:'Early (Week 1\u20132)',  colour:C.teal,    count: coachees.filter(c => c.weekNumber<=2).length },
-      { label:'Middle (Week 3\u20135)', colour:C.gold,    count: coachees.filter(c => c.weekNumber>2 && c.weekNumber<=5).length },
-      { label:'Later (Week 6+)',        colour:'#7B5EA7', count: coachees.filter(c => c.weekNumber>5).length },
-    ];
-
-    // Re-engagement risk, matching the Loop's own threshold so this screen
-    // and Today's Loop never disagree about who counts as at risk.
-    const onTrack = coachees.filter(c => daysSince(c.lastSession) < 7);
-    const approaching = coachees.filter(c => { const d = daysSince(c.lastSession); return d >= 7 && d < automations.reengageDays; });
-    const atRisk = coachees.filter(c => daysSince(c.lastSession) >= automations.reengageDays);
-    const riskBuckets = [
-      { label:'On track (0\u20136 days)', colour:C.teal, count: onTrack.length },
-      { label:`Approaching (7\u2013${automations.reengageDays-1} days)`, colour:C.gold, count: approaching.length },
-      { label:`Needs re-engagement (${automations.reengageDays}+)`, colour:C.red, count: atRisk.length },
-    ];
-
-    const oppByStage = OPP_STAGES.map(s => ({ ...s, count: opportunities.filter(o => o.stage === s.id).length }));
-    const parsedValues = opportunities
-      .map(o => parseFloat(String(o.value||'').replace(/[^0-9.]/g,'')))
-      .filter(v => !isNaN(v) && v > 0);
-    const estimatedValue = parsedValues.reduce((a,b)=>a+b, 0);
-    const unparsedCount = opportunities.filter(o => o.value && isNaN(parseFloat(String(o.value).replace(/[^0-9.]/g,'')))).length;
-
-    const maxStageCount = Math.max(1, ...stageBuckets.map(b=>b.count));
-    const maxRiskCount = Math.max(1, ...riskBuckets.map(b=>b.count));
-    const maxOppCount = Math.max(1, ...oppByStage.map(b=>b.count));
-
-    const BarRow = ({ label, count, max, colour }) => (
-      <div style={{ marginBottom:12 }}>
-        <div style={{ display:'flex', justifyContent:'space-between', fontSize:15, color:C.slate, marginBottom:4 }}>
-          <span>{label}</span>
-          <span style={{ fontWeight:600, color:C.navy }}>{count}</span>
-        </div>
-        <div style={{ background:C.light, borderRadius:6, height:10, overflow:'hidden' }}>
-          <div style={{ background:colour, height:'100%',
-            width: count===0 ? '0%' : `${Math.max(6,(count/max)*100)}%`, borderRadius:6 }} />
-        </div>
-      </div>
-    );
-
-    return (
-      <div style={{ padding:'28px 24px' }}>
-        {MobileHeader({title:"Reports"})}
-        <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:20 }}>
-          Reports
-        </div>
-
-        {coachees.length === 0 && opportunities.length === 0 ? (
-          <div style={{ textAlign:'center', padding:'60px 20px', background:C.white, borderRadius:16,
-            border:'1.5px dashed #DDE3EA' }}>
-            <div style={{ fontSize:36, marginBottom:12 }}>📊</div>
-            <div className="cc-serif" style={{ fontSize:24, color:C.navy, marginBottom:8 }}>Nothing to report yet</div>
-            <div style={{ fontSize:17, color:C.slate }}>Once you have coachees or opportunities logged, their trends will show up here.</div>
-          </div>
-        ) : (
-        <>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:12, marginBottom:28 }}>
-          {[
-            { label:'Active coachees', value: coachees.length, colour:C.navy },
-            { label:'Total sessions logged', value: totalSessions, colour:C.teal },
-            { label:'Avg progress score', value: avgScore!==null ? avgScore.toFixed(1) : '\u2014', colour:C.gold },
-            { label:'Avg week number', value: coachees.length ? avgWeek.toFixed(1) : '\u2014', colour:'#7B5EA7' },
-            { label:'Concession coachees', value: concessionCount, colour:C.slate },
-            { label:'Open opportunities', value: opportunities.filter(o=>o.stage!=='won'&&o.stage!=='lost').length, colour:C.teal },
-          ].map((stat,i) => (
-            <div key={i} style={{ background:C.white, borderRadius:10, padding:'14px 16px', border:'1px solid #EEF3F7' }}>
-              <div style={{ fontSize:24, fontWeight:600, color:stat.colour }}>{stat.value}</div>
-              <div style={{ fontSize:14, color:C.slate, marginTop:2, lineHeight:1.3 }}>{stat.label}</div>
+      {archivedCoachees.length > 0 && (
+        <div style={{ marginTop:28 }}>
+          <button className="cc-btn" onClick={() => setShowArchivedCoachees(v => !v)}
+            style={{ background:C.white, color:C.slate, border:'1px solid #DDE3EA', padding:'9px 14px', borderRadius:8, fontSize:16 }}>
+            {showArchivedCoachees ? '▾' : '▸'} Archived Coachees ({archivedCoachees.length})
+          </button>
+          {showArchivedCoachees && (
+            <div style={{ marginTop:12, display:'grid', gap:10 }}>
+              {archivedCoachees.map(c => (
+                <div key={c.id} style={{ background:C.white, border:'1px solid #E5EAF0', borderRadius:10, padding:'14px 16px', display:'flex', justifyContent:'space-between', gap:12, alignItems:'center', flexWrap:'wrap' }}>
+                  <div style={{ minWidth:220, flex:1 }}>
+                    <div style={{ fontSize:17, fontWeight:500, color:C.navy }}>{c.name}</div>
+                    <div style={{ fontSize:15, color:C.slate, marginTop:3, lineHeight:1.5 }}>{c.goal}</div>
+                    {c.archivedAt && <div style={{ fontSize:13, color:'#8A97A6', marginTop:4 }}>Archived {new Date(c.archivedAt).toLocaleDateString('en-GB')}</div>}
+                  </div>
+                  <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                    <button className="cc-btn" onClick={() => { setSelected(c); setView('detail'); }}
+                      style={{ background:C.light, color:C.slate, padding:'7px 12px', borderRadius:6, fontSize:15 }}>
+                      View
+                    </button>
+                    <button className="cc-btn" onClick={() => restoreCoachee(c.id, c.name)}
+                      style={{ background:C.tealLight, color:C.teal, padding:'7px 12px', borderRadius:6, fontSize:15, fontWeight:500 }}>
+                      Restore to Active
+                    </button>
+                    <button className="cc-delete-btn" onClick={() => removeCoachee(c.id, c.name)}>Delete Permanently</button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
-
-        {coachees.length > 0 && (
-        <>
-        <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
-          Week Stage Distribution
-        </div>
-        <div style={{ background:C.white, borderRadius:12, padding:'18px 20px', border:'1px solid #EEF3F7', marginBottom:28 }}>
-          {stageBuckets.map((b,i) => <BarRow key={i} label={b.label} count={b.count} max={maxStageCount} colour={b.colour} />)}
-        </div>
-
-        <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
-          Re-engagement Risk
-        </div>
-        <div style={{ background:C.white, borderRadius:12, padding:'18px 20px', border:'1px solid #EEF3F7', marginBottom: atRisk.length ? 10 : 28 }}>
-          {riskBuckets.map((b,i) => <BarRow key={i} label={b.label} count={b.count} max={maxRiskCount} colour={b.colour} />)}
-        </div>
-        {atRisk.length > 0 && (
-          <div style={{ background:'#FFF3E0', borderRadius:10, padding:'12px 16px', marginBottom:28, fontSize:16, color:'#8A4B10' }}>
-            Needs attention: {atRisk.map(c=>c.name).join(', ')}
-          </div>
-        )}
-        </>
-        )}
-
-        {opportunities.length > 0 && (
-        <>
-        <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
-          Pipeline Funnel
-        </div>
-        <div style={{ background:C.white, borderRadius:12, padding:'18px 20px', border:'1px solid #EEF3F7', marginBottom:12 }}>
-          {oppByStage.map((b,i) => <BarRow key={i} label={b.label} count={b.count} max={maxOppCount}
-            colour={b.id==='won'?C.teal:b.id==='lost'?C.red:C.gold} />)}
-        </div>
-        {parsedValues.length > 0 && (
-          <div style={{ fontSize:15, color:C.slate, marginBottom:28 }}>
-            Estimated pipeline value: <strong style={{ color:C.navy }}>{estimatedValue.toLocaleString('en-GB')}</strong> from {parsedValues.length} {parsedValues.length===1?'opportunity':'opportunities'} with a numeric value entered
-            {unparsedCount > 0 && ` (${unparsedCount} more ${unparsedCount===1?'has':'have'} a non-numeric value entered, so ${unparsedCount===1?'it is':'they are'} excluded from this total)`}.
-          </div>
-        )}
-        </>
-        )}
-        </>
-        )}
-      </div>
+      )}
+    </div>
     );
   };
 
@@ -2064,21 +1756,40 @@ function CommandCentre() {
                       Concession
                     </span>
                   )}
+                  {c.archived && (
+                    <span style={{ background:'rgba(255,255,255,0.12)', color:C.white, fontSize:17, padding:'3px 10px', borderRadius:20, fontWeight:500 }}>
+                      Archived
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
               <button className="cc-btn" onClick={() => openEdit(c)}
                 style={{ background:'rgba(255,255,255,0.1)', color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16 }}>
                 Edit
               </button>
-              <button className="cc-btn" onClick={() => setProgressPanelOpen(true)}
-                style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16, fontWeight:500 }}>
-                ✓ Complete Session
+              {!c.archived && (
+                <button className="cc-btn" onClick={() => setProgressPanelOpen(true)}
+                  style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16, fontWeight:500 }}>
+                  ✓ Complete Session
+                </button>
+              )}
+              {c.archived ? (
+                <button className="cc-btn" onClick={() => restoreCoachee(c.id, c.name)}
+                  style={{ background:C.teal, color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16, fontWeight:500 }}>
+                  Restore to Active
+                </button>
+              ) : (
+                <button className="cc-btn" onClick={() => archiveCoachee(c.id, c.name)}
+                  style={{ background:'rgba(255,255,255,0.12)', color:C.white, padding:'8px 16px', borderRadius:6, fontSize:16 }}>
+                  Archive Coachee
+                </button>
+              )}
+              <button onClick={() => removeCoachee(c.id, c.name)} title="Permanently delete coachee" className="cc-delete-btn">
+                Delete Permanently
               </button>
             </div>
-            <button onClick={() => removeCoachee(c.id, c.name)} title="Remove coachee" className="cc-delete-btn"
-              style={{ alignSelf:'flex-start' }}>Delete Coachee</button>
           </div>
           <div style={{ marginTop:20, padding:'14px 18px', background:'rgba(255,255,255,0.06)', borderRadius:10 }}>
             <div style={{ fontSize:16, color:C.teal, letterSpacing:3, textTransform:'uppercase', marginBottom:6 }}>Coaching Goal</div>
@@ -2093,7 +1804,7 @@ function CommandCentre() {
         </div>
 
         {/* Complete Session panel */}
-        {progressPanelOpen && (
+        {progressPanelOpen && !c.archived && (
           <div style={{ background:C.white, border:`1.5px solid ${C.teal}`, borderRadius:12, padding:20, marginBottom:24 }}>
             <div style={{ fontSize:17, fontWeight:500, color:C.navy, marginBottom:14 }}>
               Complete Session, Week {c.weekNumber}
@@ -2203,29 +1914,6 @@ function CommandCentre() {
             </div>
           </div>
         )}
-
-        {/* Communications Log */}
-        <div style={{ marginBottom:24 }}>
-          <div style={{ fontSize:18, letterSpacing:3, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:14 }}>
-            Communications Log
-          </div>
-          <div className="cc-result-box" style={{ marginBottom:16, whiteSpace:'pre-wrap' }}>
-            {c.notes || 'No communications logged yet. Entries from Today\u2019s Loop are added automatically when you Mark Sent, or add one manually below.'}
-          </div>
-          <div style={{ display:'flex', gap:8 }}>
-            <select className="cc-input" value={coacheeNoteType} onChange={e => setCoacheeNoteType(e.target.value)}
-              style={{ maxWidth:170, flexShrink:0 }}>
-              {COMM_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-            </select>
-            <input className="cc-input" placeholder="What was said..." value={coacheeNoteDraft}
-              onChange={e => setCoacheeNoteDraft(e.target.value)}
-              onKeyDown={e => { if (e.key==='Enter') appendCoacheeNote(c.id, coacheeNoteDraft, coacheeNoteType); }} />
-            <button className="cc-btn" onClick={() => appendCoacheeNote(c.id, coacheeNoteDraft, coacheeNoteType)}
-              style={{ background:C.teal, color:C.white, padding:'0 18px', borderRadius:8, fontSize:16, fontWeight:500, flexShrink:0 }}>
-              Add
-            </button>
-          </div>
-        </div>
 
         {/* Message generators */}
         <div style={{ marginBottom:16 }}>
@@ -2873,7 +2561,7 @@ function CommandCentre() {
             </div>
             <div style={{ fontSize:16, color:C.slate, marginTop:2 }}>{today}</div>
           </div>
-          <button className="cc-btn" onClick={() => setLoopItems(getLoopItems(coachees, sabbath.dates||[], sentIds, automations))}
+          <button className="cc-btn" onClick={() => setLoopItems(getLoopItems(coachees, sabbath.dates||[], sentIds))}
             style={{ background:C.light, color:C.slate, padding:'9px 16px', borderRadius:8, fontSize:16 }}>
             ↻ Refresh
           </button>
@@ -3105,249 +2793,6 @@ function CommandCentre() {
     );
   };
 
-  // ── AUTOMATIONS VIEW ──
-  const AutomationsView = () => {
-    const DAY_OPTIONS = [
-      { value:0, label:'Sunday' }, { value:1, label:'Monday' }, { value:2, label:'Tuesday' },
-      { value:3, label:'Wednesday' }, { value:4, label:'Thursday' }, { value:5, label:'Friday' },
-      { value:6, label:'Saturday' },
-    ];
-    const setDraft = (key, value) => { setAutomationsDraft(prev => ({ ...prev, [key]: value })); setAutomationsSaved(false); };
-
-    const resetToDefaults = () => {
-      if (!window.confirm('Reset all automation settings back to the original defaults? This replaces whatever you have set now.')) return;
-      updateAutomations({ ...DEFAULT_AUTOMATIONS });
-    };
-
-    return (
-      <div style={{ padding:'28px 24px', maxWidth:640 }}>
-        {MobileHeader({title:"Automations"})}
-        <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:8 }}>
-          Automations
-        </div>
-        <div style={{ fontSize:16, color:C.slate, marginBottom:24, lineHeight:1.6 }}>
-          Controls which day each touchpoint fires on, and the thresholds that decide when
-          Today's Loop raises a re-engagement flag or a milestone. Changing these here updates
-          the Loop immediately, with no need to edit the file itself.
-        </div>
-
-        {automationsSaved && (
-          <div style={{ background:C.tealLight, border:`1.5px solid ${C.teal}`, borderRadius:10,
-            padding:'10px 16px', marginBottom:20, fontSize:16, color:C.teal, fontWeight:500 }}>
-            ✓ Automations saved and applied to today's Loop
-          </div>
-        )}
-
-        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
-          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
-            Weekly Rhythm Days
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(160px, 1fr))', gap:14, marginBottom:14 }}>
-            <div>
-              <label className="cc-label">Live Session Day</label>
-              <select className="cc-input" value={automationsDraft.sessionDay}
-                onChange={e => setDraft('sessionDay', Number(e.target.value))}>
-                {DAY_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="cc-label">Early Check-in Day</label>
-              <select className="cc-input" value={automationsDraft.checkinDay}
-                onChange={e => setDraft('checkinDay', Number(e.target.value))}>
-                {DAY_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="cc-label">Session Reminder Day</label>
-              <select className="cc-input" value={automationsDraft.reminderDay}
-                onChange={e => setDraft('reminderDay', Number(e.target.value))}>
-                {DAY_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-              </select>
-            </div>
-          </div>
-          <div style={{ fontSize:15, color:C.slate, lineHeight:1.5 }}>
-            Keep the check-in and reminder days off your Live Session Day so a touchpoint never clashes with an actual session.
-          </div>
-        </div>
-
-        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
-          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
-            Thresholds
-          </div>
-          <div style={{ marginBottom:16 }}>
-            <label className="cc-label">Re-engagement threshold (days of silence before a flag is raised)</label>
-            <input type="number" min="1" className="cc-input" style={{ width:100 }}
-              value={automationsDraft.reengageDays}
-              onChange={e => setDraft('reengageDays', e.target.value)} />
-          </div>
-          <div style={{ marginBottom:16 }}>
-            <label className="cc-label">Milestone weeks (comma-separated)</label>
-            <input type="text" className="cc-input" value={milestoneWeeksText}
-              onChange={e => { setMilestoneWeeksText(e.target.value); setAutomationsSaved(false); }}
-              placeholder="4, 8, 12, 16, 20, 24" />
-          </div>
-          <div style={{ display:'flex', gap:14, marginBottom:16, flexWrap:'wrap' }}>
-            <div>
-              <label className="cc-label">Early check-in window: from (days after session)</label>
-              <input type="number" min="0" className="cc-input" style={{ width:100 }}
-                value={automationsDraft.checkinMinDays}
-                onChange={e => setDraft('checkinMinDays', e.target.value)} />
-            </div>
-            <div>
-              <label className="cc-label">to (days after session)</label>
-              <input type="number" min="0" className="cc-input" style={{ width:100 }}
-                value={automationsDraft.checkinMaxDays}
-                onChange={e => setDraft('checkinMaxDays', e.target.value)} />
-            </div>
-          </div>
-          <div style={{ display:'flex', gap:14, flexWrap:'wrap' }}>
-            <div>
-              <label className="cc-label">Session reminder window: from (days after session)</label>
-              <input type="number" min="0" className="cc-input" style={{ width:100 }}
-                value={automationsDraft.reminderMinDays}
-                onChange={e => setDraft('reminderMinDays', e.target.value)} />
-            </div>
-            <div>
-              <label className="cc-label">to (days after session)</label>
-              <input type="number" min="0" className="cc-input" style={{ width:100 }}
-                value={automationsDraft.reminderMaxDays}
-                onChange={e => setDraft('reminderMaxDays', e.target.value)} />
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
-          <button className="cc-btn" onClick={saveAutomationsDraft}
-            style={{ background: automationsSaved ? C.teal : C.navy, color:C.white, padding:'11px 22px',
-              borderRadius:8, fontSize:17, fontWeight:500 }}>
-            {automationsSaved ? '✓ Saved' : 'Save Automations'}
-          </button>
-          <button className="cc-btn" onClick={resetToDefaults}
-            style={{ background:C.white, color:C.slate, border:'1px solid #DDE3EA',
-              padding:'11px 20px', borderRadius:8, fontSize:17 }}>
-            Reset to Defaults
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  // ── COACH IDENTITY VIEW ──
-  const IdentityView = () => {
-    const setDraft = (key, value) => { setIdentityDraft(prev => ({ ...prev, [key]: value })); setIdentitySaved(false); };
-
-    return (
-      <div style={{ padding:'28px 24px', maxWidth:640 }}>
-        {MobileHeader({title:"Coach Identity"})}
-        <div className="cc-serif" style={{ fontSize:30, fontWeight:300, color:C.navy, marginBottom:8 }}>
-          Coach Identity
-        </div>
-        <div style={{ fontSize:16, color:C.slate, marginBottom:24, lineHeight:1.6 }}>
-          This is the one place the Command Centre gets your name, qualifications, voice, and
-          session lengths from. Every AI-generated message, the sidebar, the tab title, and the
-          session timer all read from what is saved here. Change something once and it applies
-          everywhere immediately, with no need to edit the file itself.
-        </div>
-
-        {identitySaved && (
-          <div style={{ background:C.tealLight, border:`1.5px solid ${C.teal}`, borderRadius:10,
-            padding:'10px 16px', marginBottom:20, fontSize:16, color:C.teal, fontWeight:500 }}>
-            ✓ Identity saved and applied throughout the Command Centre
-          </div>
-        )}
-
-        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
-          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
-            Who You Are
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:14, marginBottom:16 }}>
-            <div>
-              <label className="cc-label">Full name</label>
-              <input type="text" className="cc-input" value={identityDraft.name}
-                onChange={e => setDraft('name', e.target.value)} />
-            </div>
-            <div>
-              <label className="cc-label">First name (used mid-sentence)</label>
-              <input type="text" className="cc-input" value={identityDraft.firstName}
-                onChange={e => setDraft('firstName', e.target.value)} />
-            </div>
-          </div>
-          <div style={{ marginBottom:16 }}>
-            <label className="cc-label">Title / qualification</label>
-            <input type="text" className="cc-input" value={identityDraft.title}
-              onChange={e => setDraft('title', e.target.value)} />
-          </div>
-          <div>
-            <label className="cc-label">Background (one or two sentences, used in AI prompts)</label>
-            <textarea className="cc-textarea" style={{ minHeight:70 }} value={identityDraft.bio}
-              onChange={e => setDraft('bio', e.target.value)} />
-          </div>
-        </div>
-
-        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
-          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
-            Voice
-          </div>
-          <div style={{ marginBottom:16 }}>
-            <label className="cc-label">Voice description (feeds directly into every AI prompt)</label>
-            <textarea className="cc-textarea" style={{ minHeight:70 }} value={identityDraft.voiceDescription}
-              onChange={e => setDraft('voiceDescription', e.target.value)} />
-          </div>
-          <div>
-            <label className="cc-label">Sign-off</label>
-            <input type="text" className="cc-input" style={{ maxWidth:300 }} value={identityDraft.signoff}
-              onChange={e => setDraft('signoff', e.target.value)} />
-          </div>
-          <div style={{ fontSize:15, color:C.slate, marginTop:12, lineHeight:1.5 }}>
-            This is a starting voice, not the full depth of a proper voice profile. If your voice
-            needs sentence-level rules, named thinkers to draw on, or separate treatment for
-            different audiences, that still belongs in a dedicated reference document alongside
-            this, not squeezed into one text box.
-          </div>
-        </div>
-
-        <div style={{ background:C.white, borderRadius:12, padding:'20px', border:'1.5px solid #DDE3EA', marginBottom:20 }}>
-          <div style={{ fontSize:17, letterSpacing:2, textTransform:'uppercase', color:C.teal, fontWeight:500, marginBottom:16 }}>
-            Session Lengths
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(160px, 1fr))', gap:14 }}>
-            <div>
-              <label className="cc-label">Discovery session (minutes)</label>
-              <input type="number" min="1" className="cc-input" style={{ width:100 }}
-                value={identityDraft.discoveryMinutes}
-                onChange={e => setDraft('discoveryMinutes', e.target.value)} />
-            </div>
-            <div>
-              <label className="cc-label">Live session length (minutes)</label>
-              <input type="number" min="1" className="cc-input" style={{ width:100 }}
-                value={identityDraft.sessionMinutes}
-                onChange={e => setDraft('sessionMinutes', e.target.value)} />
-            </div>
-            <div>
-              <label className="cc-label">Session timer wrap-up warning (minutes)</label>
-              <input type="number" min="1" className="cc-input" style={{ width:100 }}
-                value={identityDraft.wrapUpWarningMinutes}
-                onChange={e => setDraft('wrapUpWarningMinutes', e.target.value)} />
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
-          <button className="cc-btn" onClick={saveIdentityDraft}
-            style={{ background: identitySaved ? C.teal : C.navy, color:C.white, padding:'11px 22px',
-              borderRadius:8, fontSize:17, fontWeight:500 }}>
-            {identitySaved ? '✓ Saved' : 'Save Identity'}
-          </button>
-          <button className="cc-btn" onClick={resetIdentityToDefault}
-            style={{ background:C.white, color:C.slate, border:'1px solid #DDE3EA',
-              padding:'11px 20px', borderRadius:8, fontSize:17 }}>
-            Reset to Defaults
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   // ── PIPELINE VIEW ──
   const openOppDetail = (o) => { setSelectedOpp(o); setOppNoteDraft(''); nav('pipeline-detail'); };
 
@@ -3553,9 +2998,6 @@ function CommandCentre() {
         {view === 'detail'    && DetailView()}
         {view === 'generate'  && GenerateView()}
         {view === 'loop'      && LoopView()}
-        {view === 'reports'   && ReportsView()}
-        {view === 'automations' && AutomationsView()}
-        {view === 'identity'   && IdentityView()}
         {view === 'sabbath'   && SabbathView()}
         {view === 'inbox'          && InboxView()}
         {view === 'pipeline'       && PipelineView()}
@@ -3579,18 +3021,6 @@ window.__mountApp = function() {
     window.__mountApp();
   }
 })();
-
-// Sync the browser tab title and the one-time setup screen heading to
-// IDENTITY, so they never drift from the name used everywhere else in
-// the app. Deliberately defensive: if either element is not found for
-// any reason, this simply does nothing rather than throwing an error,
-// so it can never interfere with the API key screen or app mounting
-// above, which have already finished running by this point.
-try {
-  document.title = `${IDENTITY.name}: Coaching Command Centre`;
-  const setupHeading = document.querySelector('#setup-screen h1');
-  if (setupHeading) setupHeading.innerHTML = `${IDENTITY.name}<br>Command Centre`;
-} catch (e) { /* cosmetic only — never let this block the app */ }
 
 </script>
 
